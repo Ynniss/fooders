@@ -8,16 +8,31 @@
 
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/fab_analyze"
+        style="@style/floatingActionButton"
         android:layout_margin="32dp"
-        android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
-        android:text="Contribuer"
-        app:backgroundTint="?attr/colorPrimary"
-        app:icon=""
+        android:text="Analyser"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="?attr/colorOnPrimary" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_scan_barcode"
+        style="@style/floatingActionButton"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"
+        android:text="Scan code barre"
+        app:icon="@drawable/ic_button_camera"
+        app:layout_constraintBottom_toTopOf="@+id/fab_manual_entry"
+        app:layout_constraintEnd_toEndOf="@+id/fab_manual_entry" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_manual_entry"
+        style="@style/floatingActionButton"
+        android:layout_marginBottom="16dp"
+        android:text="saisie manuelle"
+        android:visibility="gone"
+
+        app:icon="@drawable/ic_button_keyboard"
+        app:layout_constraintBottom_toTopOf="@+id/fab_analyze"
+        app:layout_constraintEnd_toEndOf="@+id/fab_analyze" />
 </androidx.constraintlayout.widget.ConstraintLayout>
