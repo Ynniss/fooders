@@ -9,5 +9,24 @@
         android:id="@+id/loginFragment"
         android:name="com.esgi.fooders.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.esgi.fooders.HomeFragment"
+        android:label="Accueil"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.esgi.fooders.ProfileFragment"
+        android:label="Profil"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.esgi.fooders.HistoryFragment"
+        android:label="Historique"
+        tools:layout="@layout/fragment_history" />
 </navigation>
