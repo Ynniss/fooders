@@ -16,19 +16,37 @@
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.esgi.fooders.HomeFragment"
         android:label="Accueil"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_scanSuccessFragment"
+            app:destination="@id/scanSuccessFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.esgi.fooders.ProfileFragment"
         android:label="Profil"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.esgi.fooders.HistoryFragment"
         android:label="Historique"
         tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/scanSuccessFragment"
+        android:name="com.esgi.fooders.ScanSuccessFragment"
+        android:label="fragment_scan_success"
+        tools:layout="@layout/fragment_scan_success">
+
+        <argument
+            android:name="barcode"
+            app:argType="string" />
+    </fragment>
 </navigation>
