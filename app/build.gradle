@@ -64,5 +64,6 @@ dependencies {
 
     implementation 'com.google.mlkit:barcode-scanning:16.2.0'
 
-
+    def lottieVersion = "3.4.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }

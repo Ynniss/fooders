@@ -6,15 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".ScanFragment">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyle"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_progress_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_scan_barcode_preview_view"
-        app:layout_constraintEnd_toEndOf="@+id/fragment_scan_barcode_preview_view"
-        app:layout_constraintStart_toStartOf="@+id/fragment_scan_barcode_preview_view"
-        app:layout_constraintTop_toTopOf="@+id/fragment_scan_barcode_preview_view" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_progress_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.70" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_progress_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_progress_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
 
 
     <androidx.camera.view.PreviewView
@@ -27,5 +47,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_food_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_progress_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_progress_right"
+        app:layout_constraintStart_toStartOf="@+id/guideline_progress_left"
+        app:layout_constraintTop_toTopOf="@+id/guideline_progress_top"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/food_loading" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
