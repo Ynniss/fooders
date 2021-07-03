@@ -51,7 +51,12 @@ class ScanFragment : Fragment() {
         startCamera()
 
         scanBarcodeViewModel.progressState.observe(viewLifecycleOwner, {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            if (it) {
+                binding.lottieFoodLoading.apply {
+                    visibility = View.VISIBLE
+                    playAnimation()
+                }
+            }
         })
 
         scanBarcodeViewModel.navigation.observe(viewLifecycleOwner, { navDirections ->

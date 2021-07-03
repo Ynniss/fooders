@@ -11,18 +11,10 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.esgi.fooders.databinding.FragmentHomeBinding
 import kotlinx.android.synthetic.main.fragment_home.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -76,7 +68,9 @@ class HomeFragment : Fragment() {
             fabManualEntry.setOnClickListener {
                 Log.d("fab", "manual entry")
             }
+
             fabScanBarcode.setOnClickListener {
+                onFabAnalyzeClicked()
                 Log.d("fab", "scan barcode")
                 if (allPermissionsGranted()) {
                     findNavController().navigate(R.id.action_homeFragment_to_scanFragment)
