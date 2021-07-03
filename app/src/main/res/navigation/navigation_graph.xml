@@ -23,8 +23,8 @@
         android:label="Accueil"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_scanSuccessFragment"
-            app:destination="@id/scanSuccessFragment" />
+            android:id="@+id/action_homeFragment_to_scanFragment"
+            app:destination="@id/scanFragment" />
     </fragment>
 
     <fragment
@@ -48,5 +48,15 @@
         <argument
             android:name="barcode"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.esgi.fooders.ScanFragment"
+        android:label="Scan"
+        tools:layout="@layout/fragment_scan">
+        <action
+            android:id="@+id/action_scanFragment_to_scanSuccessFragment"
+            app:destination="@id/scanSuccessFragment" />
     </fragment>
 </navigation>

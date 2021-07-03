@@ -24,7 +24,7 @@ class ScanBarcodeViewModel : ViewModel() {
         viewModelScope.launch {
             delay(1000)
             _navigation.value =
-                HomeFragmentDirections.actionHomeFragmentToScanSuccessFragment(barcode)
+                ScanFragmentDirections.actionScanFragmentToScanSuccessFragment(barcode)
             _progressState.value = false
         }
     }

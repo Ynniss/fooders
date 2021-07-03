@@ -2,13 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/scanFragment"
+        android:icon="@drawable/ic_menu_barcode"
+        android:title="Scan" />
+
+    <item
         android:id="@+id/historyFragment"
         android:icon="@drawable/ic_menu_history"
         android:title="Historique" />
+
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_menu_home"
         android:title="Accueil" />
+
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_menu_profile"

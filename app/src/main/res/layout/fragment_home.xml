@@ -7,25 +7,6 @@
     tools:context=".HomeFragment">
 
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/fragment_scan_barcode_preview_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.camera.view.PreviewView>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/fragment_scan_barcode_preview_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_scan_barcode_preview_view" />
-
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_analyze"
         style="@style/floatingActionButton"
@@ -37,9 +18,9 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_scan_barcode"
         style="@style/floatingActionButton"
-        android:visibility="gone"
         android:layout_marginBottom="16dp"
         android:text="Scan code barre"
+        android:visibility="gone"
         app:icon="@drawable/ic_button_camera"
         app:layout_constraintBottom_toTopOf="@+id/fab_manual_entry"
         app:layout_constraintEnd_toEndOf="@+id/fab_manual_entry" />
@@ -50,7 +31,6 @@
         android:layout_marginBottom="16dp"
         android:text="saisie manuelle"
         android:visibility="gone"
-
         app:icon="@drawable/ic_button_keyboard"
         app:layout_constraintBottom_toTopOf="@+id/fab_analyze"
         app:layout_constraintEnd_toEndOf="@+id/fab_analyze" />

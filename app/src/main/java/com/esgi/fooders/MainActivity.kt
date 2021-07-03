@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         hideBottomNavigationBar(navController)
+
     }
 
     private fun hideBottomNavigationBar(navController: NavController) {
@@ -47,6 +48,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 supportActionBar?.show()
                 View.VISIBLE
+            }
+
+            if (destination.id == R.id.scanFragment) {
+                supportActionBar?.hide()
             }
         }
     }

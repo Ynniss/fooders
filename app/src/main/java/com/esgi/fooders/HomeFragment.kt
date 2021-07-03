@@ -28,9 +28,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var fabAnalyzeClicked = false
-    private var processingBarcode = AtomicBoolean(false)
-    private lateinit var cameraExecutor: ExecutorService
-    private val scanBarcodeViewModel: ScanBarcodeViewModel by viewModels()
+
     private val rotateOpen: Animation by lazy {
         AnimationUtils.loadAnimation(
             requireContext(),
@@ -63,7 +61,6 @@ class HomeFragment : Fragment() {
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
-        cameraExecutor = Executors.newSingleThreadExecutor()
 
         return view
     }
@@ -82,7 +79,7 @@ class HomeFragment : Fragment() {
             fabScanBarcode.setOnClickListener {
                 Log.d("fab", "scan barcode")
                 if (allPermissionsGranted()) {
-                    startCamera()
+                    findNavController().navigate(R.id.action_homeFragment_to_scanFragment)
                 } else {
                     requestPermissions(
                         REQUIRED_PERMISSIONS,
@@ -91,17 +88,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        scanBarcodeViewModel.progressState.observe(viewLifecycleOwner, {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        })
-
-        scanBarcodeViewModel.navigation.observe(viewLifecycleOwner, { navDirections ->
-            navDirections?.let {
-                findNavController().navigate(navDirections)
-                scanBarcodeViewModel.doneNavigating()
-            }
-        })
     }
 
     private fun onFabAnalyzeClicked() {
@@ -147,54 +133,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun startCamera() {
-        // Create an instance of the ProcessCameraProvider,
-        // which will be used to bind the use cases to a lifecycle owner.
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        // Add a listener to the cameraProviderFuture.
-        // The first argument is a Runnable, which will be where the magic actually happens.
-        // The second argument (way down below) is an Executor that runs on the main thread.
-        cameraProviderFuture.addListener({
-            // Add a ProcessCameraProvider, which binds the lifecycle of your camera to
-            // the LifecycleOwner within the application's life.
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            // Initialize the Preview object, get a surface provider from your PreviewView,
-            // and set it on the preview instance.
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(
-                    fragment_scan_barcode_preview_view.surfaceProvider
-                )
-            }
-
-            // Setup the ImageAnalyzer for the ImageAnalysis use case
-            val imageAnalysis = ImageAnalysis.Builder()
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
-                        if (processingBarcode.compareAndSet(false, true)) {
-                            searchBarcode(barcode)
-                        }
-                    })
-                }
-
-            // Select back camera
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            try {
-                // Unbind any bound use cases before rebinding
-                cameraProvider.unbindAll()
-                // Bind use cases to lifecycleOwner
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
-            } catch (e: Exception) {
-                Log.e("PreviewUseCase", "Binding failed! :(", e)
-            }
-        }, ContextCompat.getMainExecutor(requireContext()))
-    }
-
-    private fun searchBarcode(barcode: String) {
-        scanBarcodeViewModel.searchBarcode(barcode)
-    }
-
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it
@@ -207,7 +145,7 @@ class HomeFragment : Fragment() {
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                findNavController().navigate(R.id.action_homeFragment_to_scanFragment)
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -222,7 +160,6 @@ class HomeFragment : Fragment() {
         private val REQUIRED_PERMISSIONS = arrayOf(CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
