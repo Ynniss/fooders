@@ -9,14 +9,23 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.esgi.fooders.databinding.ActivityMainBinding
+import kotlinx.coroutines.runBlocking
+import java.lang.Thread.sleep
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        /*runBlocking {
+            sleep(1000)
+        }*/
+        setTheme(R.style.Theme_Fooders)
+
         super.onCreate(savedInstanceState)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         // https://stackoverflow.com/a/61472200
