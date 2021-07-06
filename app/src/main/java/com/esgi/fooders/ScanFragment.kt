@@ -44,26 +44,31 @@ class ScanFragment : Fragment() {
 
         startCamera()
 
-        scanBarcodeViewModel.progressState.observe(viewLifecycleOwner, {
-            if (it) {
-                binding.lottieFoodLoading.apply {
-                    visibility = View.VISIBLE
-                    playAnimation()
+        scanBarcodeViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
+            if (isInProgress) {
+                binding.apply {
+                    lottieFoodLoading.visibility = View.VISIBLE
+                    lottieFoodLoading.playAnimation()
+
+                    txtScanLoading.visibility = View.VISIBLE
+                }
+            } else {
+                binding.apply {
+                    lottieFoodLoading.visibility = View.GONE
+                    txtScanLoading.visibility = View.GONE
                 }
             }
         })
 
-        scanBarcodeViewModel.navigation.observe(viewLifecycleOwner, { navDirections ->
-            navDirections?.let {
-                findNavController().navigate(navDirections)
-                scanBarcodeViewModel.doneNavigating()
-            }
+        scanBarcodeViewModel.resultsReceived.observe(viewLifecycleOwner, { resultsReceived ->
+            binding.layoutBottomSheet.visibility = View.VISIBLE
         })
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
-            peekHeight = 200
+            peekHeight = 300
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
     }
 
     private fun startCamera() {

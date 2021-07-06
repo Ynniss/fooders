@@ -9,11 +9,11 @@ import java.net.ConnectException
 
 class ScanBarcodeViewModel : ViewModel() {
 
-    val progressState: LiveData<Boolean> get() = _progressState
     private val _progressState = MutableLiveData<Boolean>()
+    val progressState: LiveData<Boolean> get() = _progressState
 
-    val navigation: LiveData<NavDirections?> get() = _navigation
-    private val _navigation = MutableLiveData<NavDirections?>()
+    private val resultsReceivedData = MutableLiveData<Boolean>()
+    val resultsReceived: LiveData<Boolean> get() = resultsReceivedData
 
     init {
         _progressState.value = false
@@ -23,13 +23,8 @@ class ScanBarcodeViewModel : ViewModel() {
         _progressState.value = true
         viewModelScope.launch {
             delay(1000)
-            _navigation.value =
-                ScanFragmentDirections.actionScanFragmentToScanSuccessFragment(barcode)
+            resultsReceivedData.value = true
             _progressState.value = false
         }
-    }
-
-    fun doneNavigating() {
-        _navigation.value = null
     }
 }
