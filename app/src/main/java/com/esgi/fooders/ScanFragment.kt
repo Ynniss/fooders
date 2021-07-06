@@ -1,30 +1,24 @@
 package com.esgi.fooders
 
-import android.Manifest.permission.CAMERA
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.esgi.fooders.databinding.FragmentHomeBinding
 import com.esgi.fooders.databinding.FragmentScanBinding
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+
 
 class ScanFragment : Fragment() {
     private var _binding: FragmentScanBinding? = null
@@ -65,6 +59,11 @@ class ScanFragment : Fragment() {
                 scanBarcodeViewModel.doneNavigating()
             }
         })
+
+        BottomSheetBehavior.from(binding.bottomSheet).apply {
+            peekHeight = 200
+            this.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     private fun startCamera() {
@@ -107,7 +106,7 @@ class ScanFragment : Fragment() {
                 val camera =
                     cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
                 if (camera.cameraInfo.hasFlashUnit()) {
-                    camera.cameraControl.enableTorch(true)
+                    camera.cameraControl.enableTorch(false)
                 }
 
             } catch (e: Exception) {
