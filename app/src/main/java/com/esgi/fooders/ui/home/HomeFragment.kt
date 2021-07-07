@@ -1,4 +1,4 @@
-package com.esgi.fooders
+package com.esgi.fooders.ui.home
 
 import android.Manifest.permission.CAMERA
 import android.content.pm.PackageManager
@@ -13,8 +13,8 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import com.esgi.fooders.R
 import com.esgi.fooders.databinding.FragmentHomeBinding
-import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

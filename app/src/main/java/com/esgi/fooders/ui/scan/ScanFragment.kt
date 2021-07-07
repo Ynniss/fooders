@@ -1,4 +1,4 @@
-package com.esgi.fooders
+package com.esgi.fooders.ui.scan
 
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +12,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.esgi.fooders.databinding.FragmentScanBinding
+import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -25,7 +25,7 @@ class ScanFragment : Fragment() {
     private val binding get() = _binding!!
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var cameraExecutor: ExecutorService
-    private val scanBarcodeViewModel: ScanBarcodeViewModel by viewModels()
+    private val scanViewModel: ScanViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -44,7 +44,7 @@ class ScanFragment : Fragment() {
 
         startCamera()
 
-        scanBarcodeViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
+        scanViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
             if (isInProgress) {
                 binding.apply {
                     lottieFoodLoading.visibility = View.VISIBLE
@@ -60,8 +60,12 @@ class ScanFragment : Fragment() {
             }
         })
 
-        scanBarcodeViewModel.resultsReceived.observe(viewLifecycleOwner, { resultsReceived ->
+        scanViewModel.resultsReceived.observe(viewLifecycleOwner, { resultsReceived ->
             binding.layoutBottomSheet.visibility = View.VISIBLE
+        })
+
+        scanViewModel.barcode.observe(viewLifecycleOwner, { barcode ->
+            binding.txtBarcode.text = barcode
         })
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
@@ -111,7 +115,7 @@ class ScanFragment : Fragment() {
                 val camera =
                     cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
                 if (camera.cameraInfo.hasFlashUnit()) {
-                    camera.cameraControl.enableTorch(false)
+                    camera.cameraControl.enableTorch(true)
                 }
 
             } catch (e: Exception) {
@@ -121,7 +125,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun searchBarcode(barcode: String) {
-        scanBarcodeViewModel.searchBarcode(barcode)
+        scanViewModel.searchBarcode(barcode)
     }
 
     override fun onDestroyView() {
