@@ -1,4 +1,4 @@
-package com.esgi.fooders
+package com.esgi.fooders.utils
 
 import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis
