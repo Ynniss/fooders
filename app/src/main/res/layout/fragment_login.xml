@@ -22,6 +22,13 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_button_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,22 +58,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_email"
+        android:id="@+id/input_email_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="Email"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom_logo">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_password"
+        android:id="@+id/input_password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -75,9 +84,10 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_email">
+        app:layout_constraintTop_toBottomOf="@+id/input_email_layout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
@@ -88,13 +98,26 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="casual"
-        android:textStyle="bold"
         android:text="LOG IN"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline_button_right"
         app:layout_constraintStart_toStartOf="@+id/guideline_button_left"
         app:layout_constraintTop_toTopOf="@+id/guideline_bottom_input" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_food_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom_loader"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_button_right"
+        app:layout_constraintStart_toStartOf="@+id/guideline_button_left"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/food_loading" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
