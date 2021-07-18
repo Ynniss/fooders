@@ -2,10 +2,14 @@ package com.esgi.fooders.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -17,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -78,6 +83,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.overflow_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.logout -> {
+                lifecycleScope.launch {
+                    dataStoreManager.updateUsername("")
+
+                    findNavController(R.id.navigation_host).setGraph(R.navigation.navigation_graph)
+                    /*val navOptions = NavOptions.Builder()
+                        .setPopUpTo(R.id.homeFragment, true)
+                        .build()
+                    withContext(Main) {
+                        Navigation.findNavController(binding.root).navigate(
+                            R.id.action_loginFragment_to_homeFragment,
+                            null,
+                            navOptions
+                        )
+                    }*/
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
