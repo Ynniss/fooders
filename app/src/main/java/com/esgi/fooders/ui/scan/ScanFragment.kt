@@ -12,17 +12,23 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
-
+@AndroidEntryPoint
 class ScanFragment : Fragment() {
     private var _binding: FragmentScanBinding? = null
     private val binding get() = _binding!!
+
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var cameraExecutor: ExecutorService
     private val scanViewModel: ScanViewModel by viewModels()
@@ -52,20 +58,31 @@ class ScanFragment : Fragment() {
 
                     txtScanLoading.visibility = View.VISIBLE
                 }
-            } else {
-                binding.apply {
-                    lottieFoodLoading.visibility = View.GONE
-                    txtScanLoading.visibility = View.GONE
-                }
             }
         })
 
-        scanViewModel.resultsReceived.observe(viewLifecycleOwner, { resultsReceived ->
-            binding.layoutBottomSheet.visibility = View.VISIBLE
-        })
-
         scanViewModel.barcode.observe(viewLifecycleOwner, { barcode ->
-            binding.txtBarcode.text = barcode
+            lifecycleScope.launch(Main) {
+                scanViewModel.getProductInformations(barcode!!)
+            }
+
+            lifecycleScope.launchWhenStarted {
+                scanViewModel.scanEvent.observe(viewLifecycleOwner, { event ->
+                    when (event) {
+                        is ScanViewModel.ScanEvent.Success -> {
+                            refreshUi(failed = false)
+                            Log.d("RESULT", event.result.data.toString())
+                        }
+                        is ScanViewModel.ScanEvent.Failure -> {
+                            refreshUi()
+
+                            Snackbar.make(binding.root, event.error, Snackbar.LENGTH_SHORT)
+                                .show()
+                        }
+                        else -> Unit
+                    }
+                })
+            }
         })
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
@@ -76,42 +93,29 @@ class ScanFragment : Fragment() {
     }
 
     private fun startCamera() {
-        // Create an instance of the ProcessCameraProvider,
-        // which will be used to bind the use cases to a lifecycle owner.
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-        // Add a listener to the cameraProviderFuture.
-        // The first argument is a Runnable, which will be where the magic actually happens.
-        // The second argument (way down below) is an Executor that runs on the main thread.
         cameraProviderFuture.addListener({
-            // Add a ProcessCameraProvider, which binds the lifecycle of your camera to
-            // the LifecycleOwner within the application's life.
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            // Initialize the Preview object, get a surface provider from your PreviewView,
-            // and set it on the preview instance.
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(
                     binding.fragmentScanBarcodePreviewView.surfaceProvider
                 )
             }
 
-            // Setup the ImageAnalyzer for the ImageAnalysis use case
             val imageAnalysis = ImageAnalysis.Builder()
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
                         if (processingBarcode.compareAndSet(false, true)) {
-                            searchBarcode(barcode)
+                            scanViewModel.searchBarcode(barcode)
                         }
                     })
                 }
 
-            // Select back camera
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
-                // Unbind any bound use cases before rebinding
                 cameraProvider.unbindAll()
-                // Bind use cases to lifecycleOwner
                 val camera =
                     cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
                 if (camera.cameraInfo.hasFlashUnit()) {
@@ -124,8 +128,15 @@ class ScanFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    private fun searchBarcode(barcode: String) {
-        scanViewModel.searchBarcode(barcode)
+    private fun refreshUi(failed: Boolean = true) {
+        binding.apply {
+            lottieFoodLoading.visibility = View.GONE
+            txtScanLoading.visibility = View.GONE
+
+            if (!failed) {
+                layoutBottomSheet.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onDestroyView() {
