@@ -76,6 +76,5 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
-
+    implementation "androidx.datastore:datastore-preferences:1.0.0-rc01"
 }

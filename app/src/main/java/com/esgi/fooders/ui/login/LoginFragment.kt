@@ -1,13 +1,11 @@
 package com.esgi.fooders.ui.login
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,6 +47,7 @@ class LoginFragment : Fragment() {
                             lottieFoodLoading.visibility = View.GONE
                             lottieFoodLoading.cancelAnimation()
                         }
+
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     }
                     is LoginViewModel.LoginEvent.Failure -> {
@@ -94,7 +93,6 @@ class LoginFragment : Fragment() {
     private fun closeKeyboard() {
         val imm = getSystemService(binding.root.context, InputMethodManager::class.java)
         imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
-
     }
 
     override fun onDestroyView() {

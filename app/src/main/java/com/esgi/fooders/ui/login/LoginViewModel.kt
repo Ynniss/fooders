@@ -1,19 +1,17 @@
 package com.esgi.fooders.ui.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.esgi.fooders.data.repository.LoginRepository
+import com.esgi.fooders.utils.DataStoreManager
 import com.esgi.fooders.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +29,9 @@ class LoginViewModel @Inject constructor(
     private val _loginEventData = MutableLiveData<LoginEvent>(LoginEvent.Empty)
     val loginEvent: LiveData<LoginEvent> = _loginEventData
 
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
+
     fun login(username: String, password: String) {
         viewModelScope.launch(IO) {
             withContext(Main) { _loginEventData.value = LoginEvent.Loading }
@@ -40,11 +41,13 @@ class LoginViewModel @Inject constructor(
                         _loginEventData.value =
                             LoginEvent.Failure(loginResponse.message!!)
                     }
-                is Resource.Success ->
+                is Resource.Success -> {
+                    dataStoreManager.updateUsername(username)
                     withContext(Main) {
                         _loginEventData.value =
                             LoginEvent.Success(loginResponse.data!!.message)
                     }
+                }
                 else -> Unit
             }
         }
