@@ -2,11 +2,9 @@ package com.esgi.fooders.data.remote
 
 import com.esgi.fooders.data.remote.requests.LoginRequest
 import com.esgi.fooders.data.remote.responses.LoginResponse
+import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface FoodersApi {
     @Headers("Content-Type: application/json")
@@ -14,5 +12,11 @@ interface FoodersApi {
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("product/{barcode}")
+    suspend fun getProductInformations(
+        @Path("barcode") barcode: String = "dsqdsq"
+    ): Response<ProductInformationsResponse>
 
 }

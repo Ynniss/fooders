@@ -2,6 +2,7 @@ package com.esgi.fooders.di
 
 import com.esgi.fooders.data.remote.FoodersApi
 import com.esgi.fooders.data.repository.LoginRepository
+import com.esgi.fooders.data.repository.ScanRepository
 import com.esgi.fooders.utils.Constants.FOODERS_API_BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -30,4 +31,11 @@ object AppModule {
     fun provideLoginRepository(api: FoodersApi): LoginRepository {
         return LoginRepository(api)
     }
+
+    @Singleton
+    @Provides
+    fun provideScanRepository(api: FoodersApi): ScanRepository {
+        return ScanRepository(api)
+    }
+
 }
