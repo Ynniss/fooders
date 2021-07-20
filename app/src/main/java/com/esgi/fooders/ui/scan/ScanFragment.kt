@@ -17,6 +17,7 @@ import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import com.tutorialwing.viewpager.VpAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -71,6 +72,12 @@ class ScanFragment : Fragment() {
                     when (event) {
                         is ScanViewModel.ScanEvent.Success -> {
                             refreshUi(failed = false)
+                            binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
+                            val vpAdapter = VpAdapter(
+                                requireFragmentManager()
+                            )
+                            binding.viewpagerProduct.adapter = vpAdapter
+
                             Log.d("RESULT", event.result.data.toString())
                         }
                         is ScanViewModel.ScanEvent.Failure -> {
