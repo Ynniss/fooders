@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.esgi.fooders.ui.viewpager_product.CharacteristicsFragment
+import com.esgi.fooders.ui.viewpager_product.EnvironmentFragment
 import com.esgi.fooders.ui.viewpager_product.IngredientsFragment
 import com.esgi.fooders.ui.viewpager_product.ScoreFragment
 
@@ -17,6 +18,7 @@ class VpAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter
             0 -> fragment = ScoreFragment()
             1 -> fragment = CharacteristicsFragment()
             2 -> fragment = IngredientsFragment()
+            3 -> fragment = EnvironmentFragment()
             else -> fragment = ScoreFragment()
         }
 
@@ -28,6 +30,12 @@ class VpAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return "Tab " + (position + 1)
+        return when (position) {
+            0 -> "Score"
+            1 -> "Caractéristiques"
+            2 -> "Ingrédients"
+            3 -> "Impact environnemental"
+            else -> "Score"
+        }
     }
 }
