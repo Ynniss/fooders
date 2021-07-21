@@ -61,6 +61,12 @@ class LoginFragment : Fragment() {
                         binding.apply {
                             lottieFoodLoading.visibility = View.GONE
                             lottieFoodLoading.cancelAnimation()
+
+                            btnLogin.isEnabled = true
+                            btnLogin.isClickable = true
+
+                            inputEmail.isEnabled = true
+                            inputPassword.isEnabled = true
                         }
                         Snackbar.make(binding.root, event.error, Snackbar.LENGTH_SHORT)
                             .show()
@@ -70,6 +76,12 @@ class LoginFragment : Fragment() {
                         binding.apply {
                             lottieFoodLoading.visibility = View.VISIBLE
                             lottieFoodLoading.playAnimation()
+
+                            btnLogin.isEnabled = false
+                            btnLogin.isClickable = false
+
+                            inputEmail.isEnabled = false
+                            inputPassword.isEnabled = false
                         }
                     }
                     else -> Unit

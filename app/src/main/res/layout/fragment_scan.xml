@@ -93,6 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
+            android:gravity="center|top"
             android:orientation="vertical"
             app:behavior_hideable="true"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -100,17 +101,26 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_gravity="center|top"
                 android:src="@drawable/ic_remove"
                 app:tint="?attr/colorPrimary" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <TextView
+                android:id="@+id/txt_product_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|top"
-                android:src="@drawable/background_login_screen"
-                />
+                android:autoSizeTextType="uniform"
+                android:fontFamily="casual"
+                android:maxLines="4"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="COCA COLA" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_product"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                tools:src="@drawable/img_cocacola" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
@@ -118,29 +128,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 app:tabContentStart="32dp"
-                app:tabMode="scrollable">
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Score" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Caractéristiques" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ingrédients" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Impact environnemental" />
-
-            </com.google.android.material.tabs.TabLayout>
+                app:tabMode="scrollable" />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewpager_product"

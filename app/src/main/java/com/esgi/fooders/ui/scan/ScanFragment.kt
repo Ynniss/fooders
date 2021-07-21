@@ -12,7 +12,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -33,6 +35,7 @@ class ScanFragment : Fragment() {
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var cameraExecutor: ExecutorService
     private val scanViewModel: ScanViewModel by viewModels()
+    private lateinit var productInfoSharedViewModel: ProductInfoSharedViewModel
 
 
     override fun onCreateView(
@@ -42,6 +45,9 @@ class ScanFragment : Fragment() {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
         val view = binding.root
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        productInfoSharedViewModel =
+            ViewModelProvider(requireActivity()).get(ProductInfoSharedViewModel::class.java)
 
         return view
     }
@@ -64,31 +70,42 @@ class ScanFragment : Fragment() {
 
         scanViewModel.barcode.observe(viewLifecycleOwner, { barcode ->
             lifecycleScope.launch(Main) {
-                scanViewModel.getProductInformations(barcode!!)
+                productInfoSharedViewModel.getProductInformations(barcode!!)
             }
 
             lifecycleScope.launchWhenStarted {
-                scanViewModel.scanEvent.observe(viewLifecycleOwner, { event ->
-                    when (event) {
-                        is ScanViewModel.ScanEvent.Success -> {
-                            refreshUi(failed = false)
-                            binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
-                            val vpAdapter = VpAdapter(
-                                requireFragmentManager()
-                            )
-                            binding.viewpagerProduct.adapter = vpAdapter
+                productInfoSharedViewModel.productInformationsEvent.observe(
+                    viewLifecycleOwner,
+                    { event ->
+                        when (event) {
+                            is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                refreshUi(failed = false)
+                                binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
+                                val vpAdapter = VpAdapter(
+                                    requireFragmentManager()
+                                )
+                                binding.apply {
+                                    viewpagerProduct.adapter = vpAdapter
 
-                            Log.d("RESULT", event.result.data.toString())
-                        }
-                        is ScanViewModel.ScanEvent.Failure -> {
-                            refreshUi()
+                                    Log.d("RESULT", event.result.data.toString())
 
-                            Snackbar.make(binding.root, event.error, Snackbar.LENGTH_SHORT)
-                                .show()
+                                    Glide.with(requireContext())
+                                        .load(event.result.data!!.data.image_front_url)
+                                        .into(imgProduct)
+
+                                    txtProductName.text = event.result.data.data.product_name
+
+                                }
+                            }
+                            is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
+                                refreshUi()
+
+                                Snackbar.make(binding.root, event.error, Snackbar.LENGTH_SHORT)
+                                    .show()
+                            }
+                            else -> Unit
                         }
-                        else -> Unit
-                    }
-                })
+                    })
             }
         })
 
