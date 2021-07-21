@@ -15,7 +15,7 @@ import com.esgi.fooders.R
 import com.esgi.fooders.databinding.FragmentLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -31,7 +31,7 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        runBlocking {
+        lifecycleScope.launch {
             if (loginViewModel.dataStoreManager.isUsernameSaved()) {
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             }
