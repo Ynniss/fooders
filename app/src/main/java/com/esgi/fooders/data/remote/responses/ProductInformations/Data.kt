@@ -8,5 +8,4 @@ data class Data(
     val nova_group: Int,
     val nutriments: Nutriments,
     var product_name: String = "Product Name Missing",
-    val properties: String
 )
