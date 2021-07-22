@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -38,7 +39,8 @@ class ScanFragment : Fragment() {
     private lateinit var cameraExecutor: ExecutorService
     private val scanViewModel: ScanViewModel by viewModels()
     private lateinit var productInfoSharedViewModel: ProductInfoSharedViewModel
-
+    private lateinit var camera: Camera
+    private lateinit var cameraProvider: ProcessCameraProvider
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,6 +83,8 @@ class ScanFragment : Fragment() {
                     { event ->
                         when (event) {
                             is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                cameraProvider.unbindAll()
+
                                 refreshUi(failed = false)
                                 binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
                                 val vpAdapter = VpAdapter(
@@ -108,9 +112,51 @@ class ScanFragment : Fragment() {
         BottomSheetBehavior.from(binding.bottomSheet).apply {
             peekHeight = 300
             this.state = BottomSheetBehavior.STATE_COLLAPSED
+            addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    Log.d("test", " toto ")
+                    /*when (newState) {
+                        BottomSheetBehavior.STATE_COLLAPSED -> Toast.makeText(
+                            context,
+                            "STATE_COLLAPSED",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        BottomSheetBehavior.STATE_EXPANDED -> Toast.makeText(
+                            context,
+                            "STATE_EXPANDED",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        BottomSheetBehavior.STATE_DRAGGING -> Toast.makeText(
+                            context,
+                            "STATE_DRAGGING",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        BottomSheetBehavior.STATE_SETTLING -> Toast.makeText(
+                            context,
+                            "STATE_SETTLING",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        BottomSheetBehavior.STATE_HIDDEN -> Toast.makeText(
+                            context,
+                            "STATE_HIDDEN",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        else -> Toast.makeText(context, "OTHER_STATE", Toast.LENGTH_SHORT).show()
+                    }*/
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    TODO("Not yet implemented")
+                }
+
+            })
         }
 
+
     }
+
 
     private fun loadHeaderProductInfo(data: ProductInformationsResponse) {
         binding.apply {
@@ -127,7 +173,7 @@ class ScanFragment : Fragment() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(
                     binding.fragmentScanBarcodePreviewView.surfaceProvider
@@ -147,7 +193,7 @@ class ScanFragment : Fragment() {
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
                 cameraProvider.unbindAll()
-                val camera =
+                camera =
                     cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
                 if (camera.cameraInfo.hasFlashUnit()) {
                     camera.cameraControl.enableTorch(true)
