@@ -15,6 +15,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.esgi.fooders.R
+import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -86,15 +88,9 @@ class ScanFragment : Fragment() {
                                 )
                                 binding.apply {
                                     viewpagerProduct.adapter = vpAdapter
-
                                     Log.d("RESULT", event.result.data.toString())
 
-                                    Glide.with(requireContext())
-                                        .load(event.result.data!!.data.image_front_url)
-                                        .into(imgProduct)
-
-                                    txtProductName.text = event.result.data.data.product_name
-
+                                    loadHeaderProductInfo(event.result.data!!)
                                 }
                             }
                             is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
@@ -114,6 +110,17 @@ class ScanFragment : Fragment() {
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
+    }
+
+    private fun loadHeaderProductInfo(data: ProductInformationsResponse) {
+        binding.apply {
+            Glide.with(requireContext())
+                .load(data.data.image_front_url)
+                .placeholder(R.drawable.not_found)
+                .into(imgProduct)
+
+            txtProductName.text = data.data.product_name
+        }
     }
 
     private fun startCamera() {

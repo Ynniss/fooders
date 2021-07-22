@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
     def nav_version = "2.3.5"
     def camerax_version = "1.0.0"
 
