@@ -13,13 +13,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.utils.BarcodeAnalyzer
+import com.esgi.fooders.utils.slideUp
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.tutorialwing.viewpager.VpAdapter
@@ -35,12 +36,23 @@ class ScanFragment : Fragment() {
     private var _binding: FragmentScanBinding? = null
     private val binding get() = _binding!!
 
+    private val ANIMATION_DURATION = 600L
+    private val START_OFFSET = 0L
+
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var cameraExecutor: ExecutorService
     private val scanViewModel: ScanViewModel by viewModels()
-    private lateinit var productInfoSharedViewModel: ProductInfoSharedViewModel
+    //private val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) {
+    //    SavedStateViewModelFactory(requireActivity().application, requireParentFragment())
+    //}
+
     private lateinit var camera: Camera
     private lateinit var cameraProvider: ProcessCameraProvider
+    private lateinit var cameraSelector: CameraSelector
+    private lateinit var imageAnalysis: ImageAnalysis
+    private lateinit var preview: Preview
+    val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) { defaultViewModelProviderFactory }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,14 +62,14 @@ class ScanFragment : Fragment() {
         val view = binding.root
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        productInfoSharedViewModel =
-            ViewModelProvider(requireActivity()).get(ProductInfoSharedViewModel::class.java)
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //productInfoSharedViewModel.resetEvent()
+        Log.d("SCAN", productInfoSharedViewModel.isBeenRequestData.value.toString())
+
 
         startCamera()
 
@@ -74,17 +86,19 @@ class ScanFragment : Fragment() {
 
         scanViewModel.barcode.observe(viewLifecycleOwner, { barcode ->
             lifecycleScope.launch(Main) {
-                productInfoSharedViewModel.getProductInformations(barcode!!)
+                productInfoSharedViewModel.apply {
+                    getProductInformations(barcode!!)
+                }
             }
 
             lifecycleScope.launchWhenStarted {
+
                 productInfoSharedViewModel.productInformationsEvent.observe(
                     viewLifecycleOwner,
                     { event ->
                         when (event) {
                             is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                                cameraProvider.unbindAll()
-
+                                Log.d("RESULT", event.result.data.toString())
                                 refreshUi(failed = false)
                                 binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
                                 val vpAdapter = VpAdapter(
@@ -92,7 +106,6 @@ class ScanFragment : Fragment() {
                                 )
                                 binding.apply {
                                     viewpagerProduct.adapter = vpAdapter
-                                    Log.d("RESULT", event.result.data.toString())
 
                                     loadHeaderProductInfo(event.result.data!!)
                                 }
@@ -100,7 +113,11 @@ class ScanFragment : Fragment() {
                             is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
                                 refreshUi()
 
-                                Snackbar.make(binding.root, event.error, Snackbar.LENGTH_SHORT)
+                                Snackbar.make(
+                                    binding.root,
+                                    event.error,
+                                    Snackbar.LENGTH_SHORT
+                                )
                                     .show()
                             }
                             else -> Unit
@@ -110,53 +127,29 @@ class ScanFragment : Fragment() {
         })
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
-            peekHeight = 300
+            peekHeight = 530
             this.state = BottomSheetBehavior.STATE_COLLAPSED
             addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
 
+
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     Log.d("test", " toto ")
-                    /*when (newState) {
-                        BottomSheetBehavior.STATE_COLLAPSED -> Toast.makeText(
-                            context,
-                            "STATE_COLLAPSED",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        BottomSheetBehavior.STATE_EXPANDED -> Toast.makeText(
-                            context,
-                            "STATE_EXPANDED",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        BottomSheetBehavior.STATE_DRAGGING -> Toast.makeText(
-                            context,
-                            "STATE_DRAGGING",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        BottomSheetBehavior.STATE_SETTLING -> Toast.makeText(
-                            context,
-                            "STATE_SETTLING",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        BottomSheetBehavior.STATE_HIDDEN -> Toast.makeText(
-                            context,
-                            "STATE_HIDDEN",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        else -> Toast.makeText(context, "OTHER_STATE", Toast.LENGTH_SHORT).show()
-                    }*/
+                    when (newState) {
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            startCamera()
+                        }
+                        BottomSheetBehavior.STATE_EXPANDED -> cameraProvider.unbindAll()
+                    }
+
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    TODO("Not yet implemented")
+                    Log.d("OnSlide", "SLIDING")
                 }
-
             })
         }
-
-
     }
-
 
     private fun loadHeaderProductInfo(data: ProductInformationsResponse) {
         binding.apply {
@@ -174,13 +167,13 @@ class ScanFragment : Fragment() {
 
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build().also {
+            preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(
                     binding.fragmentScanBarcodePreviewView.surfaceProvider
                 )
             }
 
-            val imageAnalysis = ImageAnalysis.Builder()
+            imageAnalysis = ImageAnalysis.Builder()
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
@@ -190,7 +183,7 @@ class ScanFragment : Fragment() {
                     })
                 }
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
                 cameraProvider.unbindAll()
                 camera =
@@ -211,13 +204,26 @@ class ScanFragment : Fragment() {
             txtScanLoading.visibility = View.GONE
 
             if (!failed) {
+                Log.d("REFRESH UI", "NOT FAILED")
+
                 layoutBottomSheet.visibility = View.VISIBLE
+                layoutBottomSheet.slideUp(ANIMATION_DURATION, START_OFFSET)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //productInfoSharedViewModel.resetEvent()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("SCAN", "ON STOP")
     }
 }

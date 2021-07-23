@@ -1,5 +1,6 @@
 package com.esgi.fooders.ui.scan
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,14 +29,25 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
     }
 
 
-    private val _productInformationsEvent =
+    private var _productInformationsEvent =
         MutableLiveData<ProductInformationsEvent>(ProductInformationsEvent.Empty)
     val productInformationsEvent: LiveData<ProductInformationsEvent> = _productInformationsEvent
 
+
+    private var _isBeenRequestData =
+        MutableLiveData(false)
+    val isBeenRequestData: LiveData<Boolean> = _isBeenRequestData
+
+
     fun getProductInformations(barcode: String) {
+
+        Log.d("getProductInformation", isBeenRequestData.value.toString())
+        Log.d("getProductInformation", productInformationsEvent.value.toString())
         viewModelScope.launch(IO) {
             when (val result = scanRepository.getProductInformations(barcode)) {
                 is Resource.Success -> withContext(Main) {
+                    Log.d("RES SUCCESS", "INSIDE IT")
+                    _isBeenRequestData.value = true
                     _productInformationsEvent.value = ProductInformationsEvent.Success(result)
                 }
                 is Resource.Error -> withContext(Main) {
@@ -46,4 +58,16 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
             }
         }
     }
+
+    fun resetEvent() {
+        _isBeenRequestData.value = false
+        _productInformationsEvent.value = ProductInformationsEvent.Empty
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("VM", "ON CLEARED")
+    }
+
+
 }
