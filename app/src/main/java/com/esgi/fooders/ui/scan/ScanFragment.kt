@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
+
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
     private var _binding: FragmentScanBinding? = null
@@ -51,7 +52,7 @@ class ScanFragment : Fragment() {
     private lateinit var cameraSelector: CameraSelector
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var preview: Preview
-    val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) { defaultViewModelProviderFactory }
+    val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph_scan) { defaultViewModelProviderFactory }
 
 
     override fun onCreateView(
@@ -102,7 +103,7 @@ class ScanFragment : Fragment() {
                                 refreshUi(failed = false)
                                 binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
                                 val vpAdapter = VpAdapter(
-                                    requireFragmentManager()
+                                    childFragmentManager
                                 )
                                 binding.apply {
                                     viewpagerProduct.adapter = vpAdapter
@@ -212,10 +213,6 @@ class ScanFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        //productInfoSharedViewModel.resetEvent()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -225,5 +222,8 @@ class ScanFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         Log.d("SCAN", "ON STOP")
+        viewModelStore.clear()
     }
+
+
 }

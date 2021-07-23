@@ -28,7 +28,7 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_scanFragment"
-            app:destination="@id/scanFragment" />
+            app:destination="@id/navigation_graph_scan" />
     </fragment>
 
     <fragment
@@ -43,24 +43,13 @@
         android:label="Historique"
         tools:layout="@layout/fragment_history" />
 
-    <fragment
-        android:id="@+id/scanSuccessFragment"
-        android:name="com.esgi.fooders.ScanSuccessFragment"
-        android:label="fragment_scan_success"
-        tools:layout="@layout/fragment_scan_success">
-
-        <argument
-            android:name="barcode"
-            app:argType="string" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/scanFragment"
-        android:name="com.esgi.fooders.ui.scan.ScanFragment"
-        android:label="Scan"
-        tools:layout="@layout/fragment_scan">
-        <action
-            android:id="@+id/action_scanFragment_to_scanSuccessFragment"
-            app:destination="@id/scanSuccessFragment" />
-    </fragment>
+    <navigation
+        android:id="@+id/navigation_graph_scan"
+        app:startDestination="@id/scanFragment">
+        <fragment
+            android:id="@+id/scanFragment"
+            android:name="com.esgi.fooders.ui.scan.ScanFragment"
+            android:label="Scan"
+            tools:layout="@layout/fragment_scan" />
+    </navigation>
 </navigation>

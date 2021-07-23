@@ -19,7 +19,7 @@ class IngredientsFragment : Fragment() {
     private var _binding: FragmentIngredientsBinding? = null
     private val binding get() = _binding!!
 
-    private val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) { defaultViewModelProviderFactory }
+    private val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph_scan) { defaultViewModelProviderFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
