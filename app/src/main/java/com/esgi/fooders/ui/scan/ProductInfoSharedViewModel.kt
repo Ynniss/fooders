@@ -41,8 +41,6 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
 
     fun getProductInformations(barcode: String) {
 
-        Log.d("getProductInformation", isBeenRequestData.value.toString())
-        Log.d("getProductInformation", productInformationsEvent.value.toString())
         viewModelScope.launch(IO) {
             when (val result = scanRepository.getProductInformations(barcode)) {
                 is Resource.Success -> withContext(Main) {
@@ -59,15 +57,7 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
         }
     }
 
-    fun resetEvent() {
+    fun resetBooleanCheck() {
         _isBeenRequestData.value = false
-        _productInformationsEvent.value = ProductInformationsEvent.Empty
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("VM", "ON CLEARED")
-    }
-
-
 }

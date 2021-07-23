@@ -46,7 +46,7 @@
         tools:src="@drawable/nutriscore_a" />
 
     <ImageView
-        android:id="@+id/toto"
+        android:id="@+id/img_ecoscore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
