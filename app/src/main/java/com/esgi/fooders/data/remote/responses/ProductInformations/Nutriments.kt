@@ -63,7 +63,7 @@ data class Nutriments(
     val saturated_fat_unit: String,
     @SerializedName("saturated-fat_value")
     val saturated_fat_value: Float,
-    val sugars_serving: Int?,
+    val sugars_serving: Float?,
     val sodium: Float,
     val sodium_100g: Float,
     val sodium_unit: String,

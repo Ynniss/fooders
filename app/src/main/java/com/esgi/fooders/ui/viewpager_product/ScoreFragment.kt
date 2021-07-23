@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.navGraphViewModels
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentScoreBinding
@@ -16,7 +16,7 @@ class ScoreFragment : Fragment() {
     private var _binding: FragmentScoreBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var productInfoSharedViewModel: ProductInfoSharedViewModel
+    private val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) { defaultViewModelProviderFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,21 +26,21 @@ class ScoreFragment : Fragment() {
         _binding = FragmentScoreBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        productInfoSharedViewModel =
-            ViewModelProvider(requireActivity()).get(ProductInfoSharedViewModel::class.java)
-
+        binding.root.visibility = View.VISIBLE
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d("SCORE", "BEGINNING")
+
         productInfoSharedViewModel.productInformationsEvent.observe(
             viewLifecycleOwner,
             { event ->
                 when (event) {
                     is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                        Log.d("VOILAAAAA", event.result.data.toString())
+                        Log.d("SCORE FRAGMENT", event.result.data.toString())
 
                         loadUi(event.result.data!!)
 
@@ -81,6 +81,8 @@ class ScoreFragment : Fragment() {
             }
             toto.setBackgroundResource(ecoScoreImage)
         }
+
+        Log.d("SCORE", "END")
     }
 
 }
