@@ -1,7 +1,6 @@
 package com.esgi.fooders.ui.viewpager_product
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,19 +35,21 @@ class IngredientsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("INGREDIENTS", "HELLO WORLD")
-
         lifecycleScope.launchWhenStarted {
-            productInfoSharedViewModel.productInformationsEvent.observe(
-                viewLifecycleOwner,
-                { event ->
-                    when (event) {
-                        is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                            Log.d("INGREDIENTS FRAGMENT", event.result.data.toString())
-                            loadUi(event.result.data!!)
-                        }
-                    }
-                })
+            productInfoSharedViewModel.isBeenRequestData.observe(viewLifecycleOwner, {
+                if (it) {
+
+                    productInfoSharedViewModel.productInformationsEvent.observe(
+                        viewLifecycleOwner,
+                        { event ->
+                            when (event) {
+                                is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                    loadUi(event.result.data!!)
+                                }
+                            }
+                        })
+                }
+            })
         }
     }
 

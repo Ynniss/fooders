@@ -58,7 +58,7 @@ class ScanFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
         val view = binding.root
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -68,7 +68,6 @@ class ScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //productInfoSharedViewModel.resetEvent()
         Log.d("SCAN", productInfoSharedViewModel.isBeenRequestData.value.toString())
 
 
@@ -92,44 +91,46 @@ class ScanFragment : Fragment() {
                 }
             }
 
-            lifecycleScope.launchWhenStarted {
 
-                productInfoSharedViewModel.productInformationsEvent.observe(
-                    viewLifecycleOwner,
-                    { event ->
-                        when (event) {
-                            is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                                Log.d("RESULT", event.result.data.toString())
-                                refreshUi(failed = false)
-                                binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
-                                val vpAdapter = VpAdapter(
-                                    childFragmentManager
-                                )
-                                binding.apply {
-                                    viewpagerProduct.adapter = vpAdapter
+            productInfoSharedViewModel.isBeenRequestData.observe(viewLifecycleOwner, {
+                if (it) {
+                    productInfoSharedViewModel.productInformationsEvent.observe(
+                        viewLifecycleOwner,
+                        { event ->
+                            when (event) {
+                                is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                    Log.d("RESULT", event.result.data.toString())
+                                    refreshUi(failed = false)
+                                    binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
+                                    val vpAdapter = VpAdapter(
+                                        childFragmentManager
+                                    )
+                                    binding.apply {
+                                        viewpagerProduct.adapter = vpAdapter
 
-                                    loadHeaderProductInfo(event.result.data!!)
+                                        loadHeaderProductInfo(event.result.data!!)
+                                    }
                                 }
-                            }
-                            is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
-                                refreshUi()
+                                is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
+                                    refreshUi()
 
-                                Snackbar.make(
-                                    binding.root,
-                                    event.error,
-                                    Snackbar.LENGTH_SHORT
-                                )
-                                    .show()
+                                    Snackbar.make(
+                                        binding.root,
+                                        event.error,
+                                        Snackbar.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                else -> Unit
                             }
-                            else -> Unit
-                        }
-                    })
-            }
+                        })
+                }
+            })
         })
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
             peekHeight = 530
-            this.state = BottomSheetBehavior.STATE_COLLAPSED
+            this.state = BottomSheetBehavior.STATE_EXPANDED
             addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
 
@@ -205,25 +206,19 @@ class ScanFragment : Fragment() {
             txtScanLoading.visibility = View.GONE
 
             if (!failed) {
-                Log.d("REFRESH UI", "NOT FAILED")
-
                 layoutBottomSheet.visibility = View.VISIBLE
                 layoutBottomSheet.slideUp(ANIMATION_DURATION, START_OFFSET)
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        productInfoSharedViewModel.resetBooleanCheck()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("SCAN", "ON STOP")
-        viewModelStore.clear()
-    }
-
-
 }

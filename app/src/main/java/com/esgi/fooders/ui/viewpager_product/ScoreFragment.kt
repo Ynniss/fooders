@@ -33,20 +33,21 @@ class ScoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("SCORE", "BEGINNING")
 
-        productInfoSharedViewModel.productInformationsEvent.observe(
-            viewLifecycleOwner,
-            { event ->
-                when (event) {
-                    is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                        Log.d("SCORE FRAGMENT", event.result.data.toString())
+        productInfoSharedViewModel.isBeenRequestData.observe(viewLifecycleOwner, {
+            if (it) {
+                productInfoSharedViewModel.productInformationsEvent.observe(
+                    viewLifecycleOwner,
+                    { event ->
+                        when (event) {
+                            is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                loadUi(event.result.data!!)
+                            }
+                        }
+                    })
+            }
+        })
 
-                        loadUi(event.result.data!!)
-
-                    }
-                }
-            })
     }
 
     private fun loadUi(data: ProductInformationsResponse) {
@@ -56,7 +57,7 @@ class ScoreFragment : Fragment() {
                 2 -> R.drawable.nova_group_2
                 3 -> R.drawable.nova_group_3
                 4 -> R.drawable.nova_group_4
-                else -> R.drawable.not_found
+                else -> R.drawable.nova_group_unknown
             }
             imgNovaGroup.setBackgroundResource(novaGroupImage)
 
@@ -79,7 +80,7 @@ class ScoreFragment : Fragment() {
                 "e" -> R.drawable.ecoscore_e
                 else -> R.drawable.ecoscore_unknown
             }
-            toto.setBackgroundResource(ecoScoreImage)
+            imgEcoscore.setBackgroundResource(ecoScoreImage)
         }
 
         Log.d("SCORE", "END")

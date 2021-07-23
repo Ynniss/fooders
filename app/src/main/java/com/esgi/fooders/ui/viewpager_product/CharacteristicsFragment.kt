@@ -35,15 +35,20 @@ class CharacteristicsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        productInfoSharedViewModel.productInformationsEvent.observe(
-            viewLifecycleOwner,
-            { event ->
-                when (event) {
-                    is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
-                        loadUi(event.result.data!!)
-                    }
-                }
-            })
+        productInfoSharedViewModel.isBeenRequestData.observe(viewLifecycleOwner, {
+            if (it) {
+
+                productInfoSharedViewModel.productInformationsEvent.observe(
+                    viewLifecycleOwner,
+                    { event ->
+                        when (event) {
+                            is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                loadUi(event.result.data!!)
+                            }
+                        }
+                    })
+            }
+        })
     }
 
     private fun loadUi(data: ProductInformationsResponse) {
