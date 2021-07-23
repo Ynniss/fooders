@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_graph_scan"
+        android:id="@+id/scanFragment"
         android:icon="@drawable/ic_menu_barcode"
         android:title="Scan" />
 
