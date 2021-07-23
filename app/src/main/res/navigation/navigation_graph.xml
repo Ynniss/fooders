@@ -13,10 +13,8 @@
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -28,7 +26,15 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_scanFragment"
-            app:destination="@id/navigation_graph_scan" />
+            app:destination="@id/scanFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_manualScanFragment"
+            app:destination="@id/manualScanFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
 
     <fragment
@@ -43,13 +49,14 @@
         android:label="Historique"
         tools:layout="@layout/fragment_history" />
 
-    <navigation
-        android:id="@+id/navigation_graph_scan"
-        app:startDestination="@id/scanFragment">
-        <fragment
-            android:id="@+id/scanFragment"
-            android:name="com.esgi.fooders.ui.scan.ScanFragment"
-            android:label="Scan"
-            tools:layout="@layout/fragment_scan" />
-    </navigation>
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.esgi.fooders.ui.scan.ScanFragment"
+        android:label="Scan"
+        tools:layout="@layout/fragment_scan" />
+    <fragment
+        android:id="@+id/manualScanFragment"
+        android:name="com.esgi.fooders.ui.scan.ManualScanFragment"
+        android:label="fragment_manuel_scan"
+        tools:layout="@layout/fragment_manual_scan" />
 </navigation>
