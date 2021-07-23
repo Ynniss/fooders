@@ -1,5 +1,6 @@
 package com.tutorialwing.viewpager
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -13,13 +14,16 @@ class VpAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter
     private val COUNT = 4
 
     override fun getItem(position: Int): Fragment {
-        var fragment: Fragment? = null
+        val fragment: Fragment
         when (position) {
             0 -> fragment = ScoreFragment()
             1 -> fragment = CharacteristicsFragment()
             2 -> fragment = IngredientsFragment()
             3 -> fragment = EnvironmentFragment()
-            else -> fragment = ScoreFragment()
+            else -> {
+                Log.d("ADAPTER", "FRAGMENT NULL ???")
+                fragment = IngredientsFragment()
+            }
         }
 
         return fragment
