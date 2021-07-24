@@ -51,7 +51,7 @@ class ScanFragment : Fragment() {
     private lateinit var cameraSelector: CameraSelector
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var preview: Preview
-    val productInfoSharedViewModel: ProductInfoSharedViewModel by hiltNavGraphViewModels (R.id.navigation_graph)
+    val productInfoSharedViewModel: ProductInfoSharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
 
 
     override fun onCreateView(
@@ -74,6 +74,8 @@ class ScanFragment : Fragment() {
 
         scanViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
             if (isInProgress) {
+                cameraProvider.unbindAll()
+
                 binding.apply {
                     lottieFoodLoading.visibility = View.VISIBLE
                     lottieFoodLoading.playAnimation()
@@ -99,7 +101,6 @@ class ScanFragment : Fragment() {
                                 is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
                                     Log.d("RESULT", event.result.data.toString())
                                     refreshUi(failed = false)
-                                    cameraProvider.unbindAll()
                                     binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
                                     val vpAdapter = VpAdapter(
                                         childFragmentManager
