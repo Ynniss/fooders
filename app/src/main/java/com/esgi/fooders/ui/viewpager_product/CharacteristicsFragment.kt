@@ -55,6 +55,11 @@ class CharacteristicsFragment : Fragment() {
         binding.apply {
             Glide.with(requireContext()).load(data.data.image_nutrition_url)
                 .into(imgNutrimentsList)
+
+            txtEnergyKj.text = data.data.nutriments.energy_kj.toString()
+            txtFat100g.text = data.data.nutriments.fat_100g.toString()
+            txtSaltValue.text = data.data.nutriments.salt_value.toString()
+            txtSugars100g.text = data.data.nutriments.sugars_100g.toString()
         }
     }
 }

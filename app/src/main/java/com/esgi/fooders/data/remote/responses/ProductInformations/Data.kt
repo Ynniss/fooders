@@ -9,5 +9,6 @@ data class Data(
     val nutriments: Nutriments,
     var product_name: String = "Product Name Missing",
     val nutriscore_grade: String?,
-    val ecoscore_grade: String?
+    val ecoscore_grade: String?,
+    val packaging: String?
 )

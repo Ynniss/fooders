@@ -12,4 +12,18 @@
         <item name="icon">@drawable/ic_button_analysis</item>
         <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
+
+
+    <style name="TextNutrimentLabel">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="TextNutrimentValue">
+        <item name="android:textSize">24sp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

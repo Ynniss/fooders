@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="16dp"
-                tools:test="DSQDSQDQDSQD" />
+                tools:text="LISTE DES INGREDIENTS" />
         </ScrollView>
     </com.google.android.material.card.MaterialCardView>
 
