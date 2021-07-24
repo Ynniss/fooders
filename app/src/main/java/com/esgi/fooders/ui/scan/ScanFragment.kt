@@ -13,8 +13,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
-
 
 @AndroidEntryPoint
 class ScanFragment : Fragment() {
@@ -52,7 +51,7 @@ class ScanFragment : Fragment() {
     private lateinit var cameraSelector: CameraSelector
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var preview: Preview
-    val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) { defaultViewModelProviderFactory }
+    val productInfoSharedViewModel: ProductInfoSharedViewModel by hiltNavGraphViewModels (R.id.navigation_graph)
 
 
     override fun onCreateView(
@@ -90,7 +89,6 @@ class ScanFragment : Fragment() {
                     getProductInformations(barcode!!)
                 }
             }
-
 
             productInfoSharedViewModel.isBeenRequestData.observe(viewLifecycleOwner, {
                 if (it) {
@@ -154,16 +152,6 @@ class ScanFragment : Fragment() {
         }
     }
 
-    private fun loadHeaderProductInfo(data: ProductInformationsResponse) {
-        binding.apply {
-            Glide.with(requireContext())
-                .load(data.data.image_front_url)
-                .placeholder(R.drawable.not_found)
-                .into(imgProduct)
-
-            txtProductName.text = data.data.product_name
-        }
-    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -199,6 +187,17 @@ class ScanFragment : Fragment() {
                 Log.e("PreviewUseCase", "Binding failed! :(", e)
             }
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun loadHeaderProductInfo(data: ProductInformationsResponse) {
+        binding.apply {
+            Glide.with(requireContext())
+                .load(data.data.image_front_url)
+                .placeholder(R.drawable.not_found)
+                .into(imgProduct)
+
+            txtProductName.text = data.data.product_name
+        }
     }
 
     private fun refreshUi(failed: Boolean = true) {
