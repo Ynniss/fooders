@@ -124,7 +124,7 @@
                 tools:src="@drawable/img_cocacola" />
 
             <Button
-                android:id="@+id/containedButton"
+                android:id="@+id/btn_edit_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit"

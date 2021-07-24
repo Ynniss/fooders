@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
@@ -71,6 +72,10 @@ class ScanFragment : Fragment() {
 
 
         startCamera()
+
+        binding.btnEditProduct.setOnClickListener {
+            findNavController().navigate(R.id.action_scanFragment_to_photoFragment)
+        }
 
         scanViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
             if (isInProgress) {

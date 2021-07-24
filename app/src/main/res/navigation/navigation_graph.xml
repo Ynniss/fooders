@@ -53,10 +53,23 @@
         android:id="@+id/scanFragment"
         android:name="com.esgi.fooders.ui.scan.ScanFragment"
         android:label="Scan"
-        tools:layout="@layout/fragment_scan" />
+        tools:layout="@layout/fragment_scan">
+        <action
+            android:id="@+id/action_scanFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+    </fragment>
     <fragment
         android:id="@+id/manualScanFragment"
         android:name="com.esgi.fooders.ui.scan.ManualScanFragment"
         android:label="Scan Manuel"
-        tools:layout="@layout/fragment_manual_scan" />
+        tools:layout="@layout/fragment_manual_scan">
+        <action
+            android:id="@+id/action_manualScanFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoFragment"
+        android:name="com.esgi.fooders.ui.photo.PhotoFragment"
+        android:label="fragment_photo"
+        tools:layout="@layout/fragment_photo" />
 </navigation>
