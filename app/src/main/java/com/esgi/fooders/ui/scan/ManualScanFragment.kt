@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentManualScanBinding
+import com.esgi.fooders.ui.photo.app.PhotoActivity
 import com.esgi.fooders.utils.slideUp
 import com.google.android.material.snackbar.Snackbar
 import com.tutorialwing.viewpager.VpAdapter
@@ -66,6 +67,14 @@ class ManualScanFragment : Fragment() {
                                 viewpagerProduct.adapter = vpAdapter
 
                                 loadHeaderProductInfo(event.result.data!!)
+
+                                imgProduct.setOnClickListener {
+                                    PhotoActivity.start(
+                                        requireActivity(),
+                                        event.result.data.data.code,
+                                        imageField = "front"
+                                    )
+                                }
                             }
                         }
                         is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
@@ -137,5 +146,9 @@ class ManualScanFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         refreshUi()
+
+        if (!binding.inputBarcode.text.toString().isEmpty()) {
+            productInfoSharedViewModel.getProductInformations(binding.inputBarcode.text.toString())
+        }
     }
 }

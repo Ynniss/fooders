@@ -1,6 +1,7 @@
 package com.esgi.fooders.data.remote.responses.ProductInformations
 
 data class Data(
+    val code: String,
     val image_front_url: String,
     val image_ingredients_url: String,
     val image_nutrition_url: String,

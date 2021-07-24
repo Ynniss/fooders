@@ -28,8 +28,8 @@
         </activity>
 
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
+            android:name=".ui.photo.app.PhotoActivity"
+            android:theme="@style/Theme.Fooders" />
     </application>
 
 </manifest>
