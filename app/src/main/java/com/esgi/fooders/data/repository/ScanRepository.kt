@@ -18,7 +18,7 @@ class ScanRepository @Inject constructor(
             } else if (response.code() == 401) {
                 Resource.Error("Barcode missing.")
             } else {
-                Resource.Error("An error occurred")
+                Resource.Error("Product Not found")
             }
         } catch (e: Exception) {
             Resource.Error(e.message ?: "An error occured while requesting Open Food Fact API")

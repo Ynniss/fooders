@@ -42,6 +42,9 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
     fun getProductInformations(barcode: String) {
 
         viewModelScope.launch(IO) {
+            withContext(Main) {
+                _productInformationsEvent.value = ProductInformationsEvent.Loading
+            }
             when (val result = scanRepository.getProductInformations(barcode)) {
                 is Resource.Success -> withContext(Main) {
                     Log.d("RES SUCCESS", "INSIDE IT")

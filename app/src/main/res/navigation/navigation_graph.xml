@@ -57,6 +57,6 @@
     <fragment
         android:id="@+id/manualScanFragment"
         android:name="com.esgi.fooders.ui.scan.ManualScanFragment"
-        android:label="fragment_manuel_scan"
+        android:label="Scan Manuel"
         tools:layout="@layout/fragment_manual_scan" />
 </navigation>
