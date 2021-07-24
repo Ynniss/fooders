@@ -15,11 +15,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentScanBinding
+import com.esgi.fooders.ui.photo.app.PhotoActivity
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.esgi.fooders.utils.slideUp
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -74,7 +74,6 @@ class ScanFragment : Fragment() {
         startCamera()
 
         binding.btnEditProduct.setOnClickListener {
-            findNavController().navigate(R.id.action_scanFragment_to_photoFragment)
         }
 
         scanViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
@@ -114,7 +113,16 @@ class ScanFragment : Fragment() {
                                         viewpagerProduct.adapter = vpAdapter
 
                                         loadHeaderProductInfo(event.result.data!!)
+
+                                        imgProduct.setOnClickListener {
+                                            PhotoActivity.start(
+                                                requireActivity(),
+                                                event.result.data.data.code,
+                                                imageField = "front"
+                                            )
+                                        }
                                     }
+
                                 }
                                 is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
                                     refreshUi()
@@ -221,6 +229,9 @@ class ScanFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         productInfoSharedViewModel.resetBooleanCheck()
+        if (!scanViewModel.barcode.value.isNullOrEmpty()) {
+            productInfoSharedViewModel.getProductInformations(scanViewModel.barcode.value!!)
+        }
     }
 
     override fun onDestroyView() {
