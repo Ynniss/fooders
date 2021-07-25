@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/logout"
+        android:id="@+id/settings"
         android:icon="@drawable/ic_menu_barcode"
+        android:title="@string/txt_overflow_settings" />
+    <item
+        android:id="@+id/logout"
         android:title="@string/txt_overflow_logout" />
 </menu>

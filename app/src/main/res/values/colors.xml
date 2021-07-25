@@ -5,4 +5,12 @@
     <color name="orange_600_dark">#c25e00</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="light_green_600">#7cb342</color>
+    <color name="light_green_600_light">#aee571</color>
+    <color name="light_green_600_dark">#4b830d</color>
+
+    <color name="red_600">#e53935</color>
+    <color name="red_600_light">#ff6f60</color>
+    <color name="red_600_dark">#ab000d</color>
 </resources>

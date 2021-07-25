@@ -17,10 +17,17 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
 
     private val sessionDataStore = appContext.dataStore
     private val USERNAME = stringPreferencesKey("username")
+    private val THEME = stringPreferencesKey("theme")
 
     suspend fun updateUsername(newValue: String) {
         this.sessionDataStore.edit { settings ->
             settings[USERNAME] = newValue
+        }
+    }
+
+    suspend fun updateTheme(newValue: String) {
+        this.sessionDataStore.edit { settings ->
+            settings[THEME] = newValue
         }
     }
 
@@ -31,6 +38,16 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
             }
         val store = usernameReadingFlow.first()!!
         Log.d("toto", store)
+    }
+
+    suspend fun readTheme(): String {
+        val themeReadingFlow: Flow<String?> = sessionDataStore.data
+            .map { preferences ->
+                preferences[THEME] ?: "Orange"
+            }
+        val store = themeReadingFlow.first()!!
+
+        return store
     }
 
     suspend fun isUsernameSaved(): Boolean {

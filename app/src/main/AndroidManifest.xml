@@ -30,6 +30,10 @@
         <activity
             android:name=".ui.photo.app.PhotoActivity"
             android:theme="@style/Theme.Fooders" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:theme="@style/Theme.Fooders" />
     </application>
 
 </manifest>

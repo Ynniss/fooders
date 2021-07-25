@@ -85,4 +85,5 @@ dependencies {
     // This library is used for crop image feature
     implementation 'com.github.CanHub:Android-Image-Cropper:3.2.1'
 
+    implementation 'androidx.preference:preference:1.1.1'
 }
