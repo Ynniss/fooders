@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentIngredientsBinding
+import com.esgi.fooders.ui.photo.app.PhotoActivity
 import com.esgi.fooders.ui.scan.ProductInfoSharedViewModel
 
 class IngredientsFragment : Fragment() {
@@ -60,6 +61,14 @@ class IngredientsFragment : Fragment() {
                 .into(imgIngredientsList)
 
             txtIngredients.text = data.data.ingredients_text ?: "Liste des ingrédients non trouvée"
+
+            imgIngredientsList.setOnClickListener {
+                PhotoActivity.start(
+                    requireActivity(),
+                    data.data.code,
+                    imageField = "ingredients"
+                )
+            }
         }
     }
 }
