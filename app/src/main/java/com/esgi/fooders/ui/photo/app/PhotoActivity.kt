@@ -118,11 +118,18 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
         val fileBody: RequestBody =
             RequestBody.create(MediaType.parse(contentResolver.getType(uri!!)!!), photo)
 
+        val imgUploadType = when (imageField) {
+            "front" -> "imgupload_front"
+            "ingredients" -> "imgupload_ingredients"
+            "nutrition" -> "imgupload_nutrition"
+            else -> "imgupload_front"
+        }
+
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("imagefield", imageField)
             .addFormDataPart("code", barcode)
-            .addFormDataPart("imgupload_front", System.currentTimeMillis().toString(), fileBody)
+            .addFormDataPart(imgUploadType, System.currentTimeMillis().toString(), fileBody)
             .build()
 
         photoViewModel.modifyProductImage(body)

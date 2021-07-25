@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentCharacteristicsBinding
+import com.esgi.fooders.ui.photo.app.PhotoActivity
 import com.esgi.fooders.ui.scan.ProductInfoSharedViewModel
 
 
@@ -60,6 +61,14 @@ class CharacteristicsFragment : Fragment() {
             txtFat100g.text = data.data.nutriments.fat_100g.toString()
             txtSaltValue.text = data.data.nutriments.salt_value.toString()
             txtSugars100g.text = data.data.nutriments.sugars_100g.toString()
+
+            imgNutrimentsList.setOnClickListener {
+                PhotoActivity.start(
+                    requireActivity(),
+                    data.data.code,
+                    imageField = "nutrition"
+                )
+            }
         }
     }
 }
