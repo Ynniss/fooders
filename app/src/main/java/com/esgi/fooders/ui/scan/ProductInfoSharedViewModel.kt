@@ -52,6 +52,8 @@ class ProductInfoSharedViewModel @Inject constructor(private val scanRepository:
                     _productInformationsEvent.value = ProductInformationsEvent.Success(result)
                 }
                 is Resource.Error -> withContext(Main) {
+                    Log.e("VM", result.message!!)
+                    _isBeenRequestData.value = true
                     _productInformationsEvent.value =
                         ProductInformationsEvent.Failure(result.message!!)
                 }

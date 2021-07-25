@@ -42,7 +42,6 @@ class ManualScanFragment : Fragment() {
         val view = binding.root
 
 
-
         return view
     }
 
@@ -63,7 +62,6 @@ class ManualScanFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenStarted {
-
             productInfoSharedViewModel.productInformationsEvent.observe(
                 viewLifecycleOwner,
                 { event ->
@@ -105,8 +103,7 @@ class ManualScanFragment : Fragment() {
                                 binding.root,
                                 event.error,
                                 Snackbar.LENGTH_SHORT
-                            )
-                                .show()
+                            ).show()
                         }
                         is ProductInfoSharedViewModel.ProductInformationsEvent.Loading -> {
                             binding.apply {
@@ -166,6 +163,7 @@ class ManualScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        productInfoSharedViewModel.resetBooleanCheck()
 
         binding.apply {
             viewHeader.visibility = View.GONE
@@ -173,7 +171,6 @@ class ManualScanFragment : Fragment() {
             viewpagerProduct.visibility = View.GONE
         }
 
-        productInfoSharedViewModel.resetBooleanCheck()
 
         if (!binding.inputBarcode.text.toString().isNullOrEmpty()) {
             productInfoSharedViewModel.getProductInformations(binding.inputBarcode.text.toString())

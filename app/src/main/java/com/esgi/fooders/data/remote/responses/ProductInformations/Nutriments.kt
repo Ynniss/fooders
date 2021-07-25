@@ -34,10 +34,10 @@ data class Nutriments(
     val fat_100g: Float,
     val fat_unit: String,
     val fat_value: Float,
-    val fiber: Int,
-    val fiber_100g: Int,
+    val fiber: Float,
+    val fiber_100g: Float,
     val fiber_unit: String,
-    val fiber_value: Int,
+    val fiber_value: Float,
     @SerializedName("fruits-vegetables-nuts-estimate-from-ingredients_100g")
     val fruits_vegetables_nuts_estimate_from_ingredients_100g: Float,
     @SerializedName("nova-group")

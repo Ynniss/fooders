@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Data(
     val code: String,
+    val message: String,
     val image_front_url: String,
     val image_ingredients_url: String,
     val image_nutrition_url: String,
