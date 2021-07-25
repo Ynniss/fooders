@@ -135,7 +135,7 @@ class ScanFragment : Fragment() {
                                 }
                                 is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
                                     refreshUi()
-
+                                    startCamera()
                                     Snackbar.make(
                                         binding.root,
                                         event.error,
@@ -237,12 +237,6 @@ class ScanFragment : Fragment() {
                 layoutBottomSheet.visibility = View.VISIBLE
                 layoutBottomSheet.slideUp(ANIMATION_DURATION, START_OFFSET)
             }
-        }
-    }
-
-    private fun setupUi() {
-        binding.apply {
-            layoutBottomSheet.visibility = View.GONE
         }
     }
 
