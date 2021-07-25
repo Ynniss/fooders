@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Thème">
+        <ListPreference
+            android:defaultValue="Black"
+            android:entries="@array/themeArray"
+            android:entryValues="@array/themeArray"
+            android:key="chosenTheme"
+            android:summary="Optez pour une autre couleur"
+            android:title="Choisir un thème" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

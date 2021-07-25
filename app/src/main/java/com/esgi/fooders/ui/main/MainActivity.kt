@@ -1,11 +1,14 @@
 package com.esgi.fooders.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -15,10 +18,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.ActivityMainBinding
+import com.esgi.fooders.ui.settings.SettingsActivity
 import com.esgi.fooders.utils.DataStoreManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -27,13 +32,14 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var lastThemeChanged: String
+
     @Inject
     lateinit var dataStoreManager: DataStoreManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Fooders)
-
         super.onCreate(savedInstanceState)
+
+        setFoodersTheme()
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -56,7 +62,25 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        hideBottomNavigationBar(navController)
     }
+
+    private fun hideBottomNavigationBar(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNavigationView.visibility = if (destination.id == R.id.loginFragment) {
+                supportActionBar?.hide()
+                View.GONE
+            } else {
+                supportActionBar?.show()
+                View.VISIBLE
+            }
+
+            if (destination.id == R.id.scanFragment) {
+                supportActionBar?.hide()
+            }
+        }
+    }
+
 
     override fun onStart() {
         super.onStart()
@@ -96,13 +120,47 @@ class MainActivity : AppCompatActivity() {
                     }*/
                 }
             }
+            R.id.settings -> {
+                ActivityCompat.startActivity(
+                    this,
+                    Intent(this, SettingsActivity::class.java),
+                    null
+                )
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        smartThemeChange()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun smartThemeChange() {
+        runBlocking {
+            val themeValue = dataStoreManager.readTheme()
+            if (themeValue != lastThemeChanged) {
+                recreate()
+            }
+        }
+    }
+
+    private fun setFoodersTheme() {
+        lifecycleScope.launch(IO) {
+            val themeValue = dataStoreManager.readTheme()
+            lastThemeChanged = themeValue
+
+            when (themeValue) {
+                "Avocado" -> setTheme(R.style.Theme_Fooders_Avocado)
+                "Orange" -> setTheme(R.style.Theme_Fooders)
+                "Cherry" -> setTheme(R.style.Theme_Fooders_Cherry)
+            }
+        }
     }
 
 }

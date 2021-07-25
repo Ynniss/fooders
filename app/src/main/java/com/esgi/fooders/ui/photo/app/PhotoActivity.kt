@@ -6,20 +6,25 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.View
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.canhub.cropper.CropImage
 import com.canhub.cropper.CropImageActivity
+import com.esgi.fooders.R
 import com.esgi.fooders.databinding.PhotoActivityBinding
 import com.esgi.fooders.ui.photo.domain.PhotoContract
 import com.esgi.fooders.ui.photo.presenter.PhotoPresenter
+import com.esgi.fooders.utils.DataStoreManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
@@ -38,6 +43,11 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
         }
     }
 
+    private lateinit var lastThemeChanged: String
+
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
+
     private val photoViewModel: PhotoViewModel by viewModels()
 
     private lateinit var binding: PhotoActivityBinding
@@ -47,9 +57,13 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
     private lateinit var imageField: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFoodersTheme()
+
+
         binding = PhotoActivityBinding.inflate(layoutInflater)
 
-        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         presenter.bindView(this)
 
 
@@ -65,11 +79,6 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
         }
 
         setCropImageView(binding.cropImageView)
-    }
-
-    override fun setContentView(view: View) {
-        // Override this to use your custom layout
-        super.setContentView(binding.root)
     }
 
     override fun onDestroy() {
@@ -159,5 +168,19 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
             "If not using your layout, this can be one option to change colours. Check README and wiki for more"
         )
         super.updateMenuItemIconColor(menu, itemId, color)
+    }
+
+    private fun setFoodersTheme() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val themeValue = dataStoreManager.readTheme()
+            lastThemeChanged = themeValue
+
+            when (themeValue) {
+                "Avocado" -> setTheme(R.style.Theme_Fooders_Avocado)
+                "Orange" -> setTheme(R.style.Theme_Fooders)
+                "Cherry" -> setTheme(R.style.Theme_Fooders_Cherry)
+                else -> setTheme(R.style.Theme_Fooders)
+            }
+        }
     }
 }
