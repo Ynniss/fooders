@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
@@ -43,12 +44,10 @@ class ScanFragment : Fragment() {
     private var processingBarcode = AtomicBoolean(false)
     private lateinit var cameraExecutor: ExecutorService
     private val scanViewModel: ScanViewModel by viewModels()
-    //private val productInfoSharedViewModel: ProductInfoSharedViewModel by navGraphViewModels(R.id.navigation_graph) {
-    //    SavedStateViewModelFactory(requireActivity().application, requireParentFragment())
-    //}
+
 
     private lateinit var camera: Camera
-    private lateinit var cameraProvider: ProcessCameraProvider
+    private var cameraProvider: ProcessCameraProvider? = null
     private lateinit var cameraSelector: CameraSelector
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var preview: Preview
@@ -63,6 +62,8 @@ class ScanFragment : Fragment() {
         val view = binding.root
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        requireActivity().actionBar?.hide()
+
         return view
     }
 
@@ -70,15 +71,11 @@ class ScanFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("SCAN", productInfoSharedViewModel.isBeenRequestData.value.toString())
 
-
         startCamera()
-
-        binding.btnEditProduct.setOnClickListener {
-        }
 
         scanViewModel.progressState.observe(viewLifecycleOwner, { isInProgress ->
             if (isInProgress) {
-                cameraProvider.unbindAll()
+                cameraProvider!!.unbindAll()
 
                 binding.apply {
                     lottieFoodLoading.visibility = View.VISIBLE
@@ -103,6 +100,18 @@ class ScanFragment : Fragment() {
                         { event ->
                             when (event) {
                                 is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+                                    cameraProvider?.let {
+                                        it.unbindAll()
+                                    }
+
+                                    binding.btnEditProduct.setOnClickListener {
+                                        findNavController().navigate(
+                                            ScanFragmentDirections.actionScanFragmentToEditProductFragment(
+                                                event.result.data!!, "auto"
+                                            )
+                                        )
+                                    }
+
                                     Log.d("RESULT", event.result.data.toString())
                                     refreshUi(failed = false)
                                     binding.tabLayout.setupWithViewPager(binding.viewpagerProduct)
@@ -154,7 +163,7 @@ class ScanFragment : Fragment() {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
                             startCamera()
                         }
-                        BottomSheetBehavior.STATE_EXPANDED -> cameraProvider.unbindAll()
+                        BottomSheetBehavior.STATE_EXPANDED -> cameraProvider!!.unbindAll()
                     }
 
                 }
@@ -190,9 +199,14 @@ class ScanFragment : Fragment() {
 
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
-                cameraProvider.unbindAll()
+                cameraProvider!!.unbindAll()
                 camera =
-                    cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+                    cameraProvider!!.bindToLifecycle(
+                        this,
+                        cameraSelector,
+                        preview,
+                        imageAnalysis
+                    )
                 if (camera.cameraInfo.hasFlashUnit()) {
                     camera.cameraControl.enableTorch(true)
                 }
@@ -223,6 +237,12 @@ class ScanFragment : Fragment() {
                 layoutBottomSheet.visibility = View.VISIBLE
                 layoutBottomSheet.slideUp(ANIMATION_DURATION, START_OFFSET)
             }
+        }
+    }
+
+    private fun setupUi() {
+        binding.apply {
+            layoutBottomSheet.visibility = View.GONE
         }
     }
 

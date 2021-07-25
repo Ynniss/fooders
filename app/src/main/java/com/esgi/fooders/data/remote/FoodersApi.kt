@@ -1,8 +1,9 @@
 package com.esgi.fooders.data.remote
 
 import com.esgi.fooders.data.remote.requests.LoginRequest
+import com.esgi.fooders.data.remote.responses.ImageModificationResponse.ImageModificationResponse
 import com.esgi.fooders.data.remote.responses.LoginResponse
-import com.esgi.fooders.data.remote.responses.ModifyProductImageResponse.ModifyProductImageResponse
+import com.esgi.fooders.data.remote.responses.ProductInformations.InformationsModificationResponse
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -25,8 +26,15 @@ interface FoodersApi {
 
     @Headers("Content-Type: multipart/form-data")
     @POST("https://world.openfoodfacts.org/cgi/product_image_upload.pl")
-    suspend fun postProductImage(
+    suspend fun postProductImageModifications(
         @Body body: RequestBody,
-    ): Response<ModifyProductImageResponse>
+    ): Response<ImageModificationResponse>
+
+
+    @Headers("Content-Type: multipart/form-data")
+    @POST("https://world.openfoodfacts.org/cgi/product_jqm2.pl")
+    suspend fun postProductModifications(
+        @Body body: RequestBody,
+    ): Response<InformationsModificationResponse>
 
 }

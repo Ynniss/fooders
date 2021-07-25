@@ -1,5 +1,9 @@
 package com.esgi.fooders.data.remote.responses.ProductInformations
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Data(
     val code: String,
     val image_front_url: String,
@@ -12,4 +16,4 @@ data class Data(
     val nutriscore_grade: String?,
     val ecoscore_grade: String?,
     val packaging: String?
-)
+) : Parcelable
