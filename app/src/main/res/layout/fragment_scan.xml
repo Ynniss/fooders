@@ -127,7 +127,7 @@
                 android:id="@+id/btn_edit_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
+                android:text="Modifier Fiche"
                 app:icon="@drawable/ic_edit" />
 
             <com.google.android.material.tabs.TabLayout

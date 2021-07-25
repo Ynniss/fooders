@@ -1,6 +1,6 @@
-package com.esgi.fooders.data.remote.responses.ModifyProductImageResponse
+package com.esgi.fooders.data.remote.responses.ImageModificationResponse
 
-data class ModifyProductImageResponse(
+data class ImageModificationResponse(
     val code: String,
     val files: List<File>,
     val image: Image,

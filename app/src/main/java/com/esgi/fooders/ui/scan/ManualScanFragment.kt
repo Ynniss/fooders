@@ -1,6 +1,7 @@
 package com.esgi.fooders.ui.scan
 
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
@@ -29,6 +32,8 @@ class ManualScanFragment : Fragment() {
     private val ANIMATION_DURATION = 600L
     private val START_OFFSET = 0L
 
+    val args: ManualScanFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,6 +48,13 @@ class ManualScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (args.barcode != "missing") {
+            binding.apply {
+                inputBarcode.text = Editable.Factory.getInstance().newEditable(args.barcode)
+                inputBarcode.performClick()
+            }
+        }
 
         binding.btnSearch.setOnClickListener {
             Log.d("CLICK", binding.inputBarcode.text.toString())
@@ -64,6 +76,14 @@ class ManualScanFragment : Fragment() {
                                 childFragmentManager
                             )
                             binding.apply {
+                                binding.btnEditProduct.setOnClickListener {
+                                    findNavController().navigate(
+                                        ManualScanFragmentDirections.actionManualScanFragmentToEditProductFragment(
+                                            event.result.data!!, "manual"
+                                        )
+                                    )
+                                }
+
                                 viewpagerProduct.adapter = vpAdapter
 
                                 loadHeaderProductInfo(event.result.data!!)
@@ -75,6 +95,7 @@ class ManualScanFragment : Fragment() {
                                         imageField = "front"
                                     )
                                 }
+
                             }
                         }
                         is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
@@ -145,9 +166,16 @@ class ManualScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        refreshUi()
 
-        if (!binding.inputBarcode.text.toString().isEmpty()) {
+        binding.apply {
+            viewHeader.visibility = View.GONE
+            tabLayout.visibility = View.GONE
+            viewpagerProduct.visibility = View.GONE
+        }
+
+        productInfoSharedViewModel.resetBooleanCheck()
+
+        if (!binding.inputBarcode.text.toString().isNullOrEmpty()) {
             productInfoSharedViewModel.getProductInformations(binding.inputBarcode.text.toString())
         }
     }

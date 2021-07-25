@@ -26,7 +26,7 @@ class PhotoViewModel @Inject constructor(
         viewModelScope.launch(IO) {
             try {
                 val modifyProductImageResponse =
-                    api.postProductImage(body)
+                    api.postProductImageModifications(body)
                 Log.d("RESPONSE", modifyProductImageResponse.body()?.status.toString())
 
                 when (modifyProductImageResponse.body()?.status.toString()) {

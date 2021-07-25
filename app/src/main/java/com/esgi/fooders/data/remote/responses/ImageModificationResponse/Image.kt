@@ -1,4 +1,4 @@
-package com.esgi.fooders.data.remote.responses.ModifyProductImageResponse
+package com.esgi.fooders.data.remote.responses.ImageModificationResponse
 
 data class Image(
     val crop_url: String,

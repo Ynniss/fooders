@@ -1,7 +1,10 @@
 package com.esgi.fooders.data.remote.responses.ProductInformations
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Nutriments(
     val carbohydrates: Double,
     val carbohydrates_100g: Double,
@@ -72,4 +75,4 @@ data class Nutriments(
     val sugars_100g: Double,
     val sugars_unit: String,
     val sugars_value: Double
-)
+) : Parcelable
