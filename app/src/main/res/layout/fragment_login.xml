@@ -49,7 +49,7 @@
         android:layout_marginTop="32dp"
         android:fontFamily="casual"
         android:text="Fooders"
-        android:textColor="#FB8C00"
+        android:textColor="?attr/colorPrimary"
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom_logo"

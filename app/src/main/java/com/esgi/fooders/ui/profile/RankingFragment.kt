@@ -5,18 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.esgi.fooders.databinding.FragmentProfileBinding
-import com.tutorialwing.viewpager.ProfileAdapter
+import com.esgi.fooders.databinding.FragmentRankingBinding
 
-class ProfileFragment : Fragment() {
-    private var _binding: FragmentProfileBinding? = null
+class RankingFragment : Fragment() {
+    private var _binding: FragmentRankingBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentRankingBinding.inflate(inflater, container, false)
         val view = binding.root
 
         return view
@@ -24,14 +23,6 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val profileAdapter = ProfileAdapter(
-            childFragmentManager
-        )
-        binding.apply {
-            tabLayout.setupWithViewPager(binding.viewpagerProduct)
-            viewpagerProduct.adapter = profileAdapter
-        }
     }
 
     override fun onDestroyView() {
