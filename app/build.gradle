@@ -90,4 +90,7 @@ dependencies {
     implementation 'com.github.CanHub:Android-Image-Cropper:3.2.1'
 
     implementation 'androidx.preference:preference:1.1.1'
+
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+
 }

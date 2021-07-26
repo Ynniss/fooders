@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -125,7 +124,6 @@ class LoginFragment : Fragment() {
 
             // Get new FCM registration token
             fcmToken = task.result
-            Toast.makeText(requireContext(), fcmToken, Toast.LENGTH_SHORT).show()
         })
     }
 
