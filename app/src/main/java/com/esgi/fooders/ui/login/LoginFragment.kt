@@ -1,11 +1,13 @@
 package com.esgi.fooders.ui.login
 
+import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,7 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.FragmentLoginBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 
@@ -23,6 +27,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val loginViewModel: LoginViewModel by viewModels()
+    private lateinit var fcmToken: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +42,7 @@ class LoginFragment : Fragment() {
             }
         }
 
+        getFcmToken()
         return view
     }
 
@@ -98,7 +104,8 @@ class LoginFragment : Fragment() {
         if (!binding.inputEmail.text.isNullOrEmpty() && !binding.inputPassword.text.isNullOrEmpty()) {
             loginViewModel.login(
                 binding.inputEmail.text.toString(),
-                binding.inputPassword.text.toString()
+                binding.inputPassword.text.toString(),
+                fcmToken
             )
         }
         if (binding.inputEmail.text.isNullOrEmpty()) {
@@ -107,6 +114,19 @@ class LoginFragment : Fragment() {
         if (binding.inputPassword.text.isNullOrEmpty()) {
             binding.inputPasswordLayout.error = "Password Cannot be empty !"
         }
+    }
+
+    private fun getFcmToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(ContentValues.TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            fcmToken = task.result
+            Toast.makeText(requireContext(), fcmToken, Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun closeKeyboard() {

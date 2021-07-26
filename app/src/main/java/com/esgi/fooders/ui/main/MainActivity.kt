@@ -1,6 +1,5 @@
 package com.esgi.fooders.ui.main
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
@@ -22,8 +20,6 @@ import com.esgi.fooders.R
 import com.esgi.fooders.databinding.ActivityMainBinding
 import com.esgi.fooders.ui.settings.SettingsActivity
 import com.esgi.fooders.utils.DataStoreManager
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -67,7 +63,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         hideBottomNavigationBar(navController)
-        getFcmToken()
     }
 
     private fun hideBottomNavigationBar(navController: NavController) {
@@ -111,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             R.id.logout -> {
                 lifecycleScope.launch {
                     dataStoreManager.updateUsername("")
-
+                    supportFragmentManager.popBackStack();
                     findNavController(R.id.navigation_host).setGraph(R.navigation.navigation_graph)
                     /*val navOptions = NavOptions.Builder()
                         .setPopUpTo(R.id.homeFragment, true)
@@ -168,21 +163,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getFcmToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            //val msg = getString(R.string.msg_token_fmt, token)
-            Log.d(TAG, token)
-            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
-        })
-    }
 
 }

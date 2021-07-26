@@ -32,10 +32,10 @@ class LoginViewModel @Inject constructor(
     @Inject
     lateinit var dataStoreManager: DataStoreManager
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, fcmToken: String) {
         viewModelScope.launch(IO) {
             withContext(Main) { _loginEventData.value = LoginEvent.Loading }
-            when (val loginResponse = repository.login(username, password)) {
+            when (val loginResponse = repository.login(username, password, fcmToken)) {
                 is Resource.Error ->
                     withContext(Main) {
                         _loginEventData.value =
