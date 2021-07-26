@@ -17,6 +17,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @Inject
     lateinit var dataStoreManager: DataStoreManager
 
+
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
         val themePreference = findPreference<ListPreference>("chosenTheme")
