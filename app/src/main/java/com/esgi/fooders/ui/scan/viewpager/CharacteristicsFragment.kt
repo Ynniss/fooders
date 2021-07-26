@@ -1,4 +1,4 @@
-package com.esgi.fooders.ui.viewpager_product
+package com.esgi.fooders.ui.scan.viewpager
 
 import android.os.Bundle
 import android.view.LayoutInflater
