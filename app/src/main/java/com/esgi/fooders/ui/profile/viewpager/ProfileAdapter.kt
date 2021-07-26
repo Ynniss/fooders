@@ -1,12 +1,10 @@
-package com.tutorialwing.viewpager
+package com.esgi.fooders.ui.profile.viewpager
 
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.esgi.fooders.ui.profile.ProfileFragment
-import com.esgi.fooders.ui.profile.RankingFragment
-import com.esgi.fooders.ui.profile.SuccessFragment
 
 class ProfileAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 

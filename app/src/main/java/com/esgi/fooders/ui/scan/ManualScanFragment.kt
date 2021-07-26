@@ -16,9 +16,9 @@ import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentManualScanBinding
 import com.esgi.fooders.ui.photo.app.PhotoActivity
+import com.esgi.fooders.ui.scan.viewpager.VpAdapter
 import com.esgi.fooders.utils.slideUp
 import com.google.android.material.snackbar.Snackbar
-import com.tutorialwing.viewpager.VpAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 

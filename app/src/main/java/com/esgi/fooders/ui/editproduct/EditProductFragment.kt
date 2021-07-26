@@ -71,8 +71,7 @@ class EditProductFragment : Fragment() {
                         binding.root,
                         "Product Informations modified.",
                         Snackbar.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
 
                     if (args.type == "auto") {
                         //requireActivity().supportFragmentManager.popBackStack()

@@ -1,4 +1,4 @@
-package com.esgi.fooders.ui.profile
+package com.esgi.fooders.ui.profile.viewpager
 
 import android.os.Bundle
 import android.view.LayoutInflater

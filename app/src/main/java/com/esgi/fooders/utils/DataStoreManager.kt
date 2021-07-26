@@ -31,13 +31,15 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
         }
     }
 
-    suspend fun readUsername() {
+    suspend fun readUsername(): String {
         val usernameReadingFlow: Flow<String?> = sessionDataStore.data
             .map { preferences ->
                 preferences[USERNAME] ?: ""
             }
         val store = usernameReadingFlow.first()!!
         Log.d("toto", store)
+
+        return store
     }
 
     suspend fun readTheme(): String {
