@@ -16,8 +16,8 @@ jobs:
           ruby-version: '2.6'
 
       - name: Install bundle
-        run: |
-	  gem install bundler:2.1.2
+        run: | 
+          bundle update --bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
