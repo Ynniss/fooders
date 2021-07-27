@@ -6,7 +6,7 @@ data class RankingData(
     @SerializedName("id")
     val username: String,
     val photoStat: Int,
-    val txtStat: Int,
+    val textStat: Int,
     val scanStat: Int,
     val rankingType: String
 )

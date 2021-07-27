@@ -19,7 +19,7 @@ class RankingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         } else if (data?.rankingType == "scan") {
             data.scanStat.toString()
         } else if (data?.rankingType == "text") {
-            data.txtStat.toString()
+            data.textStat.toString()
         } else {
             "not found"
         }
