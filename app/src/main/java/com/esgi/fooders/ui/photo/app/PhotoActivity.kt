@@ -15,6 +15,7 @@ import com.esgi.fooders.R
 import com.esgi.fooders.databinding.PhotoActivityBinding
 import com.esgi.fooders.ui.photo.domain.PhotoContract
 import com.esgi.fooders.ui.photo.presenter.PhotoPresenter
+import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
 import com.esgi.fooders.utils.DataStoreManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +46,8 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
 
     private lateinit var lastThemeChanged: String
 
+
+    private val successEventViewModel: SuccessEventViewModel by viewModels()
     @Inject
     lateinit var dataStoreManager: DataStoreManager
 
@@ -145,6 +148,7 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
 
         photoViewModel.imageModificationEvent.observe(this, { imageModificationEvent ->
             if (imageModificationEvent == "STATUS OK") {
+                successEventViewModel.updateUserStat("photoStat")
                 finish()
             } else if (imageModificationEvent == "STATUS NOT OK") {
                 Snackbar.make(

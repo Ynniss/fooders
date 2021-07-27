@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.esgi.fooders.data.remote.FoodersApi
+import com.esgi.fooders.data.remote.responses.RankingResponse.RankingResponse
 import com.esgi.fooders.data.remote.responses.UserSuccessResponse.Succes
 import com.esgi.fooders.data.remote.responses.UserSuccessResponse.UserSuccessResponse
 import com.esgi.fooders.utils.DataStoreManager
@@ -23,6 +24,9 @@ class ProfileViewModel @Inject constructor(
 
     private val userSuccessEventData = MutableLiveData<UserSuccessResponse?>()
     val userSuccessEvent: LiveData<UserSuccessResponse?> get() = userSuccessEventData
+
+    private val rankingEventData = MutableLiveData<RankingResponse?>()
+    val rankingEvent: LiveData<RankingResponse?> get() = rankingEventData
 
     @Inject
     lateinit var dataStoreManager: DataStoreManager
@@ -48,6 +52,31 @@ class ProfileViewModel @Inject constructor(
                 Log.d("Exception", e.toString())
                 withContext(Main) {
                     userSuccessEventData.value = null
+                }
+            }
+        }
+    }
+
+    fun getRanking() {
+        viewModelScope.launch(IO) {
+            try {
+
+                val rankingResponse =
+                    api.getRanking()
+
+                when (rankingResponse.body()) {
+                    null -> withContext(Main) {
+                        rankingEventData.value = null
+                    }
+                    else -> withContext(Main) {
+                        rankingEventData.value = rankingResponse.body()
+                    }
+                }
+                Log.d("RESPONSE", rankingResponse.body()?.toString()!!)
+            } catch (e: Exception) {
+                Log.d("Exception", e.toString())
+                withContext(Main) {
+                    rankingEventData.value = null
                 }
             }
         }
