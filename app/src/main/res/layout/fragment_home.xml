@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".ui.home.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_analyze"
+        style="@style/floatingActionButton"
+        android:layout_margin="32dp"
+        android:text="Analyser"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HOME FRAGMENT" />
+        android:id="@+id/text_logo_fooders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:fontFamily="casual"
+        android:text="Fooders"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+
+    <TextView
+        android:id="@+id/text_logo_fooder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="casual"
+        android:padding="16dp"
+        android:text="Fooders est une application\n de référencement de produits  \n alimentaires, basée sur la très célèbre API OpenFoodFact."
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_logo_fooders"
+        app:layout_constraintVertical_bias="0.275" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_scan_barcode"
+        style="@style/floatingActionButton"
+        android:layout_marginBottom="16dp"
+        android:text="Scan code barre"
+        android:visibility="gone"
+        app:icon="@drawable/ic_button_camera"
+        app:layout_constraintBottom_toTopOf="@+id/fab_manual_entry"
+        app:layout_constraintEnd_toEndOf="@+id/fab_manual_entry" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_manual_entry"
+        style="@style/floatingActionButton"
+        android:layout_marginBottom="16dp"
+        android:text="saisie manuelle"
+        android:visibility="gone"
+        app:icon="@drawable/ic_button_keyboard"
+        app:layout_constraintBottom_toTopOf="@+id/fab_analyze"
+        app:layout_constraintEnd_toEndOf="@+id/fab_analyze" />
+</androidx.constraintlayout.widget.ConstraintLayout>
