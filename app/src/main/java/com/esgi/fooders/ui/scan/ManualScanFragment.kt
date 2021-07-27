@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentManualScanBinding
 import com.esgi.fooders.ui.photo.app.PhotoActivity
+import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
 import com.esgi.fooders.ui.scan.viewpager.VpAdapter
 import com.esgi.fooders.utils.slideUp
 import com.google.android.material.snackbar.Snackbar
@@ -33,6 +35,7 @@ class ManualScanFragment : Fragment() {
     private val START_OFFSET = 0L
 
     val args: ManualScanFragmentArgs by navArgs()
+    private val successEventViewModel: SuccessEventViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,8 +60,8 @@ class ManualScanFragment : Fragment() {
 
         binding.btnSearch.setOnClickListener {
             Log.d("CLICK", binding.inputBarcode.text.toString())
-
             productInfoSharedViewModel.getProductInformations(binding.inputBarcode.text.toString())
+            successEventViewModel.miscUserSuccess("manualScan")
         }
 
         lifecycleScope.launchWhenStarted {

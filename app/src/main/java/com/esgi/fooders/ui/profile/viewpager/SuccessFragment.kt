@@ -37,22 +37,35 @@ class SuccessFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         profileViewModel.getUserSuccess()
+        binding.apply {
+            lottieFoodLoading.visibility = View.VISIBLE
+            lottieFoodLoading.playAnimation()
+
+            txtScanLoading.visibility = View.VISIBLE
+        }
 
         lifecycleScope.launchWhenStarted {
             profileViewModel.userSuccessEvent.observe(viewLifecycleOwner, { userSuccessEvent ->
-                if (userSuccessEvent.first() != "An error occurred") {
+                if (userSuccessEvent != null ) {
                     Log.d("SUCCESS", userSuccessEvent.toString())
 
-                    successAdapter.setSuccessData(userSuccessEvent)
+                    successAdapter.setSuccessData(userSuccessEvent.data.success)
                     binding.recyclerViewSuccess.visibility = View.VISIBLE
                 } else {
                     Log.d("FAILURE", userSuccessEvent.toString())
                     Snackbar.make(
                         binding.root,
-                        userSuccessEvent.first(),
+                        "An error occurred",
                         Snackbar.LENGTH_SHORT
                     )
                         .show()
+                }
+
+                binding.apply {
+                    lottieFoodLoading.visibility = View.GONE
+                    lottieFoodLoading.cancelAnimation()
+
+                    txtScanLoading.visibility = View.GONE
                 }
             })
         }

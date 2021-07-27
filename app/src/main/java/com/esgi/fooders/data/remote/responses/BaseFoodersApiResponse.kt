@@ -1,5 +1,5 @@
 package com.esgi.fooders.data.remote.responses
 
-data class LoginResponse(
+data class BaseFoodersApiResponse(
     val message: String
 )

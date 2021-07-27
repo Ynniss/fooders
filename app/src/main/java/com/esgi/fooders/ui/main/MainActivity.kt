@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
@@ -18,12 +19,15 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.ActivityMainBinding
+import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
 import com.esgi.fooders.ui.settings.SettingsActivity
 import com.esgi.fooders.utils.DataStoreManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -33,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var lastThemeChanged: String
+
+    private val successEventViewModel: SuccessEventViewModel by viewModels()
 
     @Inject
     lateinit var dataStoreManager: DataStoreManager
@@ -145,6 +151,7 @@ class MainActivity : AppCompatActivity() {
         runBlocking {
             val themeValue = dataStoreManager.readTheme()
             if (themeValue != lastThemeChanged) {
+                successEventViewModel.miscUserSuccess("theme")
                 recreate()
             }
         }
@@ -162,6 +169,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 }

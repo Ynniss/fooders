@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.esgi.fooders.R
+import com.esgi.fooders.data.remote.responses.UserSuccessResponse.Succes
 
 class SuccessAdapter() : RecyclerView.Adapter<SuccessViewHolder>() {
-    private var successData: List<String>? = null
+    private var successData: List<Succes>? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuccessViewHolder {
@@ -24,7 +25,7 @@ class SuccessAdapter() : RecyclerView.Adapter<SuccessViewHolder>() {
         return if (successData == null) 0 else successData!!.size
     }
 
-    fun setSuccessData(successData: List<String>?) {
+    fun setSuccessData(successData: List<Succes>?) {
         this.successData = successData
         notifyDataSetChanged()
     }
