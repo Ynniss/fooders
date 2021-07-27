@@ -21,6 +21,7 @@ import com.esgi.fooders.R
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.databinding.FragmentScanBinding
 import com.esgi.fooders.ui.photo.app.PhotoActivity
+import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
 import com.esgi.fooders.ui.scan.viewpager.VpAdapter
 import com.esgi.fooders.utils.BarcodeAnalyzer
 import com.esgi.fooders.utils.slideUp
@@ -52,6 +53,7 @@ class ScanFragment : Fragment() {
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var preview: Preview
     val productInfoSharedViewModel: ProductInfoSharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
+    val successEventViewModel: SuccessEventViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -87,6 +89,7 @@ class ScanFragment : Fragment() {
         })
 
         scanViewModel.barcode.observe(viewLifecycleOwner, { barcode ->
+            successEventViewModel.updateUserStat("scanStat")
             lifecycleScope.launch(Main) {
                 productInfoSharedViewModel.apply {
                     getProductInformations(barcode!!)

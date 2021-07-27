@@ -1,8 +1,10 @@
 package com.esgi.fooders.data.remote
 
 import com.esgi.fooders.data.remote.requests.LoginRequest
+import com.esgi.fooders.data.remote.requests.MiscSuccessEventRequest
+import com.esgi.fooders.data.remote.requests.UpdateStatisticRequest
 import com.esgi.fooders.data.remote.responses.ImageModificationResponse.ImageModificationResponse
-import com.esgi.fooders.data.remote.responses.LoginResponse
+import com.esgi.fooders.data.remote.responses.BaseFoodersApiResponse
 import com.esgi.fooders.data.remote.responses.ProductInformations.InformationsModificationResponse
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
 import com.esgi.fooders.data.remote.responses.UserSuccessResponse.UserSuccessResponse
@@ -16,7 +18,7 @@ interface FoodersApi {
     @POST("login/")
     suspend fun login(
         @Body request: LoginRequest
-    ): Response<LoginResponse>
+    ): Response<BaseFoodersApiResponse>
 
     @Headers("Content-Type: application/json")
     @GET("product/{barcode}")
@@ -45,4 +47,17 @@ interface FoodersApi {
         @Body body: RequestBody,
     ): Response<InformationsModificationResponse>
 
+
+    @Headers("Content-Type: application/json")
+    @POST("user/stat")
+    suspend fun updateUserStat(
+        @Body request: UpdateStatisticRequest
+    ): Response<BaseFoodersApiResponse>
+
+
+    @Headers("Content-Type: application/json")
+    @POST("user/success/misc")
+    suspend fun miscSuccessEventRequest(
+        @Body request: MiscSuccessEventRequest
+    ): Response<BaseFoodersApiResponse>
 }
