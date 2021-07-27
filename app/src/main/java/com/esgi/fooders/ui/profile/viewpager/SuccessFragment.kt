@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.esgi.fooders.databinding.FragmentSuccessBinding
 import com.esgi.fooders.ui.profile.ProfileViewModel
+import com.esgi.fooders.utils.slideUp
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,11 +20,13 @@ class SuccessFragment : Fragment() {
     private val binding get() = _binding!!
     private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var successAdapter: SuccessAdapter
+    private val ANIMATION_DURATION = 600L
+    private val START_OFFSET = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSuccessBinding.inflate(inflater, container, false)
         val view = binding.root
 
@@ -50,7 +53,10 @@ class SuccessFragment : Fragment() {
                     Log.d("SUCCESS", userSuccessEvent.toString())
 
                     successAdapter.setSuccessData(userSuccessEvent.data.success)
-                    binding.recyclerViewSuccess.visibility = View.VISIBLE
+                    binding.apply {
+                        recyclerViewSuccess.visibility = View.VISIBLE
+                        recyclerViewSuccess.slideUp(ANIMATION_DURATION, START_OFFSET)
+                    }
                 } else {
                     Log.d("FAILURE", userSuccessEvent.toString())
                     Snackbar.make(

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.esgi.fooders.databinding.FragmentEditProductBinding
+import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MultipartBody
@@ -22,6 +23,7 @@ class EditProductFragment : Fragment() {
     val args: EditProductFragmentArgs by navArgs()
 
     private val editProductViewModel: EditProductViewModel by viewModels()
+    private val successEventViewModel: SuccessEventViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +69,8 @@ class EditProductFragment : Fragment() {
             viewLifecycleOwner,
             { productModificationEvent ->
                 if (productModificationEvent == "STATUS OK") {
+                    successEventViewModel.updateUserStat("textStat")
+
                     Snackbar.make(
                         binding.root,
                         "Product Informations modified.",

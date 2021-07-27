@@ -7,6 +7,7 @@ import com.esgi.fooders.data.remote.responses.ImageModificationResponse.ImageMod
 import com.esgi.fooders.data.remote.responses.BaseFoodersApiResponse
 import com.esgi.fooders.data.remote.responses.ProductInformations.InformationsModificationResponse
 import com.esgi.fooders.data.remote.responses.ProductInformations.ProductInformationsResponse
+import com.esgi.fooders.data.remote.responses.RankingResponse.RankingResponse
 import com.esgi.fooders.data.remote.responses.UserSuccessResponse.UserSuccessResponse
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -60,4 +61,10 @@ interface FoodersApi {
     suspend fun miscSuccessEventRequest(
         @Body request: MiscSuccessEventRequest
     ): Response<BaseFoodersApiResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("rankings/")
+    suspend fun getRanking(
+    ): Response<RankingResponse>
+
 }
