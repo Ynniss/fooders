@@ -28,10 +28,13 @@ jobs:
           base64 -d -i firebase_credentials.json.b64 > firebase_credentials.json
         env:
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+
       - name: Create google services file
         run: |
           echo "$GOOGLE_SERVICES" > google-services.json.b64
           base64 -d -i google-services.json.b64 > google-services.json
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
 
       - name: Distribute app with Firebase app distribution
         run: bundle exec fastlane distribute
