@@ -32,7 +32,7 @@ jobs:
       - name: Create google services file
         run: |
           echo "$GOOGLE_SERVICES" > google-services.json.b64
-          base64 -d -i google-services.json.b64 > google-services.json
+          base64 -d -i google-services.json.b64 > /home/runner/work/fooders/fooders/app/google-services.json
         env:
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
 
