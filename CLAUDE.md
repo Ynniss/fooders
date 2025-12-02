@@ -97,6 +97,16 @@ The app follows MVVM architecture with Android Architecture Components:
 - `photo/` - Photo capture and cropping (MVP pattern for this module)
 - `settings/` - App settings
 
+**App Bar Pattern**:
+- The app uses a centralized toolbar in `MainActivity` (`activity_main.xml`)
+- Toolbar height: `?attr/actionBarSize` (standard 56dp)
+- Toolbar styling: Clean Material Design with solid color background themed by user preference (Orange/Avocado/Cherry)
+- Elevation: 4dp (standard Material Design for scrolled app bars)
+- The toolbar is hidden for `loginFragment` and `scanFragment` via `hideActionBarForSpecificScreens()`
+- Fragments that need content below the toolbar should use `@dimen/content_padding_below_toolbar` (56dp) for consistent top spacing
+- This matches the toolbar height exactly for a clean, modern look
+- Example usage in `fragment_home.xml`, `fragment_history.xml`, and `fragment_profile.xml`
+
 ### Navigation
 
 Navigation is handled via Android Navigation Component with Safe Args:

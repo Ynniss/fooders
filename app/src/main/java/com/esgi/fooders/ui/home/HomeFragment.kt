@@ -12,40 +12,22 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.FragmentHomeBinding
+import com.esgi.fooders.utils.DataStoreManager
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private var fabAnalyzeClicked = false
 
-    private val rotateOpen: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            requireContext(),
-            R.anim.rotate_open_animation
-        )
-    }
-    private val rotateClose: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            requireContext(),
-            R.anim.rotate_close_animation
-        )
-    }
-    private val fromBottom: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            requireContext(),
-            R.anim.from_bottom_animation
-        )
-    }
-    private val toBottom: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            requireContext(),
-            R.anim.to_bottom_animation
-        )
-    }
-
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,14 +42,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            fabAnalyze.setOnClickListener {
-                onFabAnalyzeClicked()
-            }
+        // Set hero card gradient based on theme
+        setHeroCardTheme()
 
-            fabScanBarcode.setOnClickListener {
-                onFabAnalyzeClicked()
-                Log.d("fab", "scan barcode")
+        binding.apply {
+            // Scan card click listener
+            cardScanFeature.setOnClickListener {
                 if (allPermissionsGranted()) {
                     findNavController().navigate(R.id.action_homeFragment_to_scanFragment)
                 } else {
@@ -78,53 +58,26 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            fabManualEntry.setOnClickListener {
-                onFabAnalyzeClicked()
-                findNavController().navigate(R.id.action_homeFragment_to_manualScanFragment)
+            // History card click listener
+            cardHistoryFeature.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_historyFragment)
             }
         }
     }
 
-    private fun onFabAnalyzeClicked() {
-        fabAnalyzeClicked = !fabAnalyzeClicked
-
-        binding.fabAnalyze.icon = if (fabAnalyzeClicked) {
-            ContextCompat.getDrawable(
-                requireContext(),
-                R.drawable.ic_button_close
-            )
-        } else {
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_button_analysis)
-        }
-
-        toggleVisibility()
-        setAnimations()
-    }
-
-    private fun toggleVisibility() {
-        if (fabAnalyzeClicked) {
-            binding.fabManualEntry.visibility = View.VISIBLE
-            binding.fabScanBarcode.visibility = View.VISIBLE
-        } else {
-            binding.fabManualEntry.visibility = View.GONE
-            binding.fabScanBarcode.visibility = View.GONE
-
-        }
-    }
-
-    private fun setAnimations() {
-        if (fabAnalyzeClicked) {
-            binding.apply {
-                fabManualEntry.startAnimation(fromBottom)
-                fabScanBarcode.startAnimation(fromBottom)
-                fabAnalyze.startAnimation(rotateOpen)
+    private fun setHeroCardTheme() {
+        lifecycleScope.launch {
+            val themeValue = dataStoreManager.readTheme()
+            
+            val gradientDrawable = when (themeValue) {
+                "Avocado" -> R.drawable.gradient_green
+                "Orange" -> R.drawable.gradient_orange
+                "Cherry" -> R.drawable.gradient_red
+                else -> R.drawable.gradient_orange
             }
-        } else {
-            binding.apply {
-                fabManualEntry.startAnimation(toBottom)
-                fabScanBarcode.startAnimation(toBottom)
-                fabAnalyze.startAnimation(rotateClose)
-            }
+            
+            // Find the FrameLayout inside the hero card and set its background
+            binding.cardHero.findViewById<View>(R.id.hero_card_background)?.setBackgroundResource(gradientDrawable)
         }
     }
 

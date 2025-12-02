@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,7 +15,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.ActivityMainBinding
 import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
@@ -24,10 +22,8 @@ import com.esgi.fooders.ui.settings.SettingsActivity
 import com.esgi.fooders.utils.DataStoreManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -51,6 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        // Set up the toolbar
+        setSupportActionBar(binding.toolbar)
+
         // https://stackoverflow.com/a/61472200
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navigation_host) as NavHostFragment
@@ -59,33 +58,24 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration =
             AppBarConfiguration(
                 setOf(
-                    R.id.historyFragment,
-                    R.id.homeFragment,
-                    R.id.profileFragment
+                    R.id.homeFragment
                 )
             )
 
-        binding.bottomNavigationView.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        hideBottomNavigationBar(navController)
+        hideActionBarForSpecificScreens(navController)
     }
 
-    private fun hideBottomNavigationBar(navController: NavController) {
+    private fun hideActionBarForSpecificScreens(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavigationView.visibility = if (destination.id == R.id.loginFragment) {
-                supportActionBar?.hide()
-                View.GONE
-            } else {
-                supportActionBar?.show()
-                View.VISIBLE
-            }
-
-            if (destination.id == R.id.scanFragment) {
-                supportActionBar?.hide()
+            when (destination.id) {
+                R.id.loginFragment, R.id.scanFragment -> supportActionBar?.hide()
+                else -> supportActionBar?.show()
             }
         }
     }
+
 
 
     override fun onStart() {
@@ -109,6 +99,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.profile -> {
+                findNavController(R.id.navigation_host).navigate(R.id.profileFragment)
+            }
             R.id.logout -> {
                 lifecycleScope.launch {
                     dataStoreManager.updateUsername("")
@@ -156,6 +149,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
     private fun setFoodersTheme() {
         lifecycleScope.launch(IO) {

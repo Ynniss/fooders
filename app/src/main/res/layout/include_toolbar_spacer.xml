@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Reusable spacer for fragments to account for toolbar height.
+    Include this at the top of fragment layouts that need to avoid toolbar overlap.
+-->
+<Space
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar_spacer"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize" />
