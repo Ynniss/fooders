@@ -65,8 +65,10 @@ class HomeFragment : Fragment() {
             val theme = dataStoreManager.readTheme()
 
             binding.apply {
-                cardScanFeature.background = ThemeHelper.createCardGradient(requireContext(), theme, 0)
-                cardHistoryFeature.background = ThemeHelper.createCardGradient(requireContext(), theme, 1)
+                cardScanFeature.background =
+                    ThemeHelper.createCardGradient(requireContext(), theme, 0)
+                cardHistoryFeature.background =
+                    ThemeHelper.createCardGradient(requireContext(), theme, 1)
                 cardAbout.background = ThemeHelper.createCardGradient(requireContext(), theme, 2)
                 cardStat1.background = ThemeHelper.createCardGradient(requireContext(), theme, 3)
                 cardStat2.background = ThemeHelper.createCardGradient(requireContext(), theme, 4)

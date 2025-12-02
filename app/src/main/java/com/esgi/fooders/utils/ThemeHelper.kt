@@ -18,21 +18,41 @@ object ThemeHelper {
         return when (theme) {
             "Avocado" -> ThemeColors(
                 primary = ContextCompat.getColor(context, R.color.md_theme_light_primary_green),
-                primaryLight = ContextCompat.getColor(context, R.color.md_theme_light_primaryContainer_green),
+                primaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_primaryContainer_green
+                ),
                 secondary = ContextCompat.getColor(context, R.color.md_theme_light_secondary_green),
-                secondaryLight = ContextCompat.getColor(context, R.color.md_theme_light_secondaryContainer_green)
+                secondaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_secondaryContainer_green
+                )
             )
+
             "Cherry" -> ThemeColors(
                 primary = ContextCompat.getColor(context, R.color.md_theme_light_primary_red),
-                primaryLight = ContextCompat.getColor(context, R.color.md_theme_light_primaryContainer_red),
+                primaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_primaryContainer_red
+                ),
                 secondary = ContextCompat.getColor(context, R.color.md_theme_light_secondary_red),
-                secondaryLight = ContextCompat.getColor(context, R.color.md_theme_light_secondaryContainer_red)
+                secondaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_secondaryContainer_red
+                )
             )
+
             else -> ThemeColors(
                 primary = ContextCompat.getColor(context, R.color.md_theme_light_primary),
-                primaryLight = ContextCompat.getColor(context, R.color.md_theme_light_primaryContainer),
+                primaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_primaryContainer
+                ),
                 secondary = ContextCompat.getColor(context, R.color.md_theme_light_secondary),
-                secondaryLight = ContextCompat.getColor(context, R.color.md_theme_light_secondaryContainer)
+                secondaryLight = ContextCompat.getColor(
+                    context,
+                    R.color.md_theme_light_secondaryContainer
+                )
             )
         }
     }
@@ -56,11 +76,9 @@ object ThemeHelper {
     fun createCardGradient(context: Context, theme: String, cardIndex: Int): GradientDrawable {
         val colors = getThemeColors(context, theme)
 
-        val (startColor, endColor) = when (cardIndex % 4) {
-            0 -> Pair(colors.primaryLight, colors.primary)
-            1 -> Pair(colors.secondaryLight, colors.secondary)
-            2 -> Pair(colors.primary, colors.primaryLight)
-            else -> Pair(colors.secondary, colors.secondaryLight)
+        val (startColor, endColor) = when (cardIndex % 2) {
+            0 -> Pair(colors.primary, colors.secondary)
+            else -> Pair(colors.secondary, colors.primary)
         }
 
         return createGradientDrawable(

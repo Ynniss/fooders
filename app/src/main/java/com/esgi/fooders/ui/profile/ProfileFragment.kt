@@ -51,11 +51,9 @@ class ProfileFragment : Fragment() {
 
     private suspend fun applyThemeToCard() {
         val theme = dataStoreManager.readTheme()
-        val colors = ThemeHelper.getThemeColors(requireContext(), theme)
 
         binding.apply {
             cardProfileHeader.background = ThemeHelper.createCardGradient(requireContext(), theme, 0)
-            txtUsername.setTextColor(colors.primary)
         }
     }
 

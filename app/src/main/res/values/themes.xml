@@ -59,7 +59,7 @@
 
         <!-- Inverse colors -->
         <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorOnSurfaceInverse">@color/white</item>
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
 
         <!-- Status bar -->
@@ -79,7 +79,8 @@
         <item name="colorSecondary">@color/md_theme_light_secondary_green</item>
         <item name="colorOnSecondary">@color/md_theme_light_onSecondary_green</item>
         <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer_green</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer_green</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer_green
+        </item>
 
         <!-- Tertiary colors -->
         <item name="colorTertiary">@color/md_theme_light_tertiary_green</item>
@@ -113,7 +114,9 @@
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary_green</item>
 
         <!-- Status bar -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary_green</item>
+        <item name="android:statusBarColor" tools:targetApi="l">
+            @color/md_theme_light_primary_green
+        </item>
         <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
 
@@ -163,7 +166,8 @@
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary_red</item>
 
         <!-- Status bar -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary_red</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary_red
+        </item>
         <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
 </resources>
