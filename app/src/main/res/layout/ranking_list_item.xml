@@ -74,7 +74,6 @@
                 android:id="@+id/txt_ranking_score_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="casual"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"

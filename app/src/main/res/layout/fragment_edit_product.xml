@@ -85,7 +85,6 @@
         android:id="@+id/btn_modify"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="casual"
         android:text="Modifier"
         android:textSize="24sp"
         android:textStyle="bold"

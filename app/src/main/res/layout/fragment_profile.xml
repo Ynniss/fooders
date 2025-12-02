@@ -12,9 +12,12 @@
         android:id="@+id/card_profile_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        app:cardCornerRadius="24dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        app:cardBackgroundColor="@color/vibrant_teal_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,10 +25,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
-            android:paddingBottom="32dp"
-            android:paddingTop="@dimen/content_padding_below_toolbar">
+            android:padding="24dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_avatar"
@@ -34,7 +34,7 @@
                 android:src="@drawable/img_avatar_tomato"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                app:strokeColor="?attr/colorOnPrimaryContainer"
+                app:strokeColor="@color/vibrant_teal"
                 app:strokeWidth="3dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textColor="@color/vibrant_teal"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:ellipsize="end"
@@ -63,6 +63,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="?attr/colorSurface"
         android:elevation="2dp"
         app:tabMode="scrollable"

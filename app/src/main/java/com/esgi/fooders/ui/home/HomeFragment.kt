@@ -3,12 +3,9 @@ package com.esgi.fooders.ui.home
 import android.Manifest.permission.CAMERA
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.FragmentHomeBinding
 import com.esgi.fooders.utils.DataStoreManager
+import com.esgi.fooders.utils.ThemeHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,11 +40,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set hero card gradient based on theme
-        setHeroCardTheme()
+        applyThemeToCards()
 
         binding.apply {
-            // Scan card click listener
             cardScanFeature.setOnClickListener {
                 if (allPermissionsGranted()) {
                     findNavController().navigate(R.id.action_homeFragment_to_scanFragment)
@@ -58,26 +54,23 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            // History card click listener
             cardHistoryFeature.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_historyFragment)
             }
         }
     }
 
-    private fun setHeroCardTheme() {
+    private fun applyThemeToCards() {
         lifecycleScope.launch {
-            val themeValue = dataStoreManager.readTheme()
-            
-            val gradientDrawable = when (themeValue) {
-                "Avocado" -> R.drawable.gradient_green
-                "Orange" -> R.drawable.gradient_orange
-                "Cherry" -> R.drawable.gradient_red
-                else -> R.drawable.gradient_orange
+            val theme = dataStoreManager.readTheme()
+
+            binding.apply {
+                cardScanFeature.background = ThemeHelper.createCardGradient(requireContext(), theme, 0)
+                cardHistoryFeature.background = ThemeHelper.createCardGradient(requireContext(), theme, 1)
+                cardAbout.background = ThemeHelper.createCardGradient(requireContext(), theme, 2)
+                cardStat1.background = ThemeHelper.createCardGradient(requireContext(), theme, 3)
+                cardStat2.background = ThemeHelper.createCardGradient(requireContext(), theme, 4)
             }
-            
-            // Find the FrameLayout inside the hero card and set its background
-            binding.cardHero.findViewById<View>(R.id.hero_card_background)?.setBackgroundResource(gradientDrawable)
         }
     }
 

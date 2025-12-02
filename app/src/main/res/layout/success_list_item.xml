@@ -28,7 +28,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- Accent bar on the left -->
             <View
                 android:layout_width="8dp"
                 android:layout_height="match_parent"

@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.esgi.fooders.databinding.FragmentProfileBinding
 import com.esgi.fooders.ui.profile.viewpager.ProfileAdapter
 import com.esgi.fooders.utils.DataStoreManager
+import com.esgi.fooders.utils.ThemeHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,6 +36,7 @@ class ProfileFragment : Fragment() {
 
         lifecycleScope.launch {
             binding.txtUsername.text = dataStoreManager.readUsername()
+            applyThemeToCard()
         }
 
         val profileAdapter = ProfileAdapter(
@@ -44,6 +46,16 @@ class ProfileFragment : Fragment() {
         binding.apply {
             tabLayout.setupWithViewPager(binding.viewpagerProduct)
             viewpagerProduct.adapter = profileAdapter
+        }
+    }
+
+    private suspend fun applyThemeToCard() {
+        val theme = dataStoreManager.readTheme()
+        val colors = ThemeHelper.getThemeColors(requireContext(), theme)
+
+        binding.apply {
+            cardProfileHeader.background = ThemeHelper.createCardGradient(requireContext(), theme, 0)
+            txtUsername.setTextColor(colors.primary)
         }
     }
 

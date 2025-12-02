@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,90 +10,28 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingBottom="32dp"
-        android:clipToPadding="false">
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Hero Card with Gradient -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_hero"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginTop="0dp"
-                app:cardCornerRadius="0dp"
-                app:cardElevation="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <FrameLayout
-                    android:id="@+id/hero_card_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/gradient_orange">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingStart="28dp"
-                        android:paddingEnd="28dp"
-                        android:paddingBottom="28dp"
-                        android:paddingTop="@dimen/content_padding_below_toolbar">
-
-                        <TextView
-                            android:id="@+id/text_logo_fooders"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="casual"
-                            android:text="Fooders"
-                            android:textColor="@color/white"
-                            android:textSize="48sp"
-                            android:textStyle="bold"
-                            android:shadowColor="#40000000"
-                            android:shadowDx="2"
-                            android:shadowDy="2"
-                            android:shadowRadius="8"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/text_logo_subtitle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="casual"
-                            android:text="Scannez et découvrez\nla qualité de vos aliments"
-                            android:textColor="@color/white"
-                            android:textSize="16sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/text_logo_fooders" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </FrameLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Features Grid -->
             <TextView
                 android:id="@+id/txt_features_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="0dp"
                 android:text="Fonctionnalités"
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_hero" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Scan Feature Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_scan_feature"
                 android:layout_width="0dp"
@@ -105,9 +42,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="@drawable/ripple_card_vibrant"
+                app:cardBackgroundColor="@color/vibrant_blue_light"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/vibrant_blue_light"
                 app:layout_constraintEnd_toStartOf="@+id/card_history_feature"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -116,24 +53,27 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="20dp">
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp">
 
                     <ImageView
                         android:id="@+id/icon_scan"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_button_camera"
-                        app:tint="@color/vibrant_blue"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/white" />
 
                     <TextView
                         android:id="@+id/txt_scan_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="Scanner"
-                        android:textColor="@color/vibrant_blue"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -141,11 +81,14 @@
                         app:layout_constraintTop_toBottomOf="@+id/icon_scan" />
 
                     <TextView
+                        android:id="@+id/txt_scan_subtitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
                         android:text="Scannez des codes-barres"
-                        android:textColor="@color/vibrant_blue"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +97,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- History Feature Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_history_feature"
                 android:layout_width="0dp"
@@ -164,9 +106,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="@drawable/ripple_card_vibrant"
+                app:cardBackgroundColor="@color/vibrant_purple_light"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/vibrant_purple_light"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/card_scan_feature"
@@ -175,24 +117,27 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="20dp">
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp">
 
                     <ImageView
                         android:id="@+id/icon_history"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_menu_history"
-                        app:tint="@color/vibrant_purple"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/white" />
 
                     <TextView
                         android:id="@+id/txt_history_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="Historique"
-                        android:textColor="@color/vibrant_purple"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -200,11 +145,14 @@
                         app:layout_constraintTop_toBottomOf="@+id/icon_history" />
 
                     <TextView
+                        android:id="@+id/txt_history_subtitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
                         android:text="Vos scans récents"
-                        android:textColor="@color/vibrant_purple"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -213,7 +161,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- About Card with Gradient -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_about"
                 android:layout_width="match_parent"
@@ -265,7 +212,6 @@
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Stats Cards -->
             <TextView
                 android:id="@+id/txt_stats_title"
                 android:layout_width="wrap_content"
@@ -288,7 +234,6 @@
                 android:layout_marginEnd="8dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/vibrant_teal_light"
                 app:layout_constraintEnd_toStartOf="@+id/card_stat_2"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -304,18 +249,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="@color/vibrant_teal"
+                        android:textColor="@color/white"
                         android:textSize="32sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txt_stat_1_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Produits scannés"
-                        android:textColor="@color/vibrant_teal"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -331,7 +278,6 @@
                 android:layout_marginEnd="20dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/vibrant_amber_light"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/card_stat_1"
@@ -347,18 +293,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="@color/vibrant_amber"
+                        android:textColor="@color/white"
                         android:textSize="32sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txt_stat_2_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Succès obtenus"
-                        android:textColor="@color/vibrant_amber"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -368,7 +316,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
