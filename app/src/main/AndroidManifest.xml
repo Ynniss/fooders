@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.esgi.fooders">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature android:name="android.hardware.camera.any" />
 
@@ -19,6 +18,7 @@
         android:theme="@style/Theme.SplashScreen">
         <activity
             android:name=".ui.main.MainActivity"
+            android:exported="true"
             android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
@@ -37,7 +37,7 @@
             android:theme="@style/Theme.Fooders" />
 
         <service
-            android:name=".utils.MyFirebaseMessagingService"
+            android:name=".utils.FoodersFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -1,16 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="orange_600">#fb8c00</color>
-    <color name="orange_600_light">#ffbd45</color>
-    <color name="orange_600_dark">#c25e00</color>
+    <!-- Orange Theme - Material 3 Color System (Vibrant) -->
+    <color name="md_theme_light_primary">#FF6B00</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#FFDCC0</color>
+    <color name="md_theme_light_onPrimaryContainer">#2B1700</color>
+    <color name="md_theme_light_secondary">#FF9500</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#FFE5CC</color>
+    <color name="md_theme_light_onSecondaryContainer">#271905</color>
+    <color name="md_theme_light_tertiary">#4CAF50</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#C8E6C9</color>
+    <color name="md_theme_light_onTertiaryContainer">#0F1F04</color>
+    <color name="md_theme_light_error">#FF3D00</color>
+    <color name="md_theme_light_errorContainer">#FFCDD2</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    <color name="md_theme_light_background">#FAFAFA</color>
+    <color name="md_theme_light_onBackground">#1C1B1F</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_onSurface">#1C1B1F</color>
+    <color name="md_theme_light_surfaceVariant">#FFF3E0</color>
+    <color name="md_theme_light_onSurfaceVariant">#49454F</color>
+    <color name="md_theme_light_outline">#79747E</color>
+    <color name="md_theme_light_inverseOnSurface">#F4EFF4</color>
+    <color name="md_theme_light_inverseSurface">#313033</color>
+    <color name="md_theme_light_inversePrimary">#FFB74D</color>
+    <color name="md_theme_light_shadow">#000000</color>
+    <color name="md_theme_light_surfaceTint">#FF6B00</color>
+    <color name="md_theme_light_outlineVariant">#E0E0E0</color>
+    <color name="md_theme_light_scrim">#000000</color>
+
+    <!-- Green/Avocado Theme - Material 3 Color System (Vibrant) -->
+    <color name="md_theme_light_primary_green">#66BB6A</color>
+    <color name="md_theme_light_onPrimary_green">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer_green">#C8E6C9</color>
+    <color name="md_theme_light_onPrimaryContainer_green">#1B5E20</color>
+    <color name="md_theme_light_secondary_green">#9CCC65</color>
+    <color name="md_theme_light_onSecondary_green">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer_green">#DCEDC8</color>
+    <color name="md_theme_light_onSecondaryContainer_green">#33691E</color>
+    <color name="md_theme_light_tertiary_green">#26A69A</color>
+    <color name="md_theme_light_onTertiary_green">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer_green">#B2DFDB</color>
+    <color name="md_theme_light_onTertiaryContainer_green">#004D40</color>
+    <color name="md_theme_light_inversePrimary_green">#81C784</color>
+    <color name="md_theme_light_surfaceTint_green">#66BB6A</color>
+
+    <!-- Red/Cherry Theme - Material 3 Color System (Vibrant) -->
+    <color name="md_theme_light_primary_red">#F44336</color>
+    <color name="md_theme_light_onPrimary_red">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer_red">#FFCDD2</color>
+    <color name="md_theme_light_onPrimaryContainer_red">#B71C1C</color>
+    <color name="md_theme_light_secondary_red">#FF5722</color>
+    <color name="md_theme_light_onSecondary_red">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer_red">#FFCCBC</color>
+    <color name="md_theme_light_onSecondaryContainer_red">#BF360C</color>
+    <color name="md_theme_light_tertiary_red">#FFC107</color>
+    <color name="md_theme_light_onTertiary_red">#000000</color>
+    <color name="md_theme_light_tertiaryContainer_red">#FFECB3</color>
+    <color name="md_theme_light_onTertiaryContainer_red">#FF6F00</color>
+    <color name="md_theme_light_inversePrimary_red">#EF5350</color>
+    <color name="md_theme_light_surfaceTint_red">#F44336</color>
+
+    <!-- Vibrant Accent Colors for Cards and UI Elements -->
+    <color name="vibrant_blue">#2196F3</color>
+    <color name="vibrant_blue_light">#BBDEFB</color>
+    <color name="vibrant_purple">#9C27B0</color>
+    <color name="vibrant_purple_light">#E1BEE7</color>
+    <color name="vibrant_pink">#E91E63</color>
+    <color name="vibrant_pink_light">#F8BBD0</color>
+    <color name="vibrant_teal">#009688</color>
+    <color name="vibrant_teal_light">#B2DFDB</color>
+    <color name="vibrant_lime">#CDDC39</color>
+    <color name="vibrant_lime_light">#F0F4C3</color>
+    <color name="vibrant_amber">#FFC107</color>
+    <color name="vibrant_amber_light">#FFECB3</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradient_orange_start">#FF6B00</color>
+    <color name="gradient_orange_end">#FF9500</color>
+    <color name="gradient_green_start">#66BB6A</color>
+    <color name="gradient_green_end">#26A69A</color>
+    <color name="gradient_blue_start">#2196F3</color>
+    <color name="gradient_blue_end">#00BCD4</color>
+    <color name="gradient_purple_start">#9C27B0</color>
+    <color name="gradient_purple_end">#E91E63</color>
+
+    <!-- Legacy colors for backward compatibility -->
+    <color name="orange_600">#FF6B00</color>
+    <color name="orange_600_light">#FFB74D</color>
+    <color name="orange_600_dark">#E65100</color>
+    <color name="light_green_600">#66BB6A</color>
+    <color name="light_green_600_light">#81C784</color>
+    <color name="light_green_600_dark">#388E3C</color>
+    <color name="red_600">#F44336</color>
+    <color name="red_600_light">#EF5350</color>
+    <color name="red_600_dark">#C62828</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="light_green_600">#7cb342</color>
-    <color name="light_green_600_light">#aee571</color>
-    <color name="light_green_600_dark">#4b830d</color>
-
-    <color name="red_600">#e53935</color>
-    <color name="red_600_light">#ff6f60</color>
-    <color name="red_600_dark">#ab000d</color>
+    <!-- Surface colors for modern design -->
+    <color name="surface_elevated">#FFFFFF</color>
+    <color name="surface_base">#FAFAFA</color>
 </resources>

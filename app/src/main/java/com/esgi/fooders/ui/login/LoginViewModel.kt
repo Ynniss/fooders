@@ -22,8 +22,8 @@ class LoginViewModel @Inject constructor(
     sealed class LoginEvent {
         class Success(val result: String) : LoginEvent()
         class Failure(val error: String) : LoginEvent()
-        object Loading : LoginEvent()
-        object Empty : LoginEvent()
+        data object Loading : LoginEvent()
+        data object Empty : LoginEvent()
     }
 
     private val _loginEventData = MutableLiveData<LoginEvent>(LoginEvent.Empty)
@@ -48,7 +48,6 @@ class LoginViewModel @Inject constructor(
                             LoginEvent.Success(loginResponse.data!!.message)
                     }
                 }
-                else -> Unit
             }
         }
     }

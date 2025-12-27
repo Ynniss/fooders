@@ -46,6 +46,7 @@ class CharacteristicsFragment : Fragment() {
                             is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
                                 loadUi(event.result.data!!)
                             }
+                            else -> Unit
                         }
                     })
             }

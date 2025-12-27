@@ -25,11 +25,9 @@
         android:id="@+id/txt_scan_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="casual"
         android:text="Scan en cours..."
         android:textColor="?attr/colorOnPrimary"
         android:textSize="24dp"
-
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
