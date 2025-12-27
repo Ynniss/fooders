@@ -22,6 +22,31 @@ class EditProductViewModel @Inject constructor(
     private val productModificationEventData = MutableLiveData<String?>(null)
     val productModificationEvent: LiveData<String?> get() = productModificationEventData
 
+    // Alias for Compose
+    val modificationEvent: LiveData<String?> get() = productModificationEventData
+
+    fun modifyProductInfo(
+        code: String,
+        productName: String,
+        packaging: String,
+        ingredientsText: String
+    ) {
+        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("code", code)
+
+        if (productName.isNotBlank()) {
+            builder.addFormDataPart("product_name", productName)
+        }
+        if (packaging.isNotBlank()) {
+            builder.addFormDataPart("packaging", packaging)
+        }
+        if (ingredientsText.isNotBlank()) {
+            builder.addFormDataPart("ingredients_text", ingredientsText)
+        }
+
+        modifyProductInformations(builder.build())
+    }
+
     fun modifyProductInformations(body: MultipartBody) {
         viewModelScope.launch(IO) {
             try {

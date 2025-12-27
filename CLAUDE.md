@@ -50,11 +50,20 @@ This requires:
 
 ## Architecture
 
+### UI Architecture: Jetpack Compose + Material 3
+
+The app uses a **single-activity, multiple-composables architecture** with Jetpack Compose and Material 3:
+
+- **Single Activity**: `MainActivity` hosts the entire app using `setContent { FoodersApp() }`
+- **Compose Navigation**: Type-safe navigation with `androidx.navigation:navigation-compose`
+- **Material 3**: Full Material You design system with dynamic theming
+
 ### Dependency Injection (Dagger Hilt)
 
 The app uses Dagger Hilt for dependency injection:
 - `FoodersApplication` is annotated with `@HiltAndroidApp`
-- All injectable activities/fragments use `@AndroidEntryPoint`
+- `MainActivity` uses `@AndroidEntryPoint`
+- ViewModels use `@HiltViewModel` and are accessed via `hiltViewModel()` in Composables
 - DI configuration in `di/AppModule.kt`
 
 Key provided dependencies:
@@ -80,110 +89,167 @@ Key provided dependencies:
 
 **Responses**: Located in `data/remote/responses/` with subdirectories for different response types (ProductInformations, ImageModificationResponse, UserSuccessResponse, RankingResponse)
 
-### Presentation Layer (MVVM)
-
-The app follows MVVM architecture with Android Architecture Components:
+### Presentation Layer
 
 **UI Structure** (`ui/` package):
-- `login/` - User authentication
-- `main/` - Main activity container with bottom navigation
-- `home/` - Home screen
-- `scan/` - Barcode scanning with CameraX and ML Kit
-  - `viewpager/` - Product details tabs (Score, Characteristics, Ingredients, Environment)
-- `profile/` - User profile
-  - `viewpager/` - Profile tabs (Success achievements, Rankings)
-- `history/` - Scan history
-- `editproduct/` - Product editing interface
-- `photo/` - Photo capture and cropping (MVP pattern for this module)
-- `settings/` - App settings
 
-**App Bar Pattern**:
-- The app uses a centralized toolbar in `MainActivity` (`activity_main.xml`)
-- Toolbar height: `?attr/actionBarSize` (standard 56dp)
-- Toolbar styling: Clean Material Design with solid color background themed by user preference (Orange/Avocado/Cherry)
-- Elevation: 4dp (standard Material Design for scrolled app bars)
-- The toolbar is hidden for `loginFragment` and `scanFragment` via `hideActionBarForSpecificScreens()`
-- Fragments that need content below the toolbar should use `@dimen/content_padding_below_toolbar` (56dp) for consistent top spacing
-- This matches the toolbar height exactly for a clean, modern look
-- Example usage in `fragment_home.xml`, `fragment_history.xml`, and `fragment_profile.xml`
+```
+ui/
+├── FoodersApp.kt              # Main app composable with navigation
+├── theme/
+│   ├── Color.kt              # Color definitions for all themes
+│   ├── Type.kt               # Material 3 typography
+│   ├── Shape.kt              # Material 3 shapes
+│   └── Theme.kt              # FoodersTheme composable
+├── navigation/
+│   ├── Screen.kt             # Navigation routes
+│   └── FoodersNavHost.kt     # Navigation graph
+├── components/
+│   ├── FoodersTopAppBar.kt   # App bar variants
+│   ├── FoodersBottomNavigation.kt
+│   ├── FoodersCard.kt        # Card components
+│   ├── FoodersButton.kt      # Button variants
+│   ├── FoodersTextField.kt   # Text input components
+│   └── LoadingIndicator.kt   # Lottie loading animation
+├── login/
+│   ├── LoginScreen.kt
+│   └── LoginViewModel.kt
+├── home/
+│   └── HomeScreen.kt         # Feature cards with gradients
+├── scan/
+│   ├── ScanScreen.kt         # CameraX + barcode scanning
+│   ├── ManualScanScreen.kt
+│   ├── ScanViewModel.kt
+│   ├── ProductInfoSharedViewModel.kt
+│   └── details/
+│       ├── ScoreTab.kt
+│       ├── CharacteristicsTab.kt
+│       ├── IngredientsTab.kt
+│       └── EnvironmentTab.kt
+├── editproduct/
+│   ├── EditProductScreen.kt
+│   └── EditProductViewModel.kt
+├── history/
+│   └── HistoryScreen.kt      # Coming soon placeholder
+├── profile/
+│   ├── ProfileScreen.kt      # With HorizontalPager tabs
+│   └── ProfileViewModel.kt
+├── settings/
+│   ├── SettingsScreen.kt
+│   └── SettingsViewModel.kt
+└── main/
+    └── MainActivity.kt       # Single activity entry point
+```
+
+### Theme System
+
+**Material 3 with 3 Color Schemes + Dark Mode**:
+
+Color themes:
+- **Orange** (default) - Vibrant orange primary
+- **Avocado** - Fresh green primary
+- **Cherry** - Bold red primary
+
+Dark mode options:
+- **System** - Follows device settings
+- **Light** - Always light
+- **Dark** - Always dark
+
+Theme is applied via `FoodersTheme` composable:
+```kotlin
+FoodersTheme(
+    colorTheme = FoodersColorTheme.Orange,
+    darkModePreference = DarkModePreference.System
+) {
+    // Content
+}
+```
 
 ### Navigation
 
-Navigation is handled via Android Navigation Component with Safe Args:
-- Main navigation graph: `res/navigation/navigation_graph.xml`
-- Entry point: `LoginFragment`
-- Main screens accessible via bottom navigation: Home, History, Profile
-- Navigation uses custom animations (from_right, to_left, from_left, to_right)
+Navigation is handled via Compose Navigation:
+- Routes defined in `Screen.kt` sealed class
+- Entry point determined by login state (Login or Home)
+- Bottom navigation for Home, History, Profile
+- Slide animations for screen transitions
 
 ### Data Persistence
 
 **DataStore** (via `DataStoreManager`):
 - User session management (username)
 - Theme preference (Orange, Avocado, Cherry)
-- Async operations using Kotlin Coroutines Flow
+- Dark mode preference (System, Light, Dark)
+- Flow-based API for Compose integration
 
 ### Key Features
 
 **Barcode Scanning**:
-- Uses CameraX for camera preview
+- CameraX with AndroidView wrapper
 - ML Kit Barcode Scanning for barcode detection
 - Custom `BarcodeAnalyzer` utility for processing
-- Manual barcode entry option via `ManualScanFragment`
+- Bottom sheet product display
+- Manual barcode entry option
 
 **Product Management**:
-- View product information with tabbed interface (ViewPager2)
-- Edit product details and images
+- Product information with HorizontalPager tabs (Score, Characteristics, Ingredients, Environment)
+- Edit product details
 - Integration with OpenFoodFacts for data submission
-- Image cropping using Android-Image-Cropper library
 
 **User Features**:
 - Login system with session persistence
 - Statistics tracking and rankings
 - Success/achievement system
-- Theme customization (Orange, Avocado, Cherry)
-- Firebase Cloud Messaging for push notifications
+- Theme customization with live preview
 
-**Theme System**:
-- Dynamic theme switching without restart
-- Themes stored in DataStore
-- MainActivity recreates on theme change (detected in `onResume`)
+**Profile**:
+- User info card
+- Success/Rankings tabs with HorizontalPager
+- Chip filters for ranking categories
 
 ### Dependencies & Libraries
 
 **Core**:
-- Kotlin 1.9.0
+- Kotlin 1.9.25
 - Android SDK 34 (compileSdk 34, targetSdk 34, minSdk 21)
 - Java 11 compatibility
-- ViewBinding enabled
+- Compose enabled
 - `kotlin-parcelize` for Parcelable support
+
+**Compose Stack**:
+- Compose BOM 2024.12.01
+- Material 3
+- Navigation Compose 2.8.5
+- Lifecycle Runtime Compose 2.8.7
+- Hilt Navigation Compose 1.2.0
+- Lottie Compose 6.6.2
+
+**Image Loading**:
+- Coil Compose 2.7.0 (replaces Glide for Compose)
 
 **Key Libraries**:
 - Dagger Hilt 2.48 - Dependency injection
-- Navigation Component 2.7.4 - Navigation with Safe Args
-- CameraX 1.3.0 - Camera functionality (stable)
+- CameraX 1.3.0 - Camera functionality
 - ML Kit Barcode Scanning 17.2.0 - Barcode detection
 - Retrofit 2.9.0 + Gson - Network calls
-- DataStore 1.0.0 - Preferences storage (stable)
-- Glide 4.16.0 - Image loading
-- Lottie 6.1.0 - Animations
+- DataStore 1.0.0 - Preferences storage
 - Firebase (BOM 32.7.0) - Analytics and Messaging
-- Android-Image-Cropper 4.3.2 - Image cropping
+- Accompanist Permissions 0.36.0 - Runtime permissions
 
 ### Common Patterns
 
+**Composables**:
+- Screen composables receive navigation callbacks as parameters
+- ViewModels accessed via `hiltViewModel()`
+- State hoisting for reusable components
+
 **ViewModels**:
 - Injected via Hilt (`@HiltViewModel`)
-- Use LiveData for UI state
+- Use LiveData (observed via `observeAsState`) or StateFlow (collected via `collectAsState`)
 - Repository pattern for data access
 
 **Resource Wrapper**:
 - `utils/Resource.kt` - Sealed class for Success/Error states
 - Used for wrapping API responses
-
-**Coroutines**:
-- Repositories use `suspend` functions
-- ViewModels launch coroutines in `viewModelScope`
-- Activities/Fragments use `lifecycleScope`
 
 ## CI/CD
 
@@ -200,12 +266,9 @@ Required secrets:
 
 ## Important Notes
 
-- The app requires camera permissions for scanning
-- Storage permissions are declared for image handling
+- The app requires camera permissions for scanning (handled via Accompanist Permissions)
 - Firebase services require `google-services.json` (not in repo, provided via CI secrets)
-- The photo module uses MVP pattern while the rest uses MVVM
-- AGP 8.1.4+ requires namespace declaration in build.gradle instead of package in AndroidManifest
-- Activities with intent filters must declare android:exported="true" for Android 12+ (SDK 31+)
-- KAPT (used by Hilt) requires JVM arguments in `gradle.properties` to access JDK compiler modules in Java 11+ (`--add-opens` flags are set for both `org.gradle.jvmargs` and `kotlin.daemon.jvmargs`)
-- Gradle build cache is disabled (`org.gradle.caching=false`) to prevent JDK image transformation cache corruption issues with AGP 8.1.4 + Gradle 8.12
-- Heap sizes: Gradle daemon 4GB, Kotlin daemon 2GB
+- Old fragment-based code is deprecated but still present (will be removed in cleanup)
+- AGP 8.10.1 used with Compose enabled
+- KAPT (used by Hilt) requires JVM arguments in `gradle.properties`
+- Gradle build cache is disabled to prevent cache corruption issues

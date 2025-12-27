@@ -21,7 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
@@ -128,7 +128,7 @@ internal class PhotoActivity : CropImageActivity(), PhotoContract.View {
         val photo = File(result.getUriFilePath(this)!!)
 
         val fileBody: RequestBody =
-            RequestBody.create(MediaType.parse(contentResolver.getType(uri!!)!!), photo)
+            RequestBody.create(contentResolver.getType(uri!!)!!.toMediaType(), photo)
 
         val imgUploadType = when (imageField) {
             "front" -> "imgupload_front"

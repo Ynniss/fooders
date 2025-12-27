@@ -18,6 +18,20 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
     private val sessionDataStore = appContext.dataStore
     private val USERNAME = stringPreferencesKey("username")
     private val THEME = stringPreferencesKey("theme")
+    private val DARK_MODE = stringPreferencesKey("dark_mode")
+
+    // Flow properties for Compose
+    val themeFlow: Flow<String> = sessionDataStore.data.map { preferences ->
+        preferences[THEME] ?: "Orange"
+    }
+
+    val darkModeFlow: Flow<String> = sessionDataStore.data.map { preferences ->
+        preferences[DARK_MODE] ?: "System"
+    }
+
+    val usernameFlow: Flow<String> = sessionDataStore.data.map { preferences ->
+        preferences[USERNAME] ?: ""
+    }
 
     suspend fun updateUsername(newValue: String) {
         this.sessionDataStore.edit { settings ->
@@ -29,6 +43,16 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
         this.sessionDataStore.edit { settings ->
             settings[THEME] = newValue
         }
+    }
+
+    suspend fun updateDarkMode(newValue: String) {
+        this.sessionDataStore.edit { settings ->
+            settings[DARK_MODE] = newValue
+        }
+    }
+
+    suspend fun readDarkMode(): String {
+        return darkModeFlow.first()
     }
 
     suspend fun readUsername(): String {
