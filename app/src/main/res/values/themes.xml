@@ -1,48 +1,173 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.SplashScreen" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="colorPrimary">@color/orange_600</item>
+    <!-- Splash Screen Theme - Material 3 -->
+    <style name="Theme.SplashScreen" parent="Theme.Material3.Light">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
 
-        <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
 
-
-        <!-- to change the status bar color -->
-        <item name="colorPrimaryVariant">@color/orange_600_dark</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary</item>
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
     </style>
 
-    <!-- Base application theme. -->
-    <style name="Theme.Fooders" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/orange_600</item>
-        <item name="colorPrimaryVariant">@color/orange_600_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <!--<item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>-->
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+    <!-- Base Application Theme - Material 3 Orange -->
+    <!-- Base Application Theme - Material 3 Orange -->
+    <style name="Theme.Fooders" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+
+        <!-- Tertiary colors -->
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+
+        <!-- Outline colors -->
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+
+        <!-- Inverse colors -->
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/white</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary</item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
 
+    <!-- Avocado/Green Theme - Material 3 -->
+    <style name="Theme.Fooders.Avocado" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/md_theme_light_primary_green</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary_green</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer_green</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer_green</item>
 
-    <!-- Base application theme. -->
-    <style name="Theme.Fooders.Avocado" parent="Theme.Fooders">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/light_green_600</item>
-        <item name="colorPrimaryVariant">@color/light_green_600_dark</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/light_green_600_dark</item>
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/md_theme_light_secondary_green</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary_green</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer_green</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer_green
+        </item>
+
+        <!-- Tertiary colors -->
+        <item name="colorTertiary">@color/md_theme_light_tertiary_green</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary_green</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer_green</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer_green</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+
+        <!-- Outline colors -->
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+
+        <!-- Inverse colors -->
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary_green</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">
+            @color/md_theme_light_primary_green
+        </item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
 
-    <!-- Base application theme. -->
-    <style name="Theme.Fooders.Cherry" parent="Theme.Fooders">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red_600</item>
-        <item name="colorPrimaryVariant">@color/red_600_dark</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/red_600_dark</item>
+    <!-- Cherry/Red Theme - Material 3 -->
+    <style name="Theme.Fooders.Cherry" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/md_theme_light_primary_red</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary_red</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer_red</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer_red</item>
+
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/md_theme_light_secondary_red</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary_red</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer_red</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer_red</item>
+
+        <!-- Tertiary colors -->
+        <item name="colorTertiary">@color/md_theme_light_tertiary_red</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary_red</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer_red</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer_red</item>
+
+        <!-- Error colors -->
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+
+        <!-- Outline colors -->
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+
+        <!-- Inverse colors -->
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary_red</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/md_theme_light_primary_red
+        </item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
 </resources>

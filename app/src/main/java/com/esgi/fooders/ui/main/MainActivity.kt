@@ -6,17 +6,19 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.esgi.fooders.R
 import com.esgi.fooders.databinding.ActivityMainBinding
 import com.esgi.fooders.ui.profile.viewpager.SuccessEventViewModel
@@ -24,10 +26,8 @@ import com.esgi.fooders.ui.settings.SettingsActivity
 import com.esgi.fooders.utils.DataStoreManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -45,13 +45,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
         setFoodersTheme()
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
-        // https://stackoverflow.com/a/61472200
+        setupEdgeToEdge()
+
+        setSupportActionBar(binding.toolbar)
+        applyThemeColors()
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navigation_host) as NavHostFragment
         val navController: NavController = navHostFragment.navController
@@ -59,34 +64,33 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration =
             AppBarConfiguration(
                 setOf(
-                    R.id.historyFragment,
-                    R.id.homeFragment,
-                    R.id.profileFragment
+                    R.id.homeFragment
                 )
             )
 
-        binding.bottomNavigationView.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        hideBottomNavigationBar(navController)
+        hideActionBarForSpecificScreens(navController)
     }
 
-    private fun hideBottomNavigationBar(navController: NavController) {
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavigationView.visibility = if (destination.id == R.id.loginFragment) {
-                supportActionBar?.hide()
-                View.GONE
-            } else {
-                supportActionBar?.show()
-                View.VISIBLE
-            }
+    private fun setupEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            if (destination.id == R.id.scanFragment) {
-                supportActionBar?.hide()
-            }
+            binding.appBarLayout.updatePadding(top = insets.top)
+
+            windowInsets
         }
     }
 
+    private fun hideActionBarForSpecificScreens(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.loginFragment, R.id.scanFragment -> supportActionBar?.hide()
+                else -> supportActionBar?.show()
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -109,21 +113,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.profile -> {
+                findNavController(R.id.navigation_host).navigate(R.id.profileFragment)
+            }
             R.id.logout -> {
                 lifecycleScope.launch {
                     dataStoreManager.updateUsername("")
-                    supportFragmentManager.popBackStack();
+                    supportFragmentManager.popBackStack()
                     findNavController(R.id.navigation_host).setGraph(R.navigation.navigation_graph)
-                    /*val navOptions = NavOptions.Builder()
-                        .setPopUpTo(R.id.homeFragment, true)
-                        .build()
-                    withContext(Main) {
-                        Navigation.findNavController(binding.root).navigate(
-                            R.id.action_loginFragment_to_homeFragment,
-                            null,
-                            navOptions
-                        )
-                    }*/
                 }
             }
             R.id.settings -> {
@@ -153,6 +150,25 @@ class MainActivity : AppCompatActivity() {
             if (themeValue != lastThemeChanged) {
                 successEventViewModel.miscUserSuccess("theme")
                 recreate()
+            }
+        }
+    }
+
+    private fun applyThemeColors() {
+        lifecycleScope.launch(IO) {
+            val themeValue = dataStoreManager.readTheme()
+
+            val primaryColor = when (themeValue) {
+                "Avocado" -> androidx.core.content.ContextCompat.getColor(this@MainActivity, R.color.md_theme_light_primary_green)
+                "Orange" -> androidx.core.content.ContextCompat.getColor(this@MainActivity, R.color.md_theme_light_primary)
+                "Cherry" -> androidx.core.content.ContextCompat.getColor(this@MainActivity, R.color.md_theme_light_primary_red)
+                else -> androidx.core.content.ContextCompat.getColor(this@MainActivity, R.color.md_theme_light_primary)
+            }
+
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Main) {
+                binding.toolbar.setBackgroundColor(primaryColor)
+                binding.appBarLayout.setBackgroundColor(primaryColor)
+                window.statusBarColor = android.graphics.Color.TRANSPARENT
             }
         }
     }

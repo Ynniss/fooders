@@ -47,6 +47,7 @@ class IngredientsFragment : Fragment() {
                                 is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
                                     loadUi(event.result.data!!)
                                 }
+                                else -> Unit
                             }
                         })
                 }

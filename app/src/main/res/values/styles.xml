@@ -26,4 +26,56 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="ShapeAppearance.Fooders.RoundedToolbar" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomLeft">60dp</item>
+        <item name="cornerSizeBottomRight">60dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+    </style>
+
+    <style name="BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?attr/colorPrimaryContainer</item>
+        <item name="android:width">72dp</item>
+        <item name="android:height">36dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
+    </style>
+
+    <!-- Modern Action Bar Styles -->
+    <style name="ModernActionBar" parent="Widget.Material3.ActionBar.Solid">
+        <item name="background">@color/md_theme_light_primary</item>
+        <item name="elevation">8dp</item>
+        <item name="titleTextStyle">@style/ModernActionBarTitle</item>
+    </style>
+
+    <style name="ModernActionBar.Green">
+        <item name="background">@color/md_theme_light_primary_green</item>
+    </style>
+
+    <style name="ModernActionBar.Red">
+        <item name="background">@color/md_theme_light_primary_red</item>
+    </style>
+
+    <style name="ModernActionBarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="ModernActionBarTheme" parent="ThemeOverlay.Material3.ActionBar">
+        <item name="colorControlNormal">@color/md_theme_light_onPrimary</item>
+        <item name="actionMenuTextColor">@color/md_theme_light_onPrimary</item>
+    </style>
+
+    <style name="ModernActionBarTheme.Green">
+        <item name="colorControlNormal">@color/md_theme_light_onPrimary_green</item>
+        <item name="actionMenuTextColor">@color/md_theme_light_onPrimary_green</item>
+    </style>
+
+    <style name="ModernActionBarTheme.Red">
+        <item name="colorControlNormal">@color/md_theme_light_onPrimary_red</item>
+        <item name="actionMenuTextColor">@color/md_theme_light_onPrimary_red</item>
+    </style>
+
 </resources>
