@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".FoodersApplication"
+        android:name=".ForkLifeApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,21 +28,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.photo.app.PhotoActivity"
-            android:theme="@style/Theme.Fooders" />
-
-        <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:theme="@style/Theme.Fooders" />
-
-        <service
-            android:name=".utils.FoodersFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+        <!-- Google Play Games Services -->
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/play_games_app_id" />
     </application>
 
 </manifest>

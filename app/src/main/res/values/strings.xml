@@ -1,5 +1,11 @@
 <resources>
-    <string name="app_name">Fooders</string>
+    <string name="app_name">ForkLife</string>
+
+    <!-- Google Play Games Services IDs -->
+    <!-- TODO: Replace with actual IDs from Play Console after setup -->
+    <string name="play_games_app_id">YOUR_PLAY_GAMES_APP_ID</string>
+    <string name="leaderboard_total_scans">YOUR_LEADERBOARD_ID</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txt_overflow_logout">Logout</string>
