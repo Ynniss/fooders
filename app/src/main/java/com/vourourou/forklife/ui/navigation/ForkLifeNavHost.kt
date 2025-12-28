@@ -1,0 +1,132 @@
+package com.vourourou.forklife.ui.navigation
+
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.vourourou.forklife.ui.history.HistoryScreen
+import com.vourourou.forklife.ui.home.HomeScreen
+import com.vourourou.forklife.ui.profile.ProfileScreen
+import com.vourourou.forklife.ui.scan.ManualScanScreen
+import com.vourourou.forklife.ui.scan.ScanScreen
+import com.vourourou.forklife.ui.settings.SettingsScreen
+
+private const val ANIMATION_DURATION = 300
+
+@Composable
+fun ForkLifeNavHost(
+    navController: NavHostController,
+    startDestination: String,
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = modifier,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(ANIMATION_DURATION)
+            ) + fadeIn(animationSpec = tween(ANIMATION_DURATION))
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(ANIMATION_DURATION)
+            ) + fadeOut(animationSpec = tween(ANIMATION_DURATION))
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(ANIMATION_DURATION)
+            ) + fadeIn(animationSpec = tween(ANIMATION_DURATION))
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(ANIMATION_DURATION)
+            ) + fadeOut(animationSpec = tween(ANIMATION_DURATION))
+        }
+    ) {
+        // Home Screen
+        composable(route = Screen.Home.route) {
+            HomeScreen(
+                paddingValues = paddingValues,
+                onNavigateToScan = {
+                    navController.navigate(Screen.Scan.route)
+                },
+                onNavigateToManualScan = {
+                    navController.navigate(Screen.ManualScan.createRoute())
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Screen.History.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
+        }
+
+        // Scan Screen
+        composable(route = Screen.Scan.route) {
+            ScanScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToManualScan = {
+                    navController.navigate(Screen.ManualScan.createRoute())
+                }
+            )
+        }
+
+        // Manual Scan Screen
+        composable(
+            route = Screen.ManualScan.route,
+            arguments = listOf(
+                navArgument(NavArguments.BARCODE) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val barcode = backStackEntry.arguments?.getString(NavArguments.BARCODE) ?: ""
+            ManualScanScreen(
+                initialBarcode = barcode,
+                paddingValues = paddingValues
+            )
+        }
+
+        // History Screen
+        composable(route = Screen.History.route) {
+            HistoryScreen(
+                paddingValues = paddingValues,
+                onNavigateToProduct = { barcode ->
+                    navController.navigate(Screen.ManualScan.createRoute(barcode))
+                }
+            )
+        }
+
+        // Profile Screen
+        composable(route = Screen.Profile.route) {
+            ProfileScreen(
+                paddingValues = paddingValues
+            )
+        }
+
+        // Settings Screen
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(
+                paddingValues = paddingValues
+            )
+        }
+    }
+}
