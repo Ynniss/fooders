@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fooders is an Android application for scanning and managing food product information. The app integrates with OpenFoodFacts API for product data and uses a custom backend API (Firebase Functions) for user management, statistics, and rankings.
+ForkLife is an Android application for scanning and managing food product information developed by Vourourou mobile app studio. The app integrates with OpenFoodFacts API for product data and uses Google Play Games Services for authentication and leaderboards.
 
-**Package name**: `com.esgi.fooders`
-**Application ID**: `com.esgi_project.fooders`
+**Package name**: `com.vourourou.forklife`
+**Application ID**: `com.vourourou.forklife`
 
 ## Build Commands
 
@@ -54,20 +54,20 @@ This requires:
 
 The app uses a **single-activity, multiple-composables architecture** with Jetpack Compose and Material 3:
 
-- **Single Activity**: `MainActivity` hosts the entire app using `setContent { FoodersApp() }`
+- **Single Activity**: `MainActivity` hosts the entire app using `setContent { ForkLifeApp() }`
 - **Compose Navigation**: Type-safe navigation with `androidx.navigation:navigation-compose`
 - **Material 3**: Full Material You design system with dynamic theming
 
 ### Dependency Injection (Dagger Hilt)
 
 The app uses Dagger Hilt for dependency injection:
-- `FoodersApplication` is annotated with `@HiltAndroidApp`
+- `ForkLifeApplication` is annotated with `@HiltAndroidApp`
 - `MainActivity` uses `@AndroidEntryPoint`
 - ViewModels use `@HiltViewModel` and are accessed via `hiltViewModel()` in Composables
 - DI configuration in `di/AppModule.kt`
 
 Key provided dependencies:
-- `FoodersApi` (Retrofit instance with 60s timeouts)
+- `ForkLifeApi` (Retrofit instance with 60s timeouts)
 - `LoginRepository`
 - `ScanRepository`
 - `DataStoreManager` (injected via constructor)
@@ -78,16 +78,15 @@ Key provided dependencies:
 - **Custom Backend**: `https://us-central1-fooders-811cb.cloudfunctions.net/app/fooders/api/`
   - User login, statistics, rankings, and success tracking
 - **OpenFoodFacts API**: `https://world.openfoodfacts.org/`
-  - Product information retrieval
-  - Product image and information modifications
+  - Product information retrieval (READ-only, no authentication required)
 
-**API Interface**: `data/remote/FoodersApi.kt`
+**API Interface**: `data/remote/ForkLifeApi.kt`
 
 **Repositories**:
 - `LoginRepository`: Handles user authentication
 - `ScanRepository`: Manages product scanning and information retrieval
 
-**Responses**: Located in `data/remote/responses/` with subdirectories for different response types (ProductInformations, ImageModificationResponse, UserSuccessResponse, RankingResponse)
+**Responses**: Located in `data/remote/responses/` with subdirectories for different response types (ProductInformations, UserSuccessResponse, RankingResponse)
 
 ### Presentation Layer
 
@@ -95,21 +94,21 @@ Key provided dependencies:
 
 ```
 ui/
-├── FoodersApp.kt              # Main app composable with navigation
+├── ForkLifeApp.kt              # Main app composable with navigation
 ├── theme/
 │   ├── Color.kt              # Color definitions for all themes
 │   ├── Type.kt               # Material 3 typography
 │   ├── Shape.kt              # Material 3 shapes
-│   └── Theme.kt              # FoodersTheme composable
+│   └── Theme.kt              # ForkLifeTheme composable
 ├── navigation/
 │   ├── Screen.kt             # Navigation routes
-│   └── FoodersNavHost.kt     # Navigation graph
+│   └── ForkLifeNavHost.kt     # Navigation graph
 ├── components/
-│   ├── FoodersTopAppBar.kt   # App bar variants
-│   ├── FoodersBottomNavigation.kt
-│   ├── FoodersCard.kt        # Card components
-│   ├── FoodersButton.kt      # Button variants
-│   ├── FoodersTextField.kt   # Text input components
+│   ├── ForkLifeTopAppBar.kt   # App bar variants
+│   ├── ForkLifeBottomNavigation.kt
+│   ├── ForkLifeCard.kt        # Card components
+│   ├── ForkLifeButton.kt      # Button variants
+│   ├── ForkLifeTextField.kt   # Text input components
 │   └── LoadingIndicator.kt   # Lottie loading animation
 ├── login/
 │   ├── LoginScreen.kt
@@ -126,9 +125,6 @@ ui/
 │       ├── CharacteristicsTab.kt
 │       ├── IngredientsTab.kt
 │       └── EnvironmentTab.kt
-├── editproduct/
-│   ├── EditProductScreen.kt
-│   └── EditProductViewModel.kt
 ├── history/
 │   └── HistoryScreen.kt      # Coming soon placeholder
 ├── profile/
@@ -155,10 +151,10 @@ Dark mode options:
 - **Light** - Always light
 - **Dark** - Always dark
 
-Theme is applied via `FoodersTheme` composable:
+Theme is applied via `ForkLifeTheme` composable:
 ```kotlin
-FoodersTheme(
-    colorTheme = FoodersColorTheme.Orange,
+ForkLifeTheme(
+    colorTheme = ForkLifeColorTheme.Orange,
     darkModePreference = DarkModePreference.System
 ) {
     // Content
@@ -190,10 +186,9 @@ Navigation is handled via Compose Navigation:
 - Bottom sheet product display
 - Manual barcode entry option
 
-**Product Management**:
+**Product Information**:
 - Product information with HorizontalPager tabs (Score, Characteristics, Ingredients, Environment)
-- Edit product details
-- Integration with OpenFoodFacts for data submission
+- READ-only access to OpenFoodFacts database (no account required)
 
 **User Features**:
 - Login system with session persistence
@@ -268,7 +263,7 @@ Required secrets:
 
 - The app requires camera permissions for scanning (handled via Accompanist Permissions)
 - Firebase services require `google-services.json` (not in repo, provided via CI secrets)
-- Old fragment-based code is deprecated but still present (will be removed in cleanup)
+- OpenFoodFacts API is READ-only - no account or authentication required for product data
 - AGP 8.10.1 used with Compose enabled
 - KAPT (used by Hilt) requires JVM arguments in `gradle.properties`
 - Gradle build cache is disabled to prevent cache corruption issues
