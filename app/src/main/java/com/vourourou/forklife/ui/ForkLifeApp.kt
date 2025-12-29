@@ -4,11 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Settings
@@ -17,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -73,7 +68,6 @@ private fun ForkLifeScaffold(
     val showBottomBar = shouldShowBottomBar(navController)
 
     Scaffold(
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -119,7 +113,7 @@ private fun ForkLifeTopBar(
         currentRoute == Screen.Home.route -> {
             ForkLifeTopAppBar(
                 title = "ForkLife",
-                windowInsets = WindowInsets.statusBars,
+                windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -134,7 +128,7 @@ private fun ForkLifeTopBar(
         currentRoute == Screen.History.route -> {
             ForkLifeTopAppBar(
                 title = "Historique",
-                windowInsets = WindowInsets.safeDrawing,
+                windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -149,7 +143,7 @@ private fun ForkLifeTopBar(
         currentRoute == Screen.Profile.route -> {
             ForkLifeTopAppBar(
                 title = "Profil",
-                windowInsets = WindowInsets.safeDrawing,
+                windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -165,7 +159,7 @@ private fun ForkLifeTopBar(
             ForkLifeBackTopAppBar(
                 title = "Parametres",
                 onBackClick = { navController.popBackStack() },
-                windowInsets = WindowInsets.safeDrawing
+                windowInsets = TopAppBarDefaults.windowInsets
             )
         }
 
@@ -173,7 +167,7 @@ private fun ForkLifeTopBar(
             ForkLifeBackTopAppBar(
                 title = "Saisie manuelle",
                 onBackClick = { navController.popBackStack() },
-                windowInsets = WindowInsets.safeDrawing
+                windowInsets = TopAppBarDefaults.windowInsets
             )
         }
 
