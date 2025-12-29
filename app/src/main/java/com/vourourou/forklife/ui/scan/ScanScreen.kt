@@ -271,6 +271,7 @@ fun CameraPreview(
 
     var cameraProvider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val currentIsScanning by rememberUpdatedState(isScanning)
+    val currentOnBarcodeScanned by rememberUpdatedState(onBarcodeScanned)
 
     DisposableEffect(lifecycleOwner) {
         onDispose {
@@ -307,7 +308,7 @@ fun CameraPreview(
                             .also {
                                 it.setAnalyzer(cameraExecutor, BarcodeAnalyzer { barcode ->
                                     if (currentIsScanning) {
-                                        onBarcodeScanned(barcode)
+                                        currentOnBarcodeScanned(barcode)
                                     }
                                 })
                             }

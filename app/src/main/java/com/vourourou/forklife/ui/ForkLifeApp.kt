@@ -6,6 +6,9 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Settings
@@ -14,20 +17,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vourourou.forklife.ui.components.ForkLifeBackTopAppBar
 import com.vourourou.forklife.ui.components.ForkLifeBottomNavigation
 import com.vourourou.forklife.ui.components.ForkLifeExtendedFAB
-import com.vourourou.forklife.ui.components.ForkLifeMediumTopAppBar
 import com.vourourou.forklife.ui.components.ForkLifeTopAppBar
 import com.vourourou.forklife.ui.components.shouldShowBottomBar
 import com.vourourou.forklife.ui.navigation.ForkLifeNavHost
@@ -37,23 +38,28 @@ import com.vourourou.forklife.ui.theme.toDarkModePreference
 import com.vourourou.forklife.ui.theme.toForkLifeColorTheme
 import com.vourourou.forklife.utils.DataStoreManager
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForkLifeApp(
     dataStoreManager: DataStoreManager
 ) {
     val navController = rememberNavController()
 
-    val theme by dataStoreManager.themeFlow.collectAsState(initial = "Orange")
-    val darkMode by dataStoreManager.darkModeFlow.collectAsState(initial = "System")
+    val theme by dataStoreManager.themeFlow.collectAsState(initial = null)
+    val darkMode by dataStoreManager.darkModeFlow.collectAsState(initial = null)
 
-    ForkLifeTheme(
-        colorTheme = theme.toForkLifeColorTheme(),
-        darkModePreference = darkMode.toDarkModePreference()
-    ) {
-        ForkLifeScaffold(
-            navController = navController
-        )
+    // Only render when DataStore values are loaded to avoid recomposition jump
+    val currentTheme = theme
+    val currentDarkMode = darkMode
+
+    if (currentTheme != null && currentDarkMode != null) {
+        ForkLifeTheme(
+            colorTheme = currentTheme.toForkLifeColorTheme(),
+            darkModePreference = currentDarkMode.toDarkModePreference()
+        ) {
+            ForkLifeScaffold(
+                navController = navController
+            )
+        }
     }
 }
 
@@ -66,35 +72,14 @@ private fun ForkLifeScaffold(
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomBar = shouldShowBottomBar(navController)
 
-    // Create scroll behaviors - remembered per route type
-    val historyScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val profileScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    // Determine current scroll behavior based on route
-    val currentScrollBehavior: TopAppBarScrollBehavior? = when {
-        currentRoute == Screen.History.route -> historyScrollBehavior
-        currentRoute == Screen.Profile.route -> profileScrollBehavior
-        else -> null
-    }
-
-    val scaffoldModifier = if (currentScrollBehavior != null) {
-        Modifier
-            .fillMaxSize()
-            .nestedScroll(currentScrollBehavior.nestedScrollConnection)
-    } else {
-        Modifier.fillMaxSize()
-    }
-
     Scaffold(
-        modifier = scaffoldModifier,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             ForkLifeTopBar(
                 currentRoute = currentRoute,
-                navController = navController,
-                historyScrollBehavior = historyScrollBehavior,
-                profileScrollBehavior = profileScrollBehavior
+                navController = navController
             )
         },
         bottomBar = {
@@ -128,14 +113,13 @@ private fun ForkLifeScaffold(
 @Composable
 private fun ForkLifeTopBar(
     currentRoute: String?,
-    navController: NavHostController,
-    historyScrollBehavior: TopAppBarScrollBehavior,
-    profileScrollBehavior: TopAppBarScrollBehavior
+    navController: NavHostController
 ) {
     when {
         currentRoute == Screen.Home.route -> {
             ForkLifeTopAppBar(
                 title = "ForkLife",
+                windowInsets = WindowInsets.statusBars,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -146,10 +130,11 @@ private fun ForkLifeTopBar(
                 }
             )
         }
+
         currentRoute == Screen.History.route -> {
-            ForkLifeMediumTopAppBar(
+            ForkLifeTopAppBar(
                 title = "Historique",
-                scrollBehavior = historyScrollBehavior,
+                windowInsets = WindowInsets.safeDrawing,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -160,10 +145,11 @@ private fun ForkLifeTopBar(
                 }
             )
         }
+
         currentRoute == Screen.Profile.route -> {
-            ForkLifeMediumTopAppBar(
+            ForkLifeTopAppBar(
                 title = "Profil",
-                scrollBehavior = profileScrollBehavior,
+                windowInsets = WindowInsets.safeDrawing,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
@@ -174,18 +160,23 @@ private fun ForkLifeTopBar(
                 }
             )
         }
+
         currentRoute == Screen.Settings.route -> {
             ForkLifeBackTopAppBar(
                 title = "Parametres",
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                windowInsets = WindowInsets.safeDrawing
             )
         }
+
         currentRoute?.startsWith("manual_scan") == true -> {
             ForkLifeBackTopAppBar(
                 title = "Saisie manuelle",
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                windowInsets = WindowInsets.safeDrawing
             )
         }
+
         currentRoute == Screen.Scan.route -> {
             // No top bar for scan screen - it has its own overlay
         }
