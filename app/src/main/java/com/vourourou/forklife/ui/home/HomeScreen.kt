@@ -106,8 +106,8 @@ fun HomeScreen(
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.History,
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         },
                         onClick = onNavigateToHistory
@@ -132,8 +132,8 @@ fun HomeScreen(
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.Info,
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         },
                         onClick = { /* TODO: About dialog */ }

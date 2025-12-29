@@ -59,7 +59,13 @@ fun ForkLifeNavHost(
         }
     ) {
         // Home Screen
-        composable(route = Screen.Home.route) {
+        composable(
+            route = Screen.Home.route,
+            enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            exitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            popExitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) }
+        ) {
             HomeScreen(
                 paddingValues = paddingValues,
                 onNavigateToScan = {
@@ -119,7 +125,13 @@ fun ForkLifeNavHost(
         }
 
         // History Screen
-        composable(route = Screen.History.route) {
+        composable(
+            route = Screen.History.route,
+            enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            exitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            popExitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) }
+        ) {
             HistoryScreen(
                 paddingValues = paddingValues,
                 onNavigateToProduct = { barcode ->
@@ -129,7 +141,13 @@ fun ForkLifeNavHost(
         }
 
         // Profile Screen
-        composable(route = Screen.Profile.route) {
+        composable(
+            route = Screen.Profile.route,
+            enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            exitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
+            popExitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) }
+        ) {
             ProfileScreen(
                 paddingValues = paddingValues
             )
