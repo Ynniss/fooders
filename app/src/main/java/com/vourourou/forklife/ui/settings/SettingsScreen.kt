@@ -36,8 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vourourou.forklife.R
 import com.vourourou.forklife.ui.theme.AvocadoPrimary
 import com.vourourou.forklife.ui.theme.CherryPrimary
 import com.vourourou.forklife.ui.theme.ForkLifeCustomShapes
@@ -62,21 +64,12 @@ fun SettingsScreen(
     ) {
         // Theme Color Section
         item {
-            SettingsSection(title = "Couleur du theme") {
+            SettingsSection(title = stringResource(R.string.theme_color)) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    DarkModeOption(
-                        name = "Dynamique",
-                        description = "Couleurs de votre fond d'ecran (Android 12+)",
-                        icon = Icons.Default.Wallpaper,
-                        isSelected = currentTheme == "Dynamic",
-                        onClick = {
-                            scope.launch { viewModel.updateTheme("Dynamic") }
-                        }
-                    )
                     ThemeColorOption(
-                        name = "Orange",
+                        name = stringResource(R.string.orange),
                         color = OrangePrimary,
                         isSelected = currentTheme == "Orange",
                         onClick = {
@@ -84,7 +77,7 @@ fun SettingsScreen(
                         }
                     )
                     ThemeColorOption(
-                        name = "Avocado",
+                        name = stringResource(R.string.avocado),
                         color = AvocadoPrimary,
                         isSelected = currentTheme == "Avocado",
                         onClick = {
@@ -92,7 +85,7 @@ fun SettingsScreen(
                         }
                     )
                     ThemeColorOption(
-                        name = "Cherry",
+                        name = stringResource(R.string.cherry),
                         color = CherryPrimary,
                         isSelected = currentTheme == "Cherry",
                         onClick = {
@@ -105,13 +98,13 @@ fun SettingsScreen(
 
         // Dark Mode Section
         item {
-            SettingsSection(title = "Mode sombre") {
+            SettingsSection(title = stringResource(R.string.dark_mode)) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     DarkModeOption(
-                        name = "Systeme",
-                        description = "Suivre les parametres du systeme",
+                        name = stringResource(R.string.system),
+                        description = stringResource(R.string.system_description),
                         icon = Icons.Default.PhoneAndroid,
                         isSelected = currentDarkMode == "System",
                         onClick = {
@@ -119,8 +112,8 @@ fun SettingsScreen(
                         }
                     )
                     DarkModeOption(
-                        name = "Clair",
-                        description = "Toujours utiliser le mode clair",
+                        name = stringResource(R.string.light),
+                        description = stringResource(R.string.light_description),
                         icon = Icons.Default.LightMode,
                         isSelected = currentDarkMode == "Light",
                         onClick = {
@@ -128,8 +121,8 @@ fun SettingsScreen(
                         }
                     )
                     DarkModeOption(
-                        name = "Sombre",
-                        description = "Toujours utiliser le mode sombre",
+                        name = stringResource(R.string.dark),
+                        description = stringResource(R.string.dark_description),
                         icon = Icons.Default.DarkMode,
                         isSelected = currentDarkMode == "Dark",
                         onClick = {
@@ -178,6 +171,10 @@ fun ThemeColorOption(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    // Determine checkmark color based on background brightness
+    // Avocado green (0xFF66BB6A) needs black for better contrast
+    val checkmarkColor = if (color == AvocadoPrimary) Color.Black else Color.White
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -196,8 +193,8 @@ fun ThemeColorOption(
             if (isSelected) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Selected",
-                    tint = Color.White,
+                    contentDescription = stringResource(R.string.selected),
+                    tint = checkmarkColor,
                     modifier = Modifier.size(20.dp)
                 )
             }

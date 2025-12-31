@@ -33,9 +33,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vourourou.forklife.R
 import com.vourourou.forklife.ui.components.ForkLifePrimaryButton
 import com.vourourou.forklife.ui.components.ForkLifeTextField
 import com.vourourou.forklife.ui.components.LoadingIndicator
@@ -59,7 +61,7 @@ fun ManualScanScreen(
     )
 
     val pagerState = rememberPagerState(pageCount = { 4 })
-    val tabTitles = listOf("Score", "Caracteristiques", "Ingredients", "Environnement")
+    val tabTitles = listOf(R.string.tab_score, R.string.tab_characteristics, R.string.tab_ingredients, R.string.tab_environment)
     val tabIcons = listOf(
         Icons.Default.Info,
         Icons.Default.Science,
@@ -87,7 +89,7 @@ fun ManualScanScreen(
             ForkLifeTextField(
                 value = barcode,
                 onValueChange = { barcode = it },
-                label = "Code-barres",
+                label = stringResource(R.string.barcode),
                 leadingIcon = Icons.Default.QrCodeScanner,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -95,7 +97,7 @@ fun ManualScanScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             ForkLifePrimaryButton(
-                text = "Rechercher",
+                text = stringResource(R.string.search),
                 onClick = {
                     if (barcode.isNotBlank()) {
                         viewModel.getProductInformations(barcode)
@@ -130,19 +132,19 @@ fun ManualScanScreen(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.primary
                     ) {
-                        tabTitles.forEachIndexed { index, title ->
+                        tabTitles.forEachIndexed { index, titleRes ->
                             Tab(
                                 selected = pagerState.currentPage == index,
                                 onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
                                 icon = {
                                     Icon(
                                         imageVector = tabIcons[index],
-                                        contentDescription = title
+                                        contentDescription = stringResource(titleRes)
                                     )
                                 },
                                 text = {
                                     Text(
-                                        text = title,
+                                        text = stringResource(titleRes),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
@@ -166,7 +168,7 @@ fun ManualScanScreen(
 
                     // Bottom Actions
                     ForkLifePrimaryButton(
-                        text = "Nouveau scan",
+                        text = stringResource(R.string.new_scan),
                         onClick = {
                             barcode = ""
                             viewModel.resetBooleanCheck()
@@ -191,18 +193,18 @@ fun ManualScanScreen(
                         modifier = Modifier.padding(32.dp)
                     ) {
                         Text(
-                            text = "Produit non trouve",
+                            text = stringResource(R.string.product_not_found),
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Code-barres: $barcode",
+                            text = stringResource(R.string.barcode_format, barcode),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Ce produit n'est pas dans la base de donnees",
+                            text = stringResource(R.string.product_not_in_database),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -219,7 +221,7 @@ fun ManualScanScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Entrez un code-barres pour rechercher",
+                        text = stringResource(R.string.enter_barcode_to_search),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

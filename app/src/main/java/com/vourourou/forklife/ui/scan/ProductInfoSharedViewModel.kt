@@ -10,7 +10,6 @@ import com.vourourou.forklife.data.remote.model.Product
 import com.vourourou.forklife.data.repository.HistoryRepository
 import com.vourourou.forklife.data.repository.OpenFoodFactsRepository
 import com.vourourou.forklife.utils.DataStoreManager
-import com.vourourou.forklife.utils.PlayGamesManager
 import com.vourourou.forklife.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,7 +22,6 @@ import javax.inject.Inject
 class ProductInfoSharedViewModel @Inject constructor(
     private val repository: OpenFoodFactsRepository,
     private val dataStoreManager: DataStoreManager,
-    private val playGamesManager: PlayGamesManager,
     private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
@@ -83,12 +81,7 @@ class ProductInfoSharedViewModel @Inject constructor(
                 // Increment scan count
                 dataStoreManager.incrementScanCount()
 
-                // Get updated count
                 val scanCount = dataStoreManager.getScanCount()
-
-                // Submit to leaderboard if authenticated
-                playGamesManager.submitScore(activity, scanCount.toLong())
-
                 Log.d("ProductInfoVM", "Scan tracked: $scanCount")
             } catch (e: Exception) {
                 Log.e("ProductInfoVM", "Error tracking scan", e)

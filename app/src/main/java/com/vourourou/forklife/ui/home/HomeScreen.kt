@@ -12,15 +12,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.vourourou.forklife.BuildConfig
+import com.vourourou.forklife.R
 import com.vourourou.forklife.ui.components.ForkLifeListItem
 import com.vourourou.forklife.ui.components.ForkLifeListItemIcon
 import com.vourourou.forklife.ui.components.ForkLifeSurfaceCard
@@ -31,8 +40,40 @@ fun HomeScreen(
     onNavigateToScan: () -> Unit,
     onNavigateToManualScan: () -> Unit,
     onNavigateToHistory: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToStats: () -> Unit
 ) {
+    var showAboutDialog by remember { mutableStateOf(false) }
+
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = { showAboutDialog = false },
+            title = { Text(stringResource(R.string.about_forklife)) },
+            text = {
+                Column {
+                    Text(stringResource(R.string.version_format, BuildConfig.VERSION_NAME))
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.about_app_description))
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.developed_by),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.data_source),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAboutDialog = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
             .padding(paddingValues)
@@ -43,7 +84,7 @@ fun HomeScreen(
         // Quick Actions Section
         item {
             Text(
-                text = "Actions rapides",
+                text = stringResource(R.string.quick_actions),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -57,8 +98,8 @@ fun HomeScreen(
             ) {
                 Column {
                     ForkLifeListItem(
-                        headlineText = "Scanner un produit",
-                        supportingText = "Utilisez la camera pour scanner un code-barres",
+                        headlineText = stringResource(R.string.scan_product),
+                        supportingText = stringResource(R.string.scan_product_description),
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.CameraAlt
@@ -68,8 +109,8 @@ fun HomeScreen(
                     )
 
                     ForkLifeListItem(
-                        headlineText = "Saisie manuelle",
-                        supportingText = "Entrez le code-barres manuellement",
+                        headlineText = stringResource(R.string.manual_entry),
+                        supportingText = stringResource(R.string.manual_entry_description),
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.Edit,
@@ -87,7 +128,7 @@ fun HomeScreen(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Votre activite",
+                text = stringResource(R.string.your_activity),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -101,8 +142,8 @@ fun HomeScreen(
             ) {
                 Column {
                     ForkLifeListItem(
-                        headlineText = "Historique",
-                        supportingText = "Consultez vos scans precedents",
+                        headlineText = stringResource(R.string.history),
+                        supportingText = stringResource(R.string.history_description),
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.History,
@@ -114,21 +155,21 @@ fun HomeScreen(
                     )
 
                     ForkLifeListItem(
-                        headlineText = "Mon profil",
-                        supportingText = "Vos statistiques et succes",
+                        headlineText = stringResource(R.string.my_stats),
+                        supportingText = stringResource(R.string.stats_description),
                         leadingContent = {
                             ForkLifeListItemIcon(
-                                icon = Icons.Default.Person,
+                                icon = Icons.Default.BarChart,
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         },
-                        onClick = onNavigateToProfile
+                        onClick = onNavigateToStats
                     )
 
                     ForkLifeListItem(
-                        headlineText = "A propos",
-                        supportingText = "En savoir plus sur ForkLife",
+                        headlineText = stringResource(R.string.about),
+                        supportingText = stringResource(R.string.about_description),
                         leadingContent = {
                             ForkLifeListItemIcon(
                                 icon = Icons.Default.Info,
@@ -136,7 +177,7 @@ fun HomeScreen(
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         },
-                        onClick = { /* TODO: About dialog */ }
+                        onClick = { showAboutDialog = true }
                     )
                 }
             }

@@ -26,7 +26,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="ShapeAppearance.Fooders.RoundedToolbar" parent="">
+    <style name="ShapeAppearance.ForkLife.RoundedToolbar" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeBottomLeft">60dp</item>
         <item name="cornerSizeBottomRight">60dp</item>
