@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = 'com.vourourou.forklife'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.vourourou.forklife"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0.0"
 
