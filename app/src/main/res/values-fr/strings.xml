@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">ForkLife</string>
+
+    <!-- Common -->
+    <string name="close">Fermer</string>
+    <string name="cancel">Annuler</string>
+    <string name="back">Retour</string>
+    <string name="settings">Paramètres</string>
+    <string name="search">Rechercher</string>
+    <string name="delete">Supprimer</string>
+    <string name="authorize">Autoriser</string>
+    <string name="unknown_product">Produit inconnu</string>
+    <string name="not_available">N/A</string>
+    <string name="code_format">Code : %s</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_history">Historique</string>
+    <string name="nav_stats">Stats</string>
+
+    <!-- Home Screen -->
+    <string name="quick_actions">Actions rapides</string>
+    <string name="scan_product">Scanner un produit</string>
+    <string name="scan_product_description">Utilisez la caméra pour scanner un code-barres</string>
+    <string name="manual_entry">Saisie manuelle</string>
+    <string name="manual_entry_description">Entrez le code-barres manuellement</string>
+    <string name="your_activity">Votre activité</string>
+    <string name="history">Historique</string>
+    <string name="history_description">Consultez vos scans précédents</string>
+    <string name="my_stats">Mes statistiques</string>
+    <string name="stats_description">Vos scans et produits favoris</string>
+    <string name="about">À propos</string>
+    <string name="about_description">En savoir plus sur ForkLife</string>
+
+    <!-- About Dialog -->
+    <string name="about_forklife">À propos de ForkLife</string>
+    <string name="version_format">Version %s</string>
+    <string name="about_app_description">Scannez vos produits alimentaires pour découvrir leur qualité nutritionnelle et leur impact environnemental.</string>
+    <string name="developed_by">Développé par Vourourou</string>
+    <string name="data_source">Données : Open Food Facts</string>
+
+    <!-- Scan Screen -->
+    <string name="scanner">Scanner</string>
+    <string name="camera_permission_required">Permission caméra requise</string>
+    <string name="camera_permission_message">Veuillez autoriser l\'accès à la caméra pour scanner des codes-barres</string>
+    <string name="scan_barcode">Scannez un code-barres</string>
+    <string name="place_barcode_in_frame">Placez le code-barres dans le cadre</string>
+    <string name="product_not_found">Produit non trouvé</string>
+    <string name="barcode_format">Code-barres : %s</string>
+    <string name="product_not_in_database">Ce produit n\'est pas dans la base de données OpenFoodFacts</string>
+    <string name="flash_on">Allumer le flash</string>
+    <string name="flash_off">Éteindre le flash</string>
+
+    <!-- Manual Scan Screen -->
+    <string name="barcode">Code-barres</string>
+    <string name="new_scan">Nouveau scan</string>
+    <string name="enter_barcode_to_search">Entrez un code-barres pour rechercher</string>
+
+    <!-- Product Detail -->
+    <string name="product_details">Détails du produit</string>
+    <string name="product_image">Image du produit</string>
+
+    <!-- Tabs -->
+    <string name="tab_score">Score</string>
+    <string name="tab_characteristics">Caractéristiques</string>
+    <string name="tab_ingredients">Ingrédients</string>
+    <string name="tab_environment">Environnement</string>
+
+    <!-- Score Tab -->
+    <string name="nutri_score">Nutri-Score</string>
+    <string name="nutritional_quality">Qualité nutritionnelle</string>
+    <string name="eco_score">Eco-Score</string>
+    <string name="environmental_impact">Impact environnemental</string>
+    <string name="nova">NOVA</string>
+    <string name="processing_level">Niveau de transformation</string>
+    <string name="no_scores_available">Aucun score disponible pour ce produit</string>
+
+    <!-- Characteristics Tab -->
+    <string name="nutrition_image">Image nutrition</string>
+    <string name="nutritional_values">Valeurs nutritionnelles</string>
+    <string name="energy">Énergie</string>
+    <string name="fat">Matières grasses</string>
+    <string name="sugars">Sucres</string>
+    <string name="salt">Sel</string>
+    <string name="kcal_format">%s kcal</string>
+    <string name="grams_format">%s g</string>
+
+    <!-- Ingredients Tab -->
+    <string name="ingredients_image">Image ingrédients</string>
+    <string name="ingredients_list">Liste des ingrédients</string>
+    <string name="no_ingredients_available">Aucun ingrédient disponible</string>
+
+    <!-- Environment Tab -->
+    <string name="grade_format">Grade : %s</string>
+    <string name="not_available_text">Non disponible</string>
+    <string name="packaging">Emballage</string>
+    <string name="packaging_info_not_available">Informations d\'emballage non disponibles</string>
+    <string name="no_environment_info">Aucune information environnementale disponible</string>
+
+    <!-- History Screen -->
+    <string name="product_deleted">Produit supprimé</string>
+    <string name="undo">Annuler</string>
+    <string name="clear_history">Effacer l\'historique</string>
+    <string name="clear_history_confirmation">Voulez-vous vraiment effacer tout l\'historique ?</string>
+    <string name="clear">Effacer</string>
+    <string name="no_scans">Aucun scan</string>
+    <string name="scanned_products_appear_here">Vos produits scannés apparaîtront ici</string>
+    <string name="scanned_times_format">Scanné %d fois</string>
+    <string name="nutri_score_format">Nutri-Score %s</string>
+    <string name="eco_score_format">Eco-Score %s</string>
+
+    <!-- Stats Screen -->
+    <string name="statistics">Statistiques</string>
+    <string name="total_scans">Scans totaux</string>
+    <string name="unique_products">Produits uniques</string>
+    <string name="most_scanned_products">Produits les plus scannés</string>
+    <string name="scan_products_to_see_favorites">Scannez des produits pour voir vos favoris ici</string>
+    <string name="no_statistics_yet">Pas encore de statistiques</string>
+    <string name="start_scanning_to_see_stats">Commencez à scanner des produits pour voir vos statistiques ici !</string>
+    <string name="scan_count_format">%d scan</string>
+    <string name="scans_count_format">%d scans</string>
+
+    <plurals name="scans_count">
+        <item quantity="one">%d scan</item>
+        <item quantity="other">%d scans</item>
+    </plurals>
+
+    <!-- Settings Screen -->
+    <string name="theme_color">Couleur du thème</string>
+    <string name="orange">Orange</string>
+    <string name="avocado">Avocat</string>
+    <string name="cherry">Cerise</string>
+    <string name="dark_mode">Mode sombre</string>
+    <string name="system">Système</string>
+    <string name="system_description">Suivre les paramètres système</string>
+    <string name="light">Clair</string>
+    <string name="light_description">Toujours utiliser le mode clair</string>
+    <string name="dark">Sombre</string>
+    <string name="dark_description">Toujours utiliser le mode sombre</string>
+
+    <!-- Accessibility -->
+    <string name="navigate_back">Retour</string>
+    <string name="selected">Sélectionné</string>
+</resources>
