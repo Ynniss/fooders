@@ -15,10 +15,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vourourou.forklife.ui.history.HistoryScreen
 import com.vourourou.forklife.ui.home.HomeScreen
-import com.vourourou.forklife.ui.profile.ProfileScreen
+import com.vourourou.forklife.ui.product.ProductDetailScreen
 import com.vourourou.forklife.ui.scan.ManualScanScreen
 import com.vourourou.forklife.ui.scan.ScanScreen
 import com.vourourou.forklife.ui.settings.SettingsScreen
+import com.vourourou.forklife.ui.stats.StatsScreen
 
 private const val ANIMATION_DURATION = 300
 
@@ -83,8 +84,8 @@ fun ForkLifeNavHost(
                         restoreState = true
                     }
                 },
-                onNavigateToProfile = {
-                    navController.navigate(Screen.Profile.route) {
+                onNavigateToStats = {
+                    navController.navigate(Screen.Stats.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -100,9 +101,6 @@ fun ForkLifeNavHost(
             ScanScreen(
                 onNavigateBack = {
                     navController.popBackStack()
-                },
-                onNavigateToManualScan = {
-                    navController.navigate(Screen.ManualScan.createRoute())
                 }
             )
         }
@@ -135,20 +133,38 @@ fun ForkLifeNavHost(
             HistoryScreen(
                 paddingValues = paddingValues,
                 onNavigateToProduct = { barcode ->
-                    navController.navigate(Screen.ManualScan.createRoute(barcode))
+                    navController.navigate(Screen.ProductDetail.createRoute(barcode))
                 }
             )
         }
 
-        // Profile Screen
+        // Product Detail Screen
         composable(
-            route = Screen.Profile.route,
+            route = Screen.ProductDetail.route,
+            arguments = listOf(
+                navArgument(NavArguments.BARCODE) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val barcode = backStackEntry.arguments?.getString(NavArguments.BARCODE) ?: ""
+            ProductDetailScreen(
+                barcode = barcode,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Stats Screen
+        composable(
+            route = Screen.Stats.route,
             enterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
             exitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) },
             popEnterTransition = { fadeIn(animationSpec = tween(ANIMATION_DURATION)) },
             popExitTransition = { fadeOut(animationSpec = tween(ANIMATION_DURATION)) }
         ) {
-            ProfileScreen(
+            StatsScreen(
                 paddingValues = paddingValues
             )
         }

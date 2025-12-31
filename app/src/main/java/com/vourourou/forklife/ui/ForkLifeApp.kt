@@ -15,10 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.vourourou.forklife.R
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vourourou.forklife.ui.components.ForkLifeBackTopAppBar
@@ -35,7 +38,8 @@ import com.vourourou.forklife.utils.DataStoreManager
 
 @Composable
 fun ForkLifeApp(
-    dataStoreManager: DataStoreManager
+    dataStoreManager: DataStoreManager,
+    onReady: () -> Unit = {}
 ) {
     val navController = rememberNavController()
 
@@ -45,6 +49,13 @@ fun ForkLifeApp(
     // Only render when DataStore values are loaded to avoid recomposition jump
     val currentTheme = theme
     val currentDarkMode = darkMode
+
+    // Signal ready when DataStore values are loaded
+    LaunchedEffect(currentTheme, currentDarkMode) {
+        if (currentTheme != null && currentDarkMode != null) {
+            onReady()
+        }
+    }
 
     if (currentTheme != null && currentDarkMode != null) {
         ForkLifeTheme(
@@ -89,7 +100,7 @@ private fun ForkLifeScaffold(
         floatingActionButton = {
             if (currentRoute == Screen.Home.route) {
                 ForkLifeExtendedFAB(
-                    text = "Scanner",
+                    text = stringResource(R.string.scanner),
                     icon = Icons.Default.CameraAlt,
                     onClick = { navController.navigate(Screen.Scan.route) }
                 )
@@ -113,13 +124,13 @@ private fun ForkLifeTopBar(
     when {
         currentRoute == Screen.Home.route -> {
             ForkLifeTopAppBar(
-                title = "ForkLife",
+                title = stringResource(R.string.app_name),
                 windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(R.string.settings)
                         )
                     }
                 }
@@ -128,28 +139,28 @@ private fun ForkLifeTopBar(
 
         currentRoute == Screen.History.route -> {
             ForkLifeTopAppBar(
-                title = "Historique",
+                title = stringResource(R.string.history),
                 windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(R.string.settings)
                         )
                     }
                 }
             )
         }
 
-        currentRoute == Screen.Profile.route -> {
+        currentRoute == Screen.Stats.route -> {
             ForkLifeTopAppBar(
-                title = "Profil",
+                title = stringResource(R.string.statistics),
                 windowInsets = TopAppBarDefaults.windowInsets,
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Parametres"
+                            contentDescription = stringResource(R.string.settings)
                         )
                     }
                 }
@@ -158,7 +169,7 @@ private fun ForkLifeTopBar(
 
         currentRoute == Screen.Settings.route -> {
             ForkLifeBackTopAppBar(
-                title = "Parametres",
+                title = stringResource(R.string.settings),
                 onBackClick = { navController.popBackStack() },
                 windowInsets = TopAppBarDefaults.windowInsets
             )
@@ -166,7 +177,7 @@ private fun ForkLifeTopBar(
 
         currentRoute?.startsWith("manual_scan") == true -> {
             ForkLifeBackTopAppBar(
-                title = "Saisie manuelle",
+                title = stringResource(R.string.manual_entry),
                 onBackClick = { navController.popBackStack() },
                 windowInsets = TopAppBarDefaults.windowInsets
             )

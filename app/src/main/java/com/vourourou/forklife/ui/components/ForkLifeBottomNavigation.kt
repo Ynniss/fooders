@@ -1,13 +1,14 @@
 package com.vourourou.forklife.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -18,15 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.vourourou.forklife.R
 import com.vourourou.forklife.ui.navigation.Screen
 
 data class BottomNavItem(
     val route: String,
-    val label: String,
+    @StringRes val labelResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
@@ -34,21 +37,21 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(
         route = Screen.Home.route,
-        label = "Accueil",
+        labelResId = R.string.nav_home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
     ),
     BottomNavItem(
         route = Screen.History.route,
-        label = "Historique",
+        labelResId = R.string.nav_history,
         selectedIcon = Icons.Filled.History,
         unselectedIcon = Icons.Outlined.History
     ),
     BottomNavItem(
-        route = Screen.Profile.route,
-        label = "Profil",
-        selectedIcon = Icons.Filled.Person,
-        unselectedIcon = Icons.Outlined.Person
+        route = Screen.Stats.route,
+        labelResId = R.string.nav_stats,
+        selectedIcon = Icons.Filled.BarChart,
+        unselectedIcon = Icons.Outlined.BarChart
     )
 )
 
@@ -72,6 +75,7 @@ fun ForkLifeBottomNavigation(
             bottomNavItems.forEach { item ->
                 val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
 
+                val label = stringResource(item.labelResId)
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
@@ -91,11 +95,11 @@ fun ForkLifeBottomNavigation(
                     icon = {
                         Icon(
                             imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                            contentDescription = item.label
+                            contentDescription = label
                         )
                     },
                     label = {
-                        Text(text = item.label)
+                        Text(text = label)
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,

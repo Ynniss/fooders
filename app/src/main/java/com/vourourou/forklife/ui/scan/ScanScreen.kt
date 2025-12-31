@@ -6,18 +6,22 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,17 +30,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -55,15 +69,32 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.vourourou.forklife.R
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
@@ -99,7 +130,6 @@ import java.util.concurrent.Executors
 @Composable
 fun ScanScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToManualScan: () -> Unit,
     viewModel: ProductInfoSharedViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -113,9 +143,11 @@ fun ScanScreen(
 
     var scannedBarcode by remember { mutableStateOf<String?>(null) }
     var isScanning by remember { mutableStateOf(true) }
+    var isFlashOn by remember { mutableStateOf(false) }
+    var camera by remember { mutableStateOf<Camera?>(null) }
 
     val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.PartiallyExpanded,
+        initialValue = SheetValue.Hidden,
         skipHiddenState = false
     )
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
@@ -130,8 +162,17 @@ fun ScanScreen(
         scannedBarcode?.let { barcode ->
             viewModel.getProductInformations(barcode)
             scope.launch {
-                bottomSheetState.expand()
+                bottomSheetState.partialExpand()
             }
+        }
+    }
+
+    // Handle sheet dismissal (when user drags down to hide)
+    LaunchedEffect(bottomSheetState.currentValue) {
+        if (bottomSheetState.currentValue == SheetValue.Hidden && scannedBarcode != null) {
+            scannedBarcode = null
+            isScanning = true
+            viewModel.resetBooleanCheck()
         }
     }
 
@@ -150,25 +191,39 @@ fun ScanScreen(
         }
     }
 
+    // Dynamic peek height - only show when there's a scanned barcode
+    val peekHeight = if (scannedBarcode != null) 350.dp else 0.dp
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            ProductBottomSheet(
-                productEvent = productEvent,
-                barcode = scannedBarcode ?: "",
-                onDismiss = {
-                    scope.launch {
-                        bottomSheetState.hide()
-                        isScanning = true
-                        scannedBarcode = null
-                        viewModel.resetBooleanCheck()
-                    }
+        sheetPeekHeight = peekHeight,
+        sheetDragHandle = {
+            if (scannedBarcode != null) {
+                // Material 3 drag handle with proper top padding when expanded
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .windowInsetsPadding(
+                            WindowInsets.statusBars.only(WindowInsetsSides.Top)
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    BottomSheetDefaults.DragHandle()
                 }
-            )
+            }
+        },
+        sheetContent = {
+            if (scannedBarcode != null) {
+                ProductBottomSheet(
+                    productEvent = productEvent,
+                    barcode = scannedBarcode ?: ""
+                )
+            }
         },
         sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        sheetShape = ForkLifeCustomShapes.BottomSheet
+        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        sheetShadowElevation = 8.dp,
+        sheetTonalElevation = 0.dp
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -184,7 +239,13 @@ fun ScanScreen(
                             isScanning = false
                             scannedBarcode = barcode
                         }
-                    }
+                    },
+                    onCameraReady = { cam -> camera = cam }
+                )
+
+                // Barcode scanning frame overlay
+                BarcodeScannerOverlay(
+                    modifier = Modifier.fillMaxSize()
                 )
             } else {
                 // Permission not granted
@@ -203,20 +264,20 @@ fun ScanScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        text = "Permission camera requise",
+                        text = stringResource(R.string.camera_permission_required),
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Veuillez autoriser l'acces a la camera pour scanner des codes-barres",
+                        text = stringResource(R.string.camera_permission_message),
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     ForkLifePrimaryButton(
-                        text = "Autoriser",
+                        text = stringResource(R.string.authorize),
                         onClick = { cameraPermissionState.launchPermissionRequest() }
                     )
                 }
@@ -239,19 +300,36 @@ fun ScanScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Retour"
+                        contentDescription = stringResource(R.string.navigate_back)
                     )
                 }
 
+                // Flashlight toggle button
                 FilledIconButton(
-                    onClick = onNavigateToManualScan,
+                    onClick = {
+                        camera?.let { cam ->
+                            if (cam.cameraInfo.hasFlashUnit()) {
+                                isFlashOn = !isFlashOn
+                                cam.cameraControl.enableTorch(isFlashOn)
+                            }
+                        }
+                    },
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                        containerColor = if (isFlashOn) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                        },
+                        contentColor = if (isFlashOn) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Dialpad,
-                        contentDescription = "Saisie manuelle"
+                        imageVector = if (isFlashOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                        contentDescription = stringResource(if (isFlashOn) R.string.flash_off else R.string.flash_on)
                     )
                 }
             }
@@ -262,7 +340,8 @@ fun ScanScreen(
 @Composable
 fun CameraPreview(
     isScanning: Boolean,
-    onBarcodeScanned: (String) -> Unit
+    onBarcodeScanned: (String) -> Unit,
+    onCameraReady: (Camera) -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -272,6 +351,7 @@ fun CameraPreview(
     var cameraProvider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val currentIsScanning by rememberUpdatedState(isScanning)
     val currentOnBarcodeScanned by rememberUpdatedState(onBarcodeScanned)
+    val currentOnCameraReady by rememberUpdatedState(onCameraReady)
 
     DisposableEffect(lifecycleOwner) {
         onDispose {
@@ -316,12 +396,13 @@ fun CameraPreview(
                         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                         provider.unbindAll()
-                        provider.bindToLifecycle(
+                        val camera = provider.bindToLifecycle(
                             lifecycleOwner,
                             cameraSelector,
                             preview,
                             imageAnalyzer
                         )
+                        currentOnCameraReady(camera)
                         Log.d("CameraPreview", "Camera bound successfully")
                     } catch (e: Exception) {
                         Log.e("CameraPreview", "Camera initialization failed", e)
@@ -337,12 +418,11 @@ fun CameraPreview(
 @Composable
 fun ProductBottomSheet(
     productEvent: ProductInfoSharedViewModel.ProductInformationsEvent,
-    barcode: String,
-    onDismiss: () -> Unit
+    barcode: String
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
-    val tabTitles = listOf("Score", "Caracteristiques", "Ingredients", "Environnement")
+    val tabTitles = listOf(R.string.tab_score, R.string.tab_characteristics, R.string.tab_ingredients, R.string.tab_environment)
     val tabIcons = listOf(
         Icons.Default.Info,
         Icons.Default.Science,
@@ -353,6 +433,7 @@ fun ProductBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight()
             .navigationBarsPadding()
     ) {
         when (productEvent) {
@@ -366,19 +447,19 @@ fun ProductBottomSheet(
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.primary
                 ) {
-                    tabTitles.forEachIndexed { index, title ->
+                    tabTitles.forEachIndexed { index, titleRes ->
                         Tab(
                             selected = pagerState.currentPage == index,
                             onClick = { }, // Non-interactive during loading
                             icon = {
                                 Icon(
                                     imageVector = tabIcons[index],
-                                    contentDescription = title
+                                    contentDescription = stringResource(titleRes)
                                 )
                             },
                             text = {
                                 Text(
-                                    text = title,
+                                    text = stringResource(titleRes),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -390,7 +471,7 @@ fun ProductBottomSheet(
                 // Pager with skeleton content
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.height(350.dp),
+                    modifier = Modifier.weight(1f),
                     userScrollEnabled = false // Disable scrolling during loading
                 ) { page ->
                     when (page) {
@@ -415,19 +496,19 @@ fun ProductBottomSheet(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.primary
                     ) {
-                        tabTitles.forEachIndexed { index, title ->
+                        tabTitles.forEachIndexed { index, titleRes ->
                             Tab(
                                 selected = pagerState.currentPage == index,
                                 onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
                                 icon = {
                                     Icon(
                                         imageVector = tabIcons[index],
-                                        contentDescription = title
+                                        contentDescription = stringResource(titleRes)
                                     )
                                 },
                                 text = {
                                     Text(
-                                        text = title,
+                                        text = stringResource(titleRes),
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
@@ -439,7 +520,7 @@ fun ProductBottomSheet(
                     // Pager
                     HorizontalPager(
                         state = pagerState,
-                        modifier = Modifier.height(350.dp)
+                        modifier = Modifier.weight(1f)
                     ) { page ->
                         when (page) {
                             0 -> ScoreTab(product = product)
@@ -448,46 +529,69 @@ fun ProductBottomSheet(
                             3 -> EnvironmentTab(product = product)
                         }
                     }
-
-                    // Bottom actions
-                    ForkLifePrimaryButton(
-                        text = "Fermer",
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    )
                 }
             }
 
             is ProductInfoSharedViewModel.ProductInformationsEvent.Failure -> {
-                Column(
+                // Error Header - similar layout to ProductHeader
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Produit non trouve",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Code-barres: $barcode",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Ce produit n'est pas dans la base de donnees",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    ForkLifePrimaryButton(
-                        text = "Fermer",
-                        onClick = onDismiss
-                    )
+                    // Error icon placeholder
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(ForkLifeCustomShapes.Card)
+                            .background(MaterialTheme.colorScheme.errorContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.product_not_found),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = stringResource(R.string.code_format, barcode),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Error content
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.product_not_in_database),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
 
@@ -500,7 +604,7 @@ fun ProductBottomSheet(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Scannez un code-barres",
+                        text = stringResource(R.string.scan_barcode),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -514,20 +618,25 @@ fun ProductBottomSheet(
 fun ProductHeader(
     product: Product
 ) {
+    var showImagePreview by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Product Image
+        // Product Image - clickable for preview
         AsyncImage(
             model = product.image_front_url,
-            contentDescription = "Product image",
+            contentDescription = stringResource(R.string.product_image),
             modifier = Modifier
                 .size(80.dp)
                 .clip(ForkLifeCustomShapes.Card)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clickable(enabled = !product.image_front_url.isNullOrEmpty()) {
+                    showImagePreview = true
+                }
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -536,17 +645,94 @@ fun ProductHeader(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = product.product_name ?: "Produit inconnu",
+                text = product.product_name ?: stringResource(R.string.unknown_product),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "Code: ${product.code}",
+                text = stringResource(R.string.code_format, product.code),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+
+    // Image Preview Dialog
+    if (showImagePreview && !product.image_front_url.isNullOrEmpty()) {
+        ProductImagePreviewDialog(
+            imageUrl = product.image_front_url!!,
+            productName = product.product_name ?: stringResource(R.string.unknown_product),
+            onDismiss = { showImagePreview = false }
+        )
+    }
+}
+
+@Composable
+fun ProductImagePreviewDialog(
+    imageUrl: String,
+    productName: String,
+    onDismiss: () -> Unit
+) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
+        scale = (scale * zoomChange).coerceIn(1f, 5f)
+        offset = if (scale > 1f) {
+            offset + panChange
+        } else {
+            Offset.Zero
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.9f))
+                .clickable(onClick = onDismiss)
+        ) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = productName,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y
+                    )
+                    .transformable(state = transformableState)
+                    .clickable { },
+                contentScale = ContentScale.Fit
+            )
+
+            // Close button
+            FilledIconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.6f),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.close)
+                )
+            }
         }
     }
 }
@@ -561,4 +747,165 @@ private fun Context.findActivity(): Activity? {
         context = context.baseContext
     }
     return null
+}
+
+/**
+ * Barcode scanner overlay with a transparent scanning area and darkened surroundings
+ */
+@Composable
+fun BarcodeScannerOverlay(
+    modifier: Modifier = Modifier
+) {
+    val overlayColor = Color.Black.copy(alpha = 0.5f)
+    val frameColor = MaterialTheme.colorScheme.primary
+    val cornerLength = 40f
+    val cornerStrokeWidth = 6f
+    val cornerRadius = 16f
+
+    Box(
+        modifier = modifier
+            .drawBehind {
+                val scanAreaWidth = size.width * 0.75f
+                val scanAreaHeight = scanAreaWidth * 0.5f // Barcode aspect ratio
+                val scanAreaLeft = (size.width - scanAreaWidth) / 2
+                val scanAreaTop = (size.height - scanAreaHeight) / 2 - 60.dp.toPx() // Slightly above center
+
+                // Create the scanning area path with rounded corners
+                val scanAreaPath = Path().apply {
+                    addRoundRect(
+                        RoundRect(
+                            rect = Rect(
+                                offset = Offset(scanAreaLeft, scanAreaTop),
+                                size = Size(scanAreaWidth, scanAreaHeight)
+                            ),
+                            cornerRadius = CornerRadius(cornerRadius.dp.toPx())
+                        )
+                    )
+                }
+
+                // Draw darkened overlay with transparent scanning area
+                clipPath(scanAreaPath, clipOp = ClipOp.Difference) {
+                    drawRect(overlayColor)
+                }
+
+                // Draw corner brackets
+                val left = scanAreaLeft
+                val top = scanAreaTop
+                val right = scanAreaLeft + scanAreaWidth
+                val bottom = scanAreaTop + scanAreaHeight
+                val radius = cornerRadius.dp.toPx()
+
+                // Top-left corner
+                drawLine(
+                    color = frameColor,
+                    start = Offset(left, top + radius + cornerLength),
+                    end = Offset(left, top + radius),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+                drawArc(
+                    color = frameColor,
+                    startAngle = 180f,
+                    sweepAngle = 90f,
+                    useCenter = false,
+                    topLeft = Offset(left, top),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = cornerStrokeWidth.dp.toPx())
+                )
+                drawLine(
+                    color = frameColor,
+                    start = Offset(left + radius, top),
+                    end = Offset(left + radius + cornerLength, top),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+
+                // Top-right corner
+                drawLine(
+                    color = frameColor,
+                    start = Offset(right - radius - cornerLength, top),
+                    end = Offset(right - radius, top),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+                drawArc(
+                    color = frameColor,
+                    startAngle = 270f,
+                    sweepAngle = 90f,
+                    useCenter = false,
+                    topLeft = Offset(right - radius * 2, top),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = cornerStrokeWidth.dp.toPx())
+                )
+                drawLine(
+                    color = frameColor,
+                    start = Offset(right, top + radius),
+                    end = Offset(right, top + radius + cornerLength),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+
+                // Bottom-left corner
+                drawLine(
+                    color = frameColor,
+                    start = Offset(left, bottom - radius - cornerLength),
+                    end = Offset(left, bottom - radius),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+                drawArc(
+                    color = frameColor,
+                    startAngle = 90f,
+                    sweepAngle = 90f,
+                    useCenter = false,
+                    topLeft = Offset(left, bottom - radius * 2),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = cornerStrokeWidth.dp.toPx())
+                )
+                drawLine(
+                    color = frameColor,
+                    start = Offset(left + radius, bottom),
+                    end = Offset(left + radius + cornerLength, bottom),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+
+                // Bottom-right corner
+                drawLine(
+                    color = frameColor,
+                    start = Offset(right - radius - cornerLength, bottom),
+                    end = Offset(right - radius, bottom),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+                drawArc(
+                    color = frameColor,
+                    startAngle = 0f,
+                    sweepAngle = 90f,
+                    useCenter = false,
+                    topLeft = Offset(right - radius * 2, bottom - radius * 2),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = cornerStrokeWidth.dp.toPx())
+                )
+                drawLine(
+                    color = frameColor,
+                    start = Offset(right, bottom - radius),
+                    end = Offset(right, bottom - radius - cornerLength),
+                    strokeWidth = cornerStrokeWidth.dp.toPx()
+                )
+            }
+    ) {
+        // Hint text below the scanning area
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 100.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 180.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.place_barcode_in_frame),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
 }

@@ -16,6 +16,12 @@ class HistoryRepository @Inject constructor(
         return scanHistoryDao.getAllHistory()
     }
 
+    // Stats
+    fun getUniqueProductsCount(): Flow<Int> = scanHistoryDao.getUniqueProductsCount()
+    fun getTotalScansCount(): Flow<Int?> = scanHistoryDao.getTotalScansCount()
+    fun getMostScannedProducts(): Flow<List<ScanHistoryItem>> = scanHistoryDao.getMostScannedProducts()
+    fun getLastScannedProduct(): Flow<ScanHistoryItem?> = scanHistoryDao.getLastScannedProduct()
+
     suspend fun insertScanHistory(product: Product) {
         val existingItem = scanHistoryDao.getByBarcode(product.code)
 

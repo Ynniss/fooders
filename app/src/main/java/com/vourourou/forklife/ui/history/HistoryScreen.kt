@@ -10,19 +10,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.vourourou.forklife.R
 import com.vourourou.forklife.data.local.entity.ScanHistoryItem
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+// Valid grades for Nutri-Score and Eco-Score (A-E only)
+private val validGrades = listOf("A", "B", "C", "D", "E")
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     paddingValues: PaddingValues,
@@ -30,40 +40,104 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val historyItems by viewModel.historyItems.collectAsState()
+    val pendingDeleteItems by viewModel.pendingDeleteItems.collectAsState()
     var showClearDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    if (historyItems.isEmpty()) {
-        EmptyHistoryContent(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        )
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(
-                items = historyItems,
-                key = { it.barcode }
-            ) { item ->
-                HistoryItemCard(
-                    item = item,
-                    onClick = { onNavigateToProduct(item.barcode) },
-                    onDelete = { viewModel.deleteHistoryItem(item.barcode) }
-                )
+    // Filter out pending delete items from display
+    val visibleItems = remember(historyItems, pendingDeleteItems) {
+        historyItems.filterNot { it.barcode in pendingDeleteItems }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        if (visibleItems.isEmpty() && pendingDeleteItems.isEmpty()) {
+            EmptyHistoryContent(
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    items = visibleItems,
+                    key = { it.barcode }
+                ) { item ->
+                    val currentItem by rememberUpdatedState(item)
+
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                // Schedule deletion via ViewModel (persists across navigation)
+                                viewModel.scheduleDeletion(currentItem.barcode)
+
+                                val deletedMessage = context.getString(R.string.product_deleted)
+                                val undoLabel = context.getString(R.string.undo)
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = deletedMessage,
+                                        actionLabel = undoLabel,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        // Undo - cancel the scheduled deletion
+                                        viewModel.cancelDeletion(currentItem.barcode)
+                                    }
+                                }
+                                true
+                            } else false
+                        }
+                    )
+
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        modifier = Modifier.animateItem(),
+                        backgroundContent = {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.errorContainer)
+                                    .padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete),
+                                    tint = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        },
+                        enableDismissFromStartToEnd = false,
+                        enableDismissFromEndToStart = true
+                    ) {
+                        HistoryItemCard(
+                            item = item,
+                            onClick = { onNavigateToProduct(item.barcode) }
+                        )
+                    }
+                }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Effacer l'historique") },
-            text = { Text("Voulez-vous vraiment effacer tout l'historique ?") },
+            title = { Text(stringResource(R.string.clear_history)) },
+            text = { Text(stringResource(R.string.clear_history_confirmation)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -71,12 +145,12 @@ fun HistoryScreen(
                         showClearDialog = false
                     }
                 ) {
-                    Text("Effacer")
+                    Text(stringResource(R.string.clear))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("Annuler")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -103,7 +177,7 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Aucun scan",
+                text = stringResource(R.string.no_scans),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -111,7 +185,7 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Vos produits scannés apparaîtront ici",
+                text = stringResource(R.string.scanned_products_appear_here),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -122,16 +196,15 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
 @Composable
 private fun HistoryItemCard(
     item: ScanHistoryItem,
-    onClick: () -> Unit,
-    onDelete: () -> Unit
+    onClick: () -> Unit
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -174,14 +247,13 @@ private fun HistoryItemCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Nutriscore badge
-                    item.nutriscoreGrade?.let { grade ->
-                        NutriscoreBadge(grade = grade.uppercase())
+                    // Only show badges if grade is valid (A-E)
+                    item.nutriscoreGrade?.uppercase()?.takeIf { it in validGrades }?.let { grade ->
+                        NutriscoreBadge(grade = grade)
                     }
 
-                    // Ecoscore badge
-                    item.ecoscoreGrade?.let { grade ->
-                        EcoscoreBadge(grade = grade.uppercase())
+                    item.ecoscoreGrade?.uppercase()?.takeIf { it in validGrades }?.let { grade ->
+                        EcoscoreBadge(grade = grade)
                     }
                 }
 
@@ -195,60 +267,30 @@ private fun HistoryItemCard(
 
                 if (item.scanCount > 1) {
                     Text(
-                        text = "Scanné ${item.scanCount} fois",
+                        text = stringResource(R.string.scanned_times_format, item.scanCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-
-            // Delete button
-            IconButton(
-                onClick = { showDeleteDialog = true },
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
         }
-    }
-
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Supprimer") },
-            text = { Text("Voulez-vous supprimer ce produit de l'historique ?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDelete()
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text("Supprimer")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Annuler")
-                }
-            }
-        )
     }
 }
 
 @Composable
 private fun NutriscoreBadge(grade: String) {
     val color = when (grade) {
-        "A" -> androidx.compose.ui.graphics.Color(0xFF038141)
-        "B" -> androidx.compose.ui.graphics.Color(0xFF85BB2F)
-        "C" -> androidx.compose.ui.graphics.Color(0xFFFECB02)
-        "D" -> androidx.compose.ui.graphics.Color(0xFFEE8100)
-        "E" -> androidx.compose.ui.graphics.Color(0xFFE63E11)
+        "A" -> Color(0xFF038141)
+        "B" -> Color(0xFF85BB2F)
+        "C" -> Color(0xFFFECB02)
+        "D" -> Color(0xFFEE8100)
+        "E" -> Color(0xFFE63E11)
         else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+    // Use black text on light backgrounds (B, C grades) for better contrast
+    val textColor = when (grade) {
+        "B", "C" -> Color.Black
+        else -> Color.White
     }
 
     Box(
@@ -258,9 +300,9 @@ private fun NutriscoreBadge(grade: String) {
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Text(
-            text = "Nutri-Score $grade",
+            text = stringResource(R.string.nutri_score_format, grade),
             style = MaterialTheme.typography.labelSmall,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = textColor,
             fontWeight = FontWeight.Bold
         )
     }
@@ -269,12 +311,17 @@ private fun NutriscoreBadge(grade: String) {
 @Composable
 private fun EcoscoreBadge(grade: String) {
     val color = when (grade) {
-        "A" -> androidx.compose.ui.graphics.Color(0xFF038141)
-        "B" -> androidx.compose.ui.graphics.Color(0xFF85BB2F)
-        "C" -> androidx.compose.ui.graphics.Color(0xFFFECB02)
-        "D" -> androidx.compose.ui.graphics.Color(0xFFEE8100)
-        "E" -> androidx.compose.ui.graphics.Color(0xFFE63E11)
+        "A" -> Color(0xFF038141)
+        "B" -> Color(0xFF85BB2F)
+        "C" -> Color(0xFFFECB02)
+        "D" -> Color(0xFFEE8100)
+        "E" -> Color(0xFFE63E11)
         else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+    // Use black text on light backgrounds (B, C grades) for better contrast
+    val textColor = when (grade) {
+        "B", "C" -> Color.Black
+        else -> Color.White
     }
 
     Box(
@@ -284,9 +331,9 @@ private fun EcoscoreBadge(grade: String) {
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Text(
-            text = "Eco-Score $grade",
+            text = stringResource(R.string.eco_score_format, grade),
             style = MaterialTheme.typography.labelSmall,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = textColor,
             fontWeight = FontWeight.Bold
         )
     }

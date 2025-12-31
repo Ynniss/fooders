@@ -31,22 +31,31 @@ ForkLife is an Android application for scanning and managing food product inform
 ./gradlew clean
 ```
 
-**Note:** The project requires `google-services.json` (Firebase configuration) to build successfully. This file is not in the repository and must be provided via CI/CD secrets or placed in `app/google-services.json` for local development.
+**Note:** The project requires `google-services.json` (Firebase configuration) to build successfully. Place it in `app/google-services.json` for local development.
 
-## Fastlane Distribution
+## Device Testing
 
-The project uses Fastlane for Firebase App Distribution:
+**IMPORTANT: Always rebuild and test the app after making changes.**
+
+**Primary device**: Pixel 10 (physical device)
+- Connect via USB or wireless debugging
+- Run `adb devices` to verify connection
+- Install with: `./gradlew installDebug` or `adb install app/build/outputs/apk/debug/app-debug.apk`
+
+**Fallback**: Android Emulator
+- Use emulator only if Pixel 10 is NOT connected
+- Prefer Pixel-based emulator images for consistency
 
 ```bash
-# Distribute app via Firebase App Distribution
-bundle exec fastlane distribute
-```
+# Check connected devices
+adb devices
 
-This requires:
-- `firebase_credentials.json` (service account credentials)
-- `FIREBASE_APP_ID` environment variable
-- Release notes in `FirebaseAppDistributionConfig/release_notes.txt`
-- Groups configuration in `FirebaseAppDistributionConfig/groups.txt`
+# Install on connected device (prefers physical device)
+./gradlew installDebug
+
+# Launch the app
+adb shell am start -n com.vourourou.forklife/.ui.main.MainActivity
+```
 
 ## Architecture
 
@@ -183,7 +192,8 @@ Navigation is handled via Compose Navigation:
 - CameraX with AndroidView wrapper
 - ML Kit Barcode Scanning for barcode detection
 - Custom `BarcodeAnalyzer` utility for processing
-- Bottom sheet product display
+- Yuka-style scanning frame overlay with corner brackets and hint text
+- Bottom sheet product display with skeleton loading states
 - Manual barcode entry option
 
 **Product Information**:
@@ -246,23 +256,37 @@ Navigation is handled via Compose Navigation:
 - `utils/Resource.kt` - Sealed class for Success/Error states
 - Used for wrapping API responses
 
-## CI/CD
+## UI/UX Guidelines
 
-GitHub Actions workflow (`.github/workflows/distribute.yml`) automatically:
-1. Triggers on push to `main` branch
-2. Sets up Ruby 2.6 and Bundler
-3. Decodes Firebase credentials and Google Services JSON from secrets
-4. Runs Fastlane distribution
+### Text Contrast Requirements
+**IMPORTANT: Always ensure proper text contrast for readability.**
 
-Required secrets:
-- `FIREBASE_CREDENTIALS` (base64 encoded)
-- `GOOGLE_SERVICES` (base64 encoded)
-- `FIREBASE_APP_ID`
+- Never use white text on light backgrounds (e.g., light green, yellow, light orange)
+- For grade badges (Nutri-Score, Eco-Score, NOVA):
+  - Use **black text** on grades B (light green) and C (yellow)
+  - Use **white text** on grades A (dark green), D (orange), E (red)
+- For theme color checkmarks, use black on Avocado theme (lighter green)
+- Test UI in both light and dark modes
+
+### Missing Data Pattern
+**Hide elements when data is unavailable instead of showing "N/A".**
+
+- History screen badges: Only show Nutri-Score/Eco-Score badges if grade exists
+- Score tab: Only show score cards when data is available; show empty state message if all missing
+- Environment tab: Only show Eco-Score and Packaging cards when data exists
+- Prefer `?.let { }` pattern to conditionally render UI elements
+
+### Scanning UI
+- Barcode scanner includes a Yuka-style overlay with:
+  - Semi-transparent dark background
+  - Transparent scanning window (75% width, barcode aspect ratio)
+  - Rounded corner brackets in primary theme color
+  - Hint text: "Placez le code-barres dans le cadre"
 
 ## Important Notes
 
 - The app requires camera permissions for scanning (handled via Accompanist Permissions)
-- Firebase services require `google-services.json` (not in repo, provided via CI secrets)
+- Firebase services require `google-services.json` (not in repo)
 - OpenFoodFacts API is READ-only - no account or authentication required for product data
 - AGP 8.10.1 used with Compose enabled
 - KAPT (used by Hilt) requires JVM arguments in `gradle.properties`

@@ -28,13 +28,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vourourou.forklife.R
 import com.vourourou.forklife.data.remote.model.Product
 import com.vourourou.forklife.ui.theme.ForkLifeCustomShapes
 
+// Valid grades for Eco-Score (A-E only)
+private val validEcoGrades = listOf("A", "B", "C", "D", "E")
+
 @Composable
 fun EnvironmentTab(product: Product) {
+    // Check if eco-score is valid (A-E only)
+    val hasValidEcoscore = product.ecoscore_grade?.uppercase() in validEcoGrades
+    val hasAnyData = hasValidEcoscore || !product.packaging.isNullOrEmpty()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,89 +52,108 @@ fun EnvironmentTab(product: Product) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Eco-Score Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = ForkLifeCustomShapes.Card,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(getEcoScoreColor(product.ecoscore_grade)),
-                    contentAlignment = Alignment.Center
+        if (hasAnyData) {
+            // Eco-Score Card - only show if grade is valid (A-E)
+            if (hasValidEcoscore) {
+                val grade = product.ecoscore_grade!!.uppercase()
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = ForkLifeCustomShapes.Card,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Eco,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(getEcoScoreColor(grade)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Eco,
+                                contentDescription = null,
+                                tint = getEcoScoreIconColor(grade),
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
 
-                Column {
-                    Text(
-                        text = "Eco-Score",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "Grade: ${product.ecoscore_grade?.uppercase() ?: "Non disponible"}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.eco_score),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = stringResource(R.string.grade_format, grade),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
-        }
 
-        // Packaging Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = ForkLifeCustomShapes.Card,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+            // Packaging Card - only show if packaging info is available
+            product.packaging?.takeIf { it.isNotEmpty() }?.let { packaging ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = ForkLifeCustomShapes.Card,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Inventory2,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Emballage",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Inventory2,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = stringResource(R.string.packaging),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = packaging,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
+            }
+        } else {
+            // No environment data available
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = product.packaging?.takeIf { it.isNotEmpty() }
-                        ?: "Informations d'emballage non disponibles",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = stringResource(R.string.no_environment_info),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -132,13 +161,22 @@ fun EnvironmentTab(product: Product) {
 }
 
 @Composable
-private fun getEcoScoreColor(grade: String?): Color {
-    return when (grade?.uppercase()) {
+private fun getEcoScoreColor(grade: String): Color {
+    return when (grade.uppercase()) {
         "A" -> Color(0xFF038141) // Green
         "B" -> Color(0xFF85BB2F) // Light Green
         "C" -> Color(0xFFFECB02) // Yellow
         "D" -> Color(0xFFEE8100) // Orange
         "E" -> Color(0xFFE63E11) // Red
         else -> Color.Gray
+    }
+}
+
+@Composable
+private fun getEcoScoreIconColor(grade: String): Color {
+    // Use black icon on light backgrounds (B, C grades) for better contrast
+    return when (grade.uppercase()) {
+        "B", "C" -> Color.Black
+        else -> Color.White
     }
 }

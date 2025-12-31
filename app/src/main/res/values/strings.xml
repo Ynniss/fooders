@@ -1,20 +1,144 @@
 <resources>
     <string name="app_name">ForkLife</string>
 
-    <!-- Google Play Games Services IDs -->
-    <!-- TODO: Replace with actual IDs from Play Console after setup -->
-    <string name="play_games_app_id">YOUR_PLAY_GAMES_APP_ID</string>
-    <string name="leaderboard_total_scans">YOUR_LEADERBOARD_ID</string>
+    <!-- Common -->
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+    <string name="authorize">Authorize</string>
+    <string name="unknown_product">Unknown product</string>
+    <string name="not_available">N/A</string>
+    <string name="code_format">Code: %s</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="txt_overflow_logout">Logout</string>
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_stats">Stats</string>
 
-    <!-- Image Cropper -->
-    <string name="rotation_value">Click to change rotation: %1$s</string>
-    <string name="extend_body">This is a sample code using the library. The sample here is for extend CropImageActivity, to be about to custom build your personal view around it. For that we need to use CropImageView.</string>
-    <string name="save">Save</string>
-    <string name="txt_overflow_settings">Settings</string>
+    <!-- Home Screen -->
+    <string name="quick_actions">Quick actions</string>
+    <string name="scan_product">Scan a product</string>
+    <string name="scan_product_description">Use the camera to scan a barcode</string>
+    <string name="manual_entry">Manual entry</string>
+    <string name="manual_entry_description">Enter the barcode manually</string>
+    <string name="your_activity">Your activity</string>
+    <string name="history">History</string>
+    <string name="history_description">View your previous scans</string>
+    <string name="my_stats">My statistics</string>
+    <string name="stats_description">Your scans and favorite products</string>
+    <string name="about">About</string>
+    <string name="about_description">Learn more about ForkLife</string>
 
+    <!-- About Dialog -->
+    <string name="about_forklife">About ForkLife</string>
+    <string name="version_format">Version %s</string>
+    <string name="about_app_description">Scan your food products to discover their nutritional quality and environmental impact.</string>
+    <string name="developed_by">Developed by Vourourou</string>
+    <string name="data_source">Data: Open Food Facts</string>
 
+    <!-- Scan Screen -->
+    <string name="scanner">Scan</string>
+    <string name="camera_permission_required">Camera permission required</string>
+    <string name="camera_permission_message">Please allow camera access to scan barcodes</string>
+    <string name="scan_barcode">Scan a barcode</string>
+    <string name="place_barcode_in_frame">Place the barcode in the frame</string>
+    <string name="product_not_found">Product not found</string>
+    <string name="barcode_format">Barcode: %s</string>
+    <string name="product_not_in_database">This product is not in the OpenFoodFacts database</string>
+    <string name="flash_on">Turn flash on</string>
+    <string name="flash_off">Turn flash off</string>
+
+    <!-- Manual Scan Screen -->
+    <string name="barcode">Barcode</string>
+    <string name="new_scan">New scan</string>
+    <string name="enter_barcode_to_search">Enter a barcode to search</string>
+
+    <!-- Product Detail -->
+    <string name="product_details">Product details</string>
+    <string name="product_image">Product image</string>
+
+    <!-- Tabs -->
+    <string name="tab_score">Score</string>
+    <string name="tab_characteristics">Characteristics</string>
+    <string name="tab_ingredients">Ingredients</string>
+    <string name="tab_environment">Environment</string>
+
+    <!-- Score Tab -->
+    <string name="nutri_score">Nutri-Score</string>
+    <string name="nutritional_quality">Nutritional quality</string>
+    <string name="eco_score">Eco-Score</string>
+    <string name="environmental_impact">Environmental impact</string>
+    <string name="nova">NOVA</string>
+    <string name="processing_level">Processing level</string>
+    <string name="no_scores_available">No scores available for this product</string>
+
+    <!-- Characteristics Tab -->
+    <string name="nutrition_image">Nutrition image</string>
+    <string name="nutritional_values">Nutritional values</string>
+    <string name="energy">Energy</string>
+    <string name="fat">Fat</string>
+    <string name="sugars">Sugars</string>
+    <string name="salt">Salt</string>
+    <string name="kcal_format">%s kcal</string>
+    <string name="grams_format">%s g</string>
+
+    <!-- Ingredients Tab -->
+    <string name="ingredients_image">Ingredients image</string>
+    <string name="ingredients_list">Ingredients list</string>
+    <string name="no_ingredients_available">No ingredients available</string>
+
+    <!-- Environment Tab -->
+    <string name="grade_format">Grade: %s</string>
+    <string name="not_available_text">Not available</string>
+    <string name="packaging">Packaging</string>
+    <string name="packaging_info_not_available">Packaging information not available</string>
+    <string name="no_environment_info">No environmental information available</string>
+
+    <!-- History Screen -->
+    <string name="product_deleted">Product deleted</string>
+    <string name="undo">Undo</string>
+    <string name="clear_history">Clear history</string>
+    <string name="clear_history_confirmation">Are you sure you want to clear all history?</string>
+    <string name="clear">Clear</string>
+    <string name="no_scans">No scans</string>
+    <string name="scanned_products_appear_here">Your scanned products will appear here</string>
+    <string name="scanned_times_format">Scanned %d times</string>
+    <string name="nutri_score_format">Nutri-Score %s</string>
+    <string name="eco_score_format">Eco-Score %s</string>
+
+    <!-- Stats Screen -->
+    <string name="statistics">Statistics</string>
+    <string name="total_scans">Total scans</string>
+    <string name="unique_products">Unique products</string>
+    <string name="most_scanned_products">Most scanned products</string>
+    <string name="scan_products_to_see_favorites">Scan products to see your favorites here</string>
+    <string name="no_statistics_yet">No statistics yet</string>
+    <string name="start_scanning_to_see_stats">Start scanning products to see your statistics here!</string>
+    <string name="scan_count_format">%d scan</string>
+    <string name="scans_count_format">%d scans</string>
+
+    <plurals name="scans_count">
+        <item quantity="one">%d scan</item>
+        <item quantity="other">%d scans</item>
+    </plurals>
+
+    <!-- Settings Screen -->
+    <string name="theme_color">Theme color</string>
+    <string name="orange">Orange</string>
+    <string name="avocado">Avocado</string>
+    <string name="cherry">Cherry</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="system">System</string>
+    <string name="system_description">Follow system settings</string>
+    <string name="light">Light</string>
+    <string name="light_description">Always use light mode</string>
+    <string name="dark">Dark</string>
+    <string name="dark_description">Always use dark mode</string>
+
+    <!-- Accessibility -->
+    <string name="navigate_back">Navigate back</string>
+    <string name="selected">Selected</string>
 </resources>
