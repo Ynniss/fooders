@@ -30,17 +30,52 @@
 
 ## Screenshots
 
-<p align="center">
-  <img src="screenshots/home.png" width="200" alt="Home Screen"/>
-  <img src="screenshots/scan.png" width="200" alt="Scan Screen"/>
-  <img src="screenshots/score.png" width="200" alt="Product Details"/>
-</p>
-
-<p align="center">
-  <img src="screenshots/history.png" width="200" alt="History"/>
-  <img src="screenshots/profile.png" width="200" alt="Profile"/>
-  <img src="screenshots/settings.png" width="200" alt="Settings"/>
-</p>
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/home.png" width="180" alt="Home"/>
+      <br/>
+      <sub><b>Home</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/scan.png" width="180" alt="Scan"/>
+      <br/>
+      <sub><b>Scan</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/score.png" width="180" alt="Score"/>
+      <br/>
+      <sub><b>Score</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/history.png" width="180" alt="History"/>
+      <br/>
+      <sub><b>History</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/profile.png" width="180" alt="Profile"/>
+      <br/>
+      <sub><b>Profile</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/settings.png" width="180" alt="Settings"/>
+      <br/>
+      <sub><b>Settings</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/avocado.png" width="180" alt="Avocado Theme"/>
+      <br/>
+      <sub><b>Avocado Theme</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/cherry.png" width="180" alt="Cherry Theme"/>
+      <br/>
+      <sub><b>Cherry Theme</b></sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -153,31 +188,13 @@ ForkLife uses the [OpenFoodFacts API](https://world.openfoodfacts.org/) - the fr
 
 ## Color Themes
 
-<table>
-  <tr>
-    <td align="center">
-     <img src="screenshots/home.png" width="200" alt="Orange"/>
-      <br/>
-      <strong>Orange</strong>
-      <br/>
-      <sub>Default</sub>
-    </td>
-    <td align="center">
-     <img src="screenshots/avocado.png" width="200" alt="Avocado"/>
-      <br/>
-      <strong>Avocado</strong>
-      <br/>
-      <sub>Fresh Green</sub>
-    </td>
-    <td align="center">
-     <img src="screenshots/cherry.png" width="200" alt="Cherry"/>
-      <br/>
-      <strong>Cherry</strong>
-      <br/>
-      <sub>Bold Red</sub>
-    </td>
-  </tr>
-</table>
+| Theme | Description |
+|:-----:|:------------|
+| **Orange** | Vibrant orange primary (Default) |
+| **Avocado** | Fresh green for a natural feel |
+| **Cherry** | Bold red for a striking look |
+
+All themes support **Light**, **Dark**, and **System** modes.
 
 ---
 
