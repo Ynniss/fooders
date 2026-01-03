@@ -31,17 +31,15 @@
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/1_login.png" width="200" alt="Login Screen"/>
-  <img src="screenshots/2_home.png" width="200" alt="Home Screen"/>
-  <img src="screenshots/3_scan.png" width="200" alt="Scan Screen"/>
-  <img src="screenshots/4_product.png" width="200" alt="Product Details"/>
+  <img src="screenshots/home.png" width="200" alt="Home Screen"/>
+  <img src="screenshots/scan.png" width="200" alt="Scan Screen"/>
+  <img src="screenshots/score.png" width="200" alt="Product Details"/>
 </p>
 
 <p align="center">
-  <img src="screenshots/5_ingredients.png" width="200" alt="Ingredients"/>
-  <img src="screenshots/6_environment.png" width="200" alt="Environment Impact"/>
-  <img src="screenshots/7_profile.png" width="200" alt="Profile"/>
-  <img src="screenshots/8_settings.png" width="200" alt="Settings"/>
+  <img src="screenshots/history.png" width="200" alt="History"/>
+  <img src="screenshots/profile.png" width="200" alt="Profile"/>
+  <img src="screenshots/settings.png" width="200" alt="Settings"/>
 </p>
 
 ---
@@ -158,21 +156,21 @@ ForkLife uses the [OpenFoodFacts API](https://world.openfoodfacts.org/) - the fr
 <table>
   <tr>
     <td align="center">
-      <img src="https://via.placeholder.com/60/FF6D00/FFFFFF?text=+" alt="Orange"/>
+     <img src="screenshots/home.png" width="200" alt="Orange"/>
       <br/>
       <strong>Orange</strong>
       <br/>
       <sub>Default</sub>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/60/7CB342/FFFFFF?text=+" alt="Avocado"/>
+     <img src="screenshots/avocado.png" width="200" alt="Avocado"/>
       <br/>
       <strong>Avocado</strong>
       <br/>
       <sub>Fresh Green</sub>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/60/C62828/FFFFFF?text=+" alt="Cherry"/>
+     <img src="screenshots/cherry.png" width="200" alt="Cherry"/>
       <br/>
       <strong>Cherry</strong>
       <br/>
