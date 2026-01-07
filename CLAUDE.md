@@ -77,6 +77,12 @@ Data Layer (Repositories, Data Sources)
 
 **Note:** The project requires `google-services.json` (Firebase configuration) to build successfully. Place it in `app/google-services.json` for local development.
 
+**16 KB Page Size Support:** The app supports 16 KB memory page sizes as required by Google Play (2024+). This is configured via:
+- Manifest property: `android.app.PROPERTY_SUPPORTS_16KB_PAGE_SIZE=true`
+- ML Kit Barcode Scanning 17.3.0+ (supports 16 KB pages)
+- Modern native library packaging: `useLegacyPackaging = false`
+- All supported ABIs: armeabi-v7a, arm64-v8a, x86, x86_64
+
 ## Device Testing
 
 **IMPORTANT: Always rebuild and test the app after making changes.**
@@ -327,7 +333,7 @@ Navigation is handled via Compose Navigation:
 **Key Libraries**:
 - Dagger Hilt 2.48 - Dependency injection
 - CameraX 1.3.0 - Camera functionality
-- ML Kit Barcode Scanning 17.2.0 - Barcode detection
+- ML Kit Barcode Scanning 17.3.0 - Barcode detection (16 KB page size compatible)
 - Retrofit 2.9.0 + Gson - Network calls
 - Room 2.6.1 - Local database (scan history)
 - DataStore 1.0.0 - Preferences storage (user settings, allergens)
