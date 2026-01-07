@@ -13,5 +13,13 @@ data class ScanHistoryItem(
     val ecoscoreGrade: String?,
     val novaGroup: Int?,
     val scannedAt: Long,
-    val scanCount: Int = 1
-)
+    val scanCount: Int = 1,
+    val allergenTags: String? = null  // Comma-separated allergen tags for storage
+) {
+    /**
+     * Parses the allergenTags string into a list of tags.
+     */
+    fun getAllergenTagsList(): List<String> {
+        return allergenTags?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
+    }
+}

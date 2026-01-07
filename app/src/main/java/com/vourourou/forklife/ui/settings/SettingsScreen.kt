@@ -5,11 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,9 +23,11 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.PhoneAndroid
-import androidx.compose.material.icons.filled.Wallpaper
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -40,12 +45,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vourourou.forklife.R
+import com.vourourou.forklife.data.model.Allergen
 import com.vourourou.forklife.ui.theme.AvocadoPrimary
 import com.vourourou.forklife.ui.theme.CherryPrimary
 import com.vourourou.forklife.ui.theme.ForkLifeCustomShapes
 import com.vourourou.forklife.ui.theme.OrangePrimary
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(
     paddingValues: PaddingValues,
@@ -53,6 +60,7 @@ fun SettingsScreen(
 ) {
     val currentTheme by viewModel.currentTheme.collectAsState()
     val currentDarkMode by viewModel.currentDarkMode.collectAsState()
+    val selectedAllergens by viewModel.selectedAllergens.collectAsState()
     val scope = rememberCoroutineScope()
 
     LazyColumn(
@@ -129,6 +137,37 @@ fun SettingsScreen(
                             scope.launch { viewModel.updateDarkMode("Dark") }
                         }
                     )
+                }
+            }
+        }
+
+        // Allergen Alerts Section
+        item {
+            SettingsSection(title = stringResource(R.string.allergen_alerts)) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.allergen_alerts_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Allergen.entries.forEach { allergen ->
+                            val isSelected = selectedAllergens.contains(allergen.tag)
+                            AllergenChip(
+                                allergen = allergen,
+                                isSelected = isSelected,
+                                onClick = {
+                                    viewModel.toggleAllergen(allergen.tag, !isSelected)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -261,4 +300,36 @@ fun DarkModeOption(
             onClick = onClick
         )
     }
+}
+
+@Composable
+fun AllergenChip(
+    allergen: Allergen,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = {
+            Text(
+                text = stringResource(allergen.displayNameRes),
+                style = MaterialTheme.typography.labelMedium
+            )
+        },
+        leadingIcon = if (isSelected) {
+            {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        } else null,
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.errorContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onErrorContainer,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.onErrorContainer
+        )
+    )
 }

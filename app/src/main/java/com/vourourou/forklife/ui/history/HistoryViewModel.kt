@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vourourou.forklife.data.local.entity.ScanHistoryItem
 import com.vourourou.forklife.data.repository.HistoryRepository
+import com.vourourou.forklife.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     val historyItems: StateFlow<List<ScanHistoryItem>> = historyRepository
@@ -26,6 +28,13 @@ class HistoryViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
+        )
+
+    val selectedAllergens: StateFlow<Set<String>> = dataStoreManager.selectedAllergensFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
         )
 
     // Track items pending deletion (barcodes that are hidden but not yet deleted)

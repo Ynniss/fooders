@@ -63,7 +63,9 @@ object AppModule {
             context,
             ForkLifeDatabase::class.java,
             "forklife_database"
-        ).build()
+        )
+            .addMigrations(ForkLifeDatabase.MIGRATION_1_2)
+            .build()
     }
 
     @Singleton

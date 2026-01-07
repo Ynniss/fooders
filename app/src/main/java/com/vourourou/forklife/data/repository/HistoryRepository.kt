@@ -24,11 +24,13 @@ class HistoryRepository @Inject constructor(
 
     suspend fun insertScanHistory(product: Product) {
         val existingItem = scanHistoryDao.getByBarcode(product.code)
+        val allergenTagsString = product.allergens_tags?.joinToString(",")
 
         if (existingItem != null) {
             val updatedItem = existingItem.copy(
                 scanCount = existingItem.scanCount + 1,
-                scannedAt = System.currentTimeMillis()
+                scannedAt = System.currentTimeMillis(),
+                allergenTags = allergenTagsString ?: existingItem.allergenTags
             )
             scanHistoryDao.insert(updatedItem)
         } else {
@@ -40,7 +42,8 @@ class HistoryRepository @Inject constructor(
                 ecoscoreGrade = product.ecoscore_grade,
                 novaGroup = product.nova_group,
                 scannedAt = System.currentTimeMillis(),
-                scanCount = 1
+                scanCount = 1,
+                allergenTags = allergenTagsString
             )
             scanHistoryDao.insert(newItem)
         }
