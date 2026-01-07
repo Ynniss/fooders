@@ -58,11 +58,28 @@ class ProductInfoSharedViewModel @Inject constructor(
         )
 
 
-    fun getProductInformations(barcode: String) {
+    fun getProductInformations(barcode: String, forceRefresh: Boolean = false) {
         viewModelScope.launch(IO) {
             withContext(Main) {
                 _productInformationsEvent.value = ProductInformationsEvent.Loading
             }
+
+            // Try to load from cache first (offline-first approach)
+            if (!forceRefresh) {
+                val cachedProduct = historyRepository.getProductByBarcode(barcode)
+                if (cachedProduct != null) {
+                    withContext(Main) {
+                        Log.d("VM", "Loaded product from cache (offline)")
+                        _isBeenRequestData.value = true
+                        _productInformationsEvent.value = ProductInformationsEvent.Success(
+                            Resource.Success(cachedProduct)
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            // If not in cache or force refresh, fetch from API
             when (val result = repository.getProduct(barcode)) {
                 is Resource.Success -> withContext(Main) {
                     Log.d("RES SUCCESS", "INSIDE IT")

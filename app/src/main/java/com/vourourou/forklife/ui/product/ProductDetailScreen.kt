@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +47,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -85,6 +88,7 @@ fun ProductDetailScreen(
     val productEvent by viewModel.productInformationsEvent.observeAsState(
         ProductInfoSharedViewModel.ProductInformationsEvent.Empty
     )
+    val selectedAllergens by viewModel.selectedAllergens.collectAsState()
 
     LaunchedEffect(barcode) {
         if (barcode.isNotEmpty()) {
@@ -119,7 +123,8 @@ fun ProductDetailScreen(
                 is ProductInfoSharedViewModel.ProductInformationsEvent.Loading -> {
                     ProductDetailContent(
                         product = null,
-                        isLoading = true
+                        isLoading = true,
+                        selectedAllergens = selectedAllergens
                     )
                 }
 
@@ -128,7 +133,8 @@ fun ProductDetailScreen(
                     if (product != null) {
                         ProductDetailContent(
                             product = product,
-                            isLoading = false
+                            isLoading = false,
+                            selectedAllergens = selectedAllergens
                         )
                     }
                 }
@@ -153,7 +159,8 @@ fun ProductDetailScreen(
 @Composable
 private fun ProductDetailContent(
     product: Product?,
-    isLoading: Boolean
+    isLoading: Boolean,
+    selectedAllergens: Set<String> = emptySet()
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
@@ -177,7 +184,10 @@ private fun ProductDetailContent(
         if (isLoading) {
             ProductHeaderSkeleton()
         } else if (product != null) {
-            ProductHeader(product = product)
+            ProductHeader(
+                product = product,
+                selectedAllergens = selectedAllergens
+            )
         }
 
         // Tabs
@@ -226,7 +236,10 @@ private fun ProductDetailContent(
                 }
             } else if (product != null) {
                 when (page) {
-                    0 -> ScoreTab(product = product)
+                    0 -> ScoreTab(
+                        product = product,
+                        selectedAllergens = selectedAllergens
+                    )
                     1 -> CharacteristicsTab(product = product)
                     2 -> IngredientsTab(product = product)
                     3 -> EnvironmentTab(product = product)
@@ -237,8 +250,24 @@ private fun ProductDetailContent(
 }
 
 @Composable
-private fun ProductHeader(product: Product) {
+private fun ProductHeader(
+    product: Product,
+    selectedAllergens: Set<String> = emptySet()
+) {
     var showImagePreview by remember { mutableStateOf(false) }
+
+    // Check for allergens
+    val hasAllergenWarning = remember(product.allergens_tags, selectedAllergens) {
+        if (selectedAllergens.isEmpty() || product.allergens_tags.isNullOrEmpty()) {
+            false
+        } else {
+            product.allergens_tags.any { productTag ->
+                selectedAllergens.any { selectedTag ->
+                    productTag.equals(selectedTag, ignoreCase = true)
+                }
+            }
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -246,17 +275,40 @@ private fun ProductHeader(product: Product) {
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = product.image_front_url,
-            contentDescription = stringResource(R.string.product_image),
-            modifier = Modifier
-                .size(80.dp)
-                .clip(ForkLifeCustomShapes.Card)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable(enabled = !product.image_front_url.isNullOrEmpty()) {
-                    showImagePreview = true
+        // Product Image with allergen warning badge
+        Box {
+            AsyncImage(
+                model = product.image_front_url,
+                contentDescription = stringResource(R.string.product_image),
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(ForkLifeCustomShapes.Card)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable(enabled = !product.image_front_url.isNullOrEmpty()) {
+                        showImagePreview = true
+                    }
+            )
+
+            // Allergen warning badge on image
+            if (hasAllergenWarning) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(2.dp)
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.error),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = stringResource(R.string.contains_allergens),
+                        tint = MaterialTheme.colorScheme.onError,
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
-        )
+            }
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 

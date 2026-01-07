@@ -14,7 +14,8 @@ data class ScanHistoryItem(
     val novaGroup: Int?,
     val scannedAt: Long,
     val scanCount: Int = 1,
-    val allergenTags: String? = null  // Comma-separated allergen tags for storage
+    val allergenTags: String? = null,  // Comma-separated allergen tags for storage
+    val productJson: String? = null     // Full Product object as JSON for offline viewing
 ) {
     /**
      * Parses the allergenTags string into a list of tags.
