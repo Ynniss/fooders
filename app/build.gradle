@@ -23,7 +23,7 @@ android {
 
         // OpenFoodFacts API configuration
         buildConfigField "String", "API_BASE_URL", '"https://world.openfoodfacts.org/"'
-        buildConfigField "String", "API_USER_AGENT", '"ForkLife/1.0 (contact@vourourou.com)"'
+        buildConfigField "String", "API_USER_AGENT", '"ForkLife/1.0 (noreply@example.com)"'
     }
 
     buildTypes {
