@@ -65,6 +65,18 @@
       <sub><b>Settings</b></sub>
     </td>
     <td align="center">
+      <img src="screenshots/allergen-alerts.png" width="180" alt="Allergen Alerts"/>
+      <br/>
+      <sub><b>Allergen Alerts</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/allergen-warning.png" width="180" alt="Allergen Warning"/>
+      <br/>
+      <sub><b>Allergen Warning</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
       <img src="screenshots/avocado.png" width="180" alt="Avocado Theme"/>
       <br/>
       <sub><b>Avocado Theme</b></sub>
@@ -73,6 +85,14 @@
       <img src="screenshots/cherry.png" width="180" alt="Cherry Theme"/>
       <br/>
       <sub><b>Cherry Theme</b></sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/dark-mode.png" width="180" alt="Dark Mode"/>
+      <br/>
+      <sub><b>Dark Mode</b></sub>
+    </td>
+    <td align="center">
+      <!-- Placeholder for future screenshot -->
     </td>
   </tr>
 </table>
@@ -97,11 +117,26 @@
 - **Ingredients Tab** - Full ingredient list with analysis
 - **Environment Tab** - Packaging and carbon footprint data
 
+### 🚨 Allergen Alerts (NEW)
+- **Personalized allergen tracking** - Select up to 14 common allergens
+- **Real-time warnings** - Visual badges on products containing your allergens
+- **Supported allergens**: Gluten, Milk, Eggs, Nuts, Peanuts, Soy, Fish, Shellfish, Sesame, Mustard, Celery, Sulfites, Lupin, Molluscs
+- **Theme-aware UI** - Allergen chips match your selected color theme
+- **Persistent across sessions** - Your selections are saved automatically
+- **Works everywhere** - Scan screen, history, and product details
+
+### Scan History
+- **Local database** - All scans saved with Room
+- **Swipe to delete** - Remove items with undo option
+- **Allergen warnings** - See which saved products contain your allergens
+- **Quick access** - Tap any item to view full details
+- **Scan counter** - Track frequently scanned items
+
 ### Personalization
 - **3 Beautiful Themes** - Orange (default), Avocado, Cherry
 - **Dark Mode Support** - System, Light, or Dark
-- **Scan History** - Track all your scanned products
 - **User Profiles** - Statistics and achievements
+- **In-app review** - Share your feedback directly from the app
 
 ---
 
@@ -110,35 +145,52 @@
 | Category | Technologies |
 |----------|-------------|
 | **UI** | Jetpack Compose, Material 3, Lottie Animations |
-| **Architecture** | Single Activity, MVVM, Repository Pattern |
+| **Architecture** | Single Activity, MVVM, Repository Pattern, Clean Architecture |
 | **DI** | Dagger Hilt |
 | **Networking** | Retrofit, Gson |
-| **Database** | Room, DataStore |
+| **Database** | Room (Scan History), DataStore (Preferences & Allergens) |
 | **Camera** | CameraX, ML Kit Barcode Scanning |
 | **Image Loading** | Coil |
 | **Navigation** | Navigation Compose (Type-safe) |
+| **Play Services** | Google Play Core (In-App Review) |
 
 ---
 
 ## Architecture
 
+ForkLife follows **Clean Architecture** principles with clear separation of concerns:
+
 ```
 app/
 ├── data/
 │   ├── local/          # Room database & DataStore
-│   └── remote/         # Retrofit API & responses
-├── di/                 # Hilt modules
-├── ui/
+│   │   ├── entity/     # ScanHistoryItem
+│   │   ├── dao/        # ScanHistoryDao
+│   │   └── ForkLifeDatabase.kt
+│   ├── model/          # Domain models (Allergen enum)
+│   ├── remote/         # Retrofit API & responses
+│   └── repository/     # Repository implementations
+├── di/                 # Hilt dependency injection modules
+├── managers/           # Business logic (InAppReviewManager)
+├── ui/                 # Presentation layer
 │   ├── components/     # Reusable Compose components
 │   ├── navigation/     # Navigation graph & routes
 │   ├── theme/          # Material 3 theming
 │   ├── home/           # Home screen
 │   ├── scan/           # Scanner & product details
-│   ├── history/        # Scan history
+│   ├── history/        # Scan history with allergen warnings
+│   ├── product/        # Product detail screen
 │   ├── profile/        # User profile & achievements
-│   └── settings/       # App settings
-└── utils/              # Utility classes
+│   └── settings/       # App settings & allergen configuration
+└── utils/              # Utility classes & extensions
 ```
+
+**Key Architectural Principles:**
+- **SOLID principles** enforced throughout
+- **Single Activity** with Jetpack Compose Navigation
+- **MVVM pattern** with ViewModels and Repository pattern
+- **Dependency Injection** via Hilt for testability
+- **Unidirectional data flow** with StateFlow and LiveData
 
 ---
 
@@ -150,11 +202,22 @@ app/
 - JDK 11+
 - Android SDK 35
 
+### Firebase Configuration
+
+This app requires Firebase for analytics and messaging. To build locally:
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
+2. Add an Android app with package name: `com.vourourou.forklife`
+3. Download the `google-services.json` file
+4. Place it in `app/google-services.json`
+
+**Note**: The `google-services.json` file is not included in this repository for security reasons.
+
 ### Build
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/ForkLife.git
+git clone https://github.com/ynniss/ForkLife.git
 cd ForkLife
 
 # Build debug APK
@@ -247,7 +310,7 @@ SOFTWARE.
 ---
 
 <p align="center">
-  Made with :fork_and_knife: by <a href="https://github.com/YOUR_USERNAME">Vourourou</a>
+  Made with :fork_and_knife: by <a href="https://github.com/ynniss">Vourourou</a>
 </p>
 
 <p align="center">
