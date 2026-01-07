@@ -281,7 +281,7 @@ private fun ProductHeader(product: Product) {
     // Image Preview Dialog
     if (showImagePreview && !product.image_front_url.isNullOrEmpty()) {
         ProductImagePreviewDialog(
-            imageUrl = product.image_front_url!!,
+            imageUrl = product.image_front_url,
             productName = product.product_name ?: stringResource(R.string.unknown_product),
             onDismiss = { showImagePreview = false }
         )

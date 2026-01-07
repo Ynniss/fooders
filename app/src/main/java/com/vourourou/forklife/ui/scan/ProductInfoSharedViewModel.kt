@@ -70,10 +70,13 @@ class ProductInfoSharedViewModel @Inject constructor(
                     _productInformationsEvent.value = ProductInformationsEvent.Success(result)
                 }
                 is Resource.Error -> withContext(Main) {
-                    Log.e("VM", result.message!!)
+                    // Note: !! is necessary here despite lint warning, as smart cast doesn't work across coroutine boundary
+                    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+                    val errorMessage = result.message!!
+                    Log.e("VM", errorMessage)
                     _isBeenRequestData.value = true
                     _productInformationsEvent.value =
-                        ProductInformationsEvent.Failure(result.message!!)
+                        ProductInformationsEvent.Failure(errorMessage)
                 }
             }
         }

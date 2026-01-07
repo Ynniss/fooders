@@ -160,4 +160,9 @@
     <string name="allergen_sulfites">Sulfites</string>
     <string name="allergen_lupin">Lupin</string>
     <string name="allergen_molluscs">Mollusques</string>
+
+    <!-- About & Support -->
+    <string name="about_and_support">À propos et Support</string>
+    <string name="rate_forklife">Noter ForkLife</string>
+    <string name="rate_forklife_description">Vous aimez l\'application ? Laissez-nous un avis !</string>
 </resources>
