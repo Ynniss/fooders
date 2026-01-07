@@ -56,6 +56,7 @@ firebaseBom = "32.7.0"
 # Google
 material = "1.12.0"
 googleServices = "4.4.0"
+playReview = "2.0.1"
 
 # Testing
 junit = "4.13.2"
@@ -146,6 +147,9 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+
+# Google Play
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

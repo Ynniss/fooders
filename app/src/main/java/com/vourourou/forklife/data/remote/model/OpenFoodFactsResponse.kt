@@ -22,7 +22,9 @@ data class Product(
     val ecoscore_grade: String? = null,
     val nova_group: Int? = null,
     val nutriments: Nutriments? = null,
-    val packaging: String? = null
+    val packaging: String? = null,
+    val allergens: String? = null,
+    val allergens_tags: List<String>? = null
 ) : Parcelable
 
 @Parcelize

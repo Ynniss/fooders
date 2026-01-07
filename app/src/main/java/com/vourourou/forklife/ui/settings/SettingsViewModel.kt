@@ -29,11 +29,28 @@ class SettingsViewModel @Inject constructor(
             initialValue = "System"
         )
 
+    val selectedAllergens: StateFlow<Set<String>> = dataStoreManager.selectedAllergensFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
     suspend fun updateTheme(theme: String) {
         dataStoreManager.updateTheme(theme)
     }
 
     suspend fun updateDarkMode(darkMode: String) {
         dataStoreManager.updateDarkMode(darkMode)
+    }
+
+    fun toggleAllergen(allergenTag: String, isSelected: Boolean) {
+        viewModelScope.launch {
+            if (isSelected) {
+                dataStoreManager.addAllergen(allergenTag)
+            } else {
+                dataStoreManager.removeAllergen(allergenTag)
+            }
+        }
     }
 }

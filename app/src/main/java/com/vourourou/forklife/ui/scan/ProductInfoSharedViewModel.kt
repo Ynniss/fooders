@@ -10,10 +10,14 @@ import com.vourourou.forklife.data.remote.model.Product
 import com.vourourou.forklife.data.repository.HistoryRepository
 import com.vourourou.forklife.data.repository.OpenFoodFactsRepository
 import com.vourourou.forklife.utils.DataStoreManager
+import com.vourourou.forklife.utils.InAppReviewManager
 import com.vourourou.forklife.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,7 +26,8 @@ import javax.inject.Inject
 class ProductInfoSharedViewModel @Inject constructor(
     private val repository: OpenFoodFactsRepository,
     private val dataStoreManager: DataStoreManager,
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    private val inAppReviewManager: InAppReviewManager
 ) : ViewModel() {
 
     sealed class ProductInformationsEvent {
@@ -43,6 +48,14 @@ class ProductInfoSharedViewModel @Inject constructor(
     private var _isBeenRequestData =
         MutableLiveData(false)
     val isBeenRequestData: LiveData<Boolean> = _isBeenRequestData
+
+    // Selected allergens for allergen detection
+    val selectedAllergens: StateFlow<Set<String>> = dataStoreManager.selectedAllergensFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
 
 
     fun getProductInformations(barcode: String) {
@@ -83,9 +96,35 @@ class ProductInfoSharedViewModel @Inject constructor(
 
                 val scanCount = dataStoreManager.getScanCount()
                 Log.d("ProductInfoVM", "Scan tracked: $scanCount")
+
+                // Request in-app review if eligible (after successful scan)
+                requestInAppReviewIfEligible(activity)
             } catch (e: Exception) {
                 Log.e("ProductInfoVM", "Error tracking scan", e)
             }
+        }
+    }
+
+    /**
+     * Requests an in-app review if the user is eligible.
+     * This is triggered after a successful product scan.
+     *
+     * Eligibility criteria:
+     * - At least 5 successful scans
+     * - At least 30 days since last review request
+     */
+    private suspend fun requestInAppReviewIfEligible(activity: Activity) {
+        try {
+            inAppReviewManager.requestReviewIfEligible(
+                activity = activity,
+                coroutineScope = viewModelScope,
+                onComplete = { success ->
+                    Log.d("ProductInfoVM", "In-app review flow completed: $success")
+                }
+            )
+        } catch (e: Exception) {
+            // Silently fail - don't interrupt user experience for review errors
+            Log.e("ProductInfoVM", "Error requesting in-app review", e)
         }
     }
 }

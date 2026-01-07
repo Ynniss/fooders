@@ -67,6 +67,7 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -140,6 +141,7 @@ fun ScanScreen(
     val productEvent by viewModel.productInformationsEvent.observeAsState(
         ProductInfoSharedViewModel.ProductInformationsEvent.Empty
     )
+    val selectedAllergens by viewModel.selectedAllergens.collectAsState()
 
     var scannedBarcode by remember { mutableStateOf<String?>(null) }
     var isScanning by remember { mutableStateOf(true) }
@@ -216,7 +218,8 @@ fun ScanScreen(
             if (scannedBarcode != null) {
                 ProductBottomSheet(
                     productEvent = productEvent,
-                    barcode = scannedBarcode ?: ""
+                    barcode = scannedBarcode ?: "",
+                    selectedAllergens = selectedAllergens
                 )
             }
         },
@@ -418,7 +421,8 @@ fun CameraPreview(
 @Composable
 fun ProductBottomSheet(
     productEvent: ProductInfoSharedViewModel.ProductInformationsEvent,
-    barcode: String
+    barcode: String,
+    selectedAllergens: Set<String> = emptySet()
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
@@ -488,7 +492,10 @@ fun ProductBottomSheet(
 
                 if (product != null) {
                     // Product Header
-                    ProductHeader(product = product)
+                    ProductHeader(
+                        product = product,
+                        selectedAllergens = selectedAllergens
+                    )
 
                     // Tabs
                     TabRow(
@@ -523,7 +530,10 @@ fun ProductBottomSheet(
                         modifier = Modifier.weight(1f)
                     ) { page ->
                         when (page) {
-                            0 -> ScoreTab(product = product)
+                            0 -> ScoreTab(
+                                product = product,
+                                selectedAllergens = selectedAllergens
+                            )
                             1 -> CharacteristicsTab(product = product)
                             2 -> IngredientsTab(product = product)
                             3 -> EnvironmentTab(product = product)
@@ -616,9 +626,23 @@ fun ProductBottomSheet(
 
 @Composable
 fun ProductHeader(
-    product: Product
+    product: Product,
+    selectedAllergens: Set<String> = emptySet()
 ) {
     var showImagePreview by remember { mutableStateOf(false) }
+
+    // Check for allergens
+    val hasAllergenWarning = remember(product.allergens_tags, selectedAllergens) {
+        if (selectedAllergens.isEmpty() || product.allergens_tags.isNullOrEmpty()) {
+            false
+        } else {
+            product.allergens_tags!!.any { productTag ->
+                selectedAllergens.any { selectedTag ->
+                    productTag.equals(selectedTag, ignoreCase = true)
+                }
+            }
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -627,30 +651,57 @@ fun ProductHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Product Image - clickable for preview
-        AsyncImage(
-            model = product.image_front_url,
-            contentDescription = stringResource(R.string.product_image),
-            modifier = Modifier
-                .size(80.dp)
-                .clip(ForkLifeCustomShapes.Card)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable(enabled = !product.image_front_url.isNullOrEmpty()) {
-                    showImagePreview = true
+        Box {
+            AsyncImage(
+                model = product.image_front_url,
+                contentDescription = stringResource(R.string.product_image),
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(ForkLifeCustomShapes.Card)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable(enabled = !product.image_front_url.isNullOrEmpty()) {
+                        showImagePreview = true
+                    }
+            )
+
+            // Allergen warning badge on image
+            if (hasAllergenWarning) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.error),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.contains_allergens),
+                        tint = MaterialTheme.colorScheme.onError,
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
-        )
+            }
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(
-                text = product.product_name ?: stringResource(R.string.unknown_product),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = product.product_name ?: stringResource(R.string.unknown_product),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+            }
             Text(
                 text = stringResource(R.string.code_format, product.code),
                 style = MaterialTheme.typography.bodySmall,
