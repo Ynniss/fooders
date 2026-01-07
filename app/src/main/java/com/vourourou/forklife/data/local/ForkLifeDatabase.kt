@@ -19,8 +19,8 @@ abstract class ForkLifeDatabase : RoomDatabase() {
          * Migration from version 1 to 2: Add allergenTags column
          */
         val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE scan_history ADD COLUMN allergenTags TEXT DEFAULT NULL")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN allergenTags TEXT DEFAULT NULL")
             }
         }
     }

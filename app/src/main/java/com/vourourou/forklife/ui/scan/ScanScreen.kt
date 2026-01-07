@@ -97,7 +97,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -636,7 +636,7 @@ fun ProductHeader(
         if (selectedAllergens.isEmpty() || product.allergens_tags.isNullOrEmpty()) {
             false
         } else {
-            product.allergens_tags!!.any { productTag ->
+            product.allergens_tags.any { productTag ->
                 selectedAllergens.any { selectedTag ->
                     productTag.equals(selectedTag, ignoreCase = true)
                 }
@@ -713,7 +713,7 @@ fun ProductHeader(
     // Image Preview Dialog
     if (showImagePreview && !product.image_front_url.isNullOrEmpty()) {
         ProductImagePreviewDialog(
-            imageUrl = product.image_front_url!!,
+            imageUrl = product.image_front_url,
             productName = product.product_name ?: stringResource(R.string.unknown_product),
             onDismiss = { showImagePreview = false }
         )

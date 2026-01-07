@@ -422,4 +422,93 @@ class SettingsScreenTest {
         val savedDarkMode = runBlocking { dataStoreManager.readDarkMode() }
         assert(savedDarkMode == "Dark") { "Dark mode should be Dark, but was $savedDarkMode" }
     }
+
+    // In-App Review Tests
+
+    @Test
+    fun settingsScreen_displaysAboutAndSupportSection() {
+        composeTestRule.setContent {
+            ForkLifeTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(0.dp)
+                )
+            }
+        }
+
+        // Scroll to About and Support section and verify it's displayed
+        composeTestRule.onNodeWithText("About and Support", useUnmergedTree = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun settingsScreen_displaysRateForkLifeOption() {
+        composeTestRule.setContent {
+            ForkLifeTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(0.dp)
+                )
+            }
+        }
+
+        // Scroll to and verify "Rate ForkLife" option is displayed
+        composeTestRule.onNodeWithText("Rate ForkLife", useUnmergedTree = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun settingsScreen_displaysRateForkLifeDescription() {
+        composeTestRule.setContent {
+            ForkLifeTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(0.dp)
+                )
+            }
+        }
+
+        // Scroll to and verify the description is displayed
+        composeTestRule.onNodeWithText("Enjoying the app? Leave us a review!", useUnmergedTree = true)
+            .performScrollTo()
+            .assertExists()
+    }
+
+    @Test
+    fun settingsScreen_rateForkLifeOption_isClickable() {
+        composeTestRule.setContent {
+            ForkLifeTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(0.dp)
+                )
+            }
+        }
+
+        // Scroll to and click on "Rate ForkLife"
+        composeTestRule.onNodeWithText("Rate ForkLife", useUnmergedTree = true)
+            .performScrollTo()
+            .assertHasClickAction()
+            .performClick()
+
+        // Wait for any potential UI updates
+        composeTestRule.waitForIdle()
+
+        // Note: We can't verify the in-app review dialog appears in tests
+        // as Google Play controls when it's shown. We just verify the click works.
+    }
+
+    @Test
+    fun settingsScreen_allergenAlertsSection_isDisplayed() {
+        composeTestRule.setContent {
+            ForkLifeTheme {
+                SettingsScreen(
+                    paddingValues = PaddingValues(0.dp)
+                )
+            }
+        }
+
+        // Scroll to and verify "Allergen alerts" section is displayed
+        composeTestRule.onNodeWithText("Allergen alerts", useUnmergedTree = true)
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
 }
