@@ -1,5 +1,6 @@
 package com.vourourou.forklife.data.repository
 
+import com.google.gson.Gson
 import com.vourourou.forklife.data.local.ScanHistoryDao
 import com.vourourou.forklife.data.local.entity.ScanHistoryItem
 import com.vourourou.forklife.data.remote.model.Product
@@ -9,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class HistoryRepository @Inject constructor(
-    private val scanHistoryDao: ScanHistoryDao
+    private val scanHistoryDao: ScanHistoryDao,
+    private val gson: Gson
 ) {
 
     fun getAllHistory(): Flow<List<ScanHistoryItem>> {
@@ -24,11 +26,15 @@ class HistoryRepository @Inject constructor(
 
     suspend fun insertScanHistory(product: Product) {
         val existingItem = scanHistoryDao.getByBarcode(product.code)
+        val allergenTagsString = product.allergens_tags?.joinToString(",")
+        val productJsonString = gson.toJson(product)
 
         if (existingItem != null) {
             val updatedItem = existingItem.copy(
                 scanCount = existingItem.scanCount + 1,
-                scannedAt = System.currentTimeMillis()
+                scannedAt = System.currentTimeMillis(),
+                allergenTags = allergenTagsString ?: existingItem.allergenTags,
+                productJson = productJsonString
             )
             scanHistoryDao.insert(updatedItem)
         } else {
@@ -40,9 +46,22 @@ class HistoryRepository @Inject constructor(
                 ecoscoreGrade = product.ecoscore_grade,
                 novaGroup = product.nova_group,
                 scannedAt = System.currentTimeMillis(),
-                scanCount = 1
+                scanCount = 1,
+                allergenTags = allergenTagsString,
+                productJson = productJsonString
             )
             scanHistoryDao.insert(newItem)
+        }
+    }
+
+    suspend fun getProductByBarcode(barcode: String): Product? {
+        val historyItem = scanHistoryDao.getByBarcode(barcode)
+        return historyItem?.productJson?.let { json ->
+            try {
+                gson.fromJson(json, Product::class.java)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 

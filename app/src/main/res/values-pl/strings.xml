@@ -1,0 +1,169 @@
+<resources>
+    <string name="app_name">ForkLife</string>
+
+    <!-- Common -->
+    <string name="close">Zamknij</string>
+    <string name="cancel">Anuluj</string>
+    <string name="back">Wstecz</string>
+    <string name="settings">Ustawienia</string>
+    <string name="search">Szukaj</string>
+    <string name="delete">Usuń</string>
+    <string name="authorize">Autoryzuj</string>
+    <string name="unknown_product">Nieznany produkt</string>
+    <string name="not_available">N/D</string>
+    <string name="code_format">Kod: %s</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Start</string>
+    <string name="nav_history">Historia</string>
+    <string name="nav_stats">Statystyki</string>
+
+    <!-- Home Screen -->
+    <string name="quick_actions">Szybkie działania</string>
+    <string name="scan_product">Skanuj produkt</string>
+    <string name="scan_product_description">Użyj aparatu do skanowania kodu kreskowego</string>
+    <string name="manual_entry">Wprowadzanie ręczne</string>
+    <string name="manual_entry_description">Wprowadź kod kreskowy ręcznie</string>
+    <string name="your_activity">Twoja aktywność</string>
+    <string name="history">Historia</string>
+    <string name="history_description">Zobacz poprzednie skanowania</string>
+    <string name="my_stats">Moje statystyki</string>
+    <string name="stats_description">Twoje skanowania i ulubione produkty</string>
+    <string name="about">O aplikacji</string>
+    <string name="about_description">Dowiedz się więcej o ForkLife</string>
+
+    <!-- About Dialog -->
+    <string name="about_forklife">O ForkLife</string>
+    <string name="version_format">Wersja %s</string>
+    <string name="about_app_description">Skanuj swoje produkty spożywcze, aby odkryć ich jakość odżywczą i wpływ na środowisko.</string>
+    <string name="developed_by">Opracowane przez Vourourou</string>
+    <string name="data_source">Dane: Open Food Facts</string>
+
+    <!-- Scan Screen -->
+    <string name="scanner">Skanuj</string>
+    <string name="camera_permission_required">Wymagane uprawnienie kamery</string>
+    <string name="camera_permission_message">Proszę zezwolić na dostęp do kamery w celu skanowania kodów kreskowych</string>
+    <string name="scan_barcode">Skanuj kod kreskowy</string>
+    <string name="place_barcode_in_frame">Umieść kod kreskowy w ramce</string>
+    <string name="product_not_found">Produkt nie został znaleziony</string>
+    <string name="barcode_format">Kod kreskowy: %s</string>
+    <string name="product_not_in_database">Ten produkt nie znajduje się w bazie danych OpenFoodFacts</string>
+    <string name="flash_on">Włącz lampę</string>
+    <string name="flash_off">Wyłącz lampę</string>
+
+    <!-- Manual Scan Screen -->
+    <string name="barcode">Kod kreskowy</string>
+    <string name="new_scan">Nowe skanowanie</string>
+    <string name="enter_barcode_to_search">Wprowadź kod kreskowy, aby wyszukać</string>
+
+    <!-- Product Detail -->
+    <string name="product_details">Szczegóły produktu</string>
+    <string name="product_image">Zdjęcie produktu</string>
+
+    <!-- Tabs -->
+    <string name="tab_score">Wynik</string>
+    <string name="tab_characteristics">Charakterystyka</string>
+    <string name="tab_ingredients">Składniki</string>
+    <string name="tab_environment">Środowisko</string>
+
+    <!-- Score Tab -->
+    <string name="nutri_score">Nutri-Score</string>
+    <string name="nutritional_quality">Jakość odżywcza</string>
+    <string name="eco_score">Eko-Score</string>
+    <string name="environmental_impact">Wpływ na środowisko</string>
+    <string name="nova">NOVA</string>
+    <string name="processing_level">Poziom przetworzenia</string>
+    <string name="no_scores_available">Brak dostępnych wyników dla tego produktu</string>
+
+    <!-- Characteristics Tab -->
+    <string name="nutrition_image">Zdjęcie wartości odżywczych</string>
+    <string name="nutritional_values">Wartości odżywcze</string>
+    <string name="energy">Energia</string>
+    <string name="fat">Tłuszcz</string>
+    <string name="sugars">Cukry</string>
+    <string name="salt">Sól</string>
+    <string name="kcal_format">%s kcal</string>
+    <string name="grams_format">%s g</string>
+
+    <!-- Ingredients Tab -->
+    <string name="ingredients_image">Zdjęcie składników</string>
+    <string name="ingredients_list">Lista składników</string>
+    <string name="no_ingredients_available">Brak dostępnych składników</string>
+
+    <!-- Environment Tab -->
+    <string name="grade_format">Ocena: %s</string>
+    <string name="packaging">Opakowanie</string>
+    <string name="no_environment_info">Brak informacji o środowisku</string>
+
+    <!-- History Screen -->
+    <string name="product_deleted">Produkt usunięty</string>
+    <string name="undo">Cofnij</string>
+    <string name="clear_history">Wyczyść historię</string>
+    <string name="clear_history_confirmation">Czy na pewno chcesz wyczyścić całą historię?</string>
+    <string name="clear">Wyczyść</string>
+    <string name="no_scans">Brak skanowań</string>
+    <string name="scanned_products_appear_here">Tutaj pojawią się zeskanowane produkty</string>
+    <string name="scanned_times_format">Skanowano %d razy</string>
+    <string name="nutri_score_format">Nutri-Score %s</string>
+    <string name="eco_score_format">Eko-Score %s</string>
+
+    <!-- Stats Screen -->
+    <string name="statistics">Statystyki</string>
+    <string name="total_scans">Łączna liczba skanowań</string>
+    <string name="unique_products">Unikalne produkty</string>
+    <string name="most_scanned_products">Najczęściej skanowane produkty</string>
+    <string name="scan_products_to_see_favorites">Skanuj produkty, aby zobaczyć tutaj swoje ulubione</string>
+    <string name="no_statistics_yet">Brak statystyk</string>
+    <string name="start_scanning_to_see_stats">Zacznij skanować produkty, aby zobaczyć tutaj swoje statystyki!</string>
+
+    <plurals name="scans_count">
+        <item quantity="one">%d skanowanie</item>
+        <item quantity="few">%d skanowania</item>
+        <item quantity="other">%d skanowań</item>
+    </plurals>
+
+    <!-- Settings Screen -->
+    <string name="theme_color">Kolor motywu</string>
+    <string name="orange">Pomarańczowy</string>
+    <string name="avocado">Awokado</string>
+    <string name="cherry">Wiśnia</string>
+    <string name="dark_mode">Tryb ciemny</string>
+    <string name="system">System</string>
+    <string name="system_description">Podąża za ustawieniami systemu</string>
+    <string name="light">Jasny</string>
+    <string name="light_description">Zawsze używaj trybu jasnego</string>
+    <string name="dark">Ciemny</string>
+    <string name="dark_description">Zawsze używaj trybu ciemnego</string>
+
+    <!-- Accessibility -->
+    <string name="navigate_back">Cofnij nawigację</string>
+    <string name="selected">Wybrano</string>
+
+    <!-- Allergen Alerts -->
+    <string name="allergen_alerts">Alerty alergenów</string>
+    <string name="allergen_alerts_description">Wybierz alergeny, o których chcesz być powiadamiany</string>
+    <string name="allergen_warning">Ostrzeżenie o alergenach</string>
+    <string name="allergen_warning_message">Ten produkt zawiera alergeny, na które jesteś uczulony:</string>
+    <string name="contains_allergens">Zawiera alergeny</string>
+
+    <!-- Allergen Names -->
+    <string name="allergen_gluten">Gluten</string>
+    <string name="allergen_milk">Mleko / Laktoza</string>
+    <string name="allergen_eggs">Jaja</string>
+    <string name="allergen_nuts">Orzechy</string>
+    <string name="allergen_peanuts">Orzeszki ziemne</string>
+    <string name="allergen_soy">Soja</string>
+    <string name="allergen_fish">Ryby</string>
+    <string name="allergen_shellfish">Skorupiaki / Skorupiaki</string>
+    <string name="allergen_sesame">Sezam</string>
+    <string name="allergen_mustard">Gorczyca</string>
+    <string name="allergen_celery">Seler</string>
+    <string name="allergen_sulfites">Siarczyny</string>
+    <string name="allergen_lupin">Łubin</string>
+    <string name="allergen_molluscs">Mięczaki</string>
+
+    <!-- About &amp; Support -->
+    <string name="about_and_support">O aplikacji i Wsparcie</string>
+    <string name="rate_forklife">Oceń ForkLife</string>
+    <string name="rate_forklife_description">Podoba Ci się aplikacja? Zostaw nam recenzję!</string>
+</resources>

@@ -10,10 +10,14 @@ import com.vourourou.forklife.data.remote.model.Product
 import com.vourourou.forklife.data.repository.HistoryRepository
 import com.vourourou.forklife.data.repository.OpenFoodFactsRepository
 import com.vourourou.forklife.utils.DataStoreManager
+import com.vourourou.forklife.utils.InAppReviewManager
 import com.vourourou.forklife.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,7 +26,8 @@ import javax.inject.Inject
 class ProductInfoSharedViewModel @Inject constructor(
     private val repository: OpenFoodFactsRepository,
     private val dataStoreManager: DataStoreManager,
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
+    private val inAppReviewManager: InAppReviewManager
 ) : ViewModel() {
 
     sealed class ProductInformationsEvent {
@@ -44,12 +49,37 @@ class ProductInfoSharedViewModel @Inject constructor(
         MutableLiveData(false)
     val isBeenRequestData: LiveData<Boolean> = _isBeenRequestData
 
+    // Selected allergens for allergen detection
+    val selectedAllergens: StateFlow<Set<String>> = dataStoreManager.selectedAllergensFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
 
-    fun getProductInformations(barcode: String) {
+
+    fun getProductInformations(barcode: String, forceRefresh: Boolean = false) {
         viewModelScope.launch(IO) {
             withContext(Main) {
                 _productInformationsEvent.value = ProductInformationsEvent.Loading
             }
+
+            // Try to load from cache first (offline-first approach)
+            if (!forceRefresh) {
+                val cachedProduct = historyRepository.getProductByBarcode(barcode)
+                if (cachedProduct != null) {
+                    withContext(Main) {
+                        Log.d("VM", "Loaded product from cache (offline)")
+                        _isBeenRequestData.value = true
+                        _productInformationsEvent.value = ProductInformationsEvent.Success(
+                            Resource.Success(cachedProduct)
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            // If not in cache or force refresh, fetch from API
             when (val result = repository.getProduct(barcode)) {
                 is Resource.Success -> withContext(Main) {
                     Log.d("RES SUCCESS", "INSIDE IT")
@@ -57,10 +87,13 @@ class ProductInfoSharedViewModel @Inject constructor(
                     _productInformationsEvent.value = ProductInformationsEvent.Success(result)
                 }
                 is Resource.Error -> withContext(Main) {
-                    Log.e("VM", result.message!!)
+                    // Note: !! is necessary here despite lint warning, as smart cast doesn't work across coroutine boundary
+                    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+                    val errorMessage = result.message!!
+                    Log.e("VM", errorMessage)
                     _isBeenRequestData.value = true
                     _productInformationsEvent.value =
-                        ProductInformationsEvent.Failure(result.message!!)
+                        ProductInformationsEvent.Failure(errorMessage)
                 }
             }
         }
@@ -83,9 +116,35 @@ class ProductInfoSharedViewModel @Inject constructor(
 
                 val scanCount = dataStoreManager.getScanCount()
                 Log.d("ProductInfoVM", "Scan tracked: $scanCount")
+
+                // Request in-app review if eligible (after successful scan)
+                requestInAppReviewIfEligible(activity)
             } catch (e: Exception) {
                 Log.e("ProductInfoVM", "Error tracking scan", e)
             }
+        }
+    }
+
+    /**
+     * Requests an in-app review if the user is eligible.
+     * This is triggered after a successful product scan.
+     *
+     * Eligibility criteria:
+     * - At least 5 successful scans
+     * - At least 30 days since last review request
+     */
+    private suspend fun requestInAppReviewIfEligible(activity: Activity) {
+        try {
+            inAppReviewManager.requestReviewIfEligible(
+                activity = activity,
+                coroutineScope = viewModelScope,
+                onComplete = { success ->
+                    Log.d("ProductInfoVM", "In-app review flow completed: $success")
+                }
+            )
+        } catch (e: Exception) {
+            // Silently fail - don't interrupt user experience for review errors
+            Log.e("ProductInfoVM", "Error requesting in-app review", e)
         }
     }
 }

@@ -27,8 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vourourou.forklife.R
+import com.vourourou.forklife.data.model.Allergen
 import com.vourourou.forklife.data.remote.model.Product
+import com.vourourou.forklife.ui.components.AllergenWarningBanner
 import com.vourourou.forklife.ui.theme.ForkLifeCustomShapes
+import com.vourourou.forklife.utils.AllergenChecker
 
 // Valid grades for Nutri-Score and Eco-Score
 private val validLetterGrades = listOf("A", "B", "C", "D", "E")
@@ -36,7 +39,10 @@ private val validLetterGrades = listOf("A", "B", "C", "D", "E")
 private val validNovaGroups = listOf(1, 2, 3, 4)
 
 @Composable
-fun ScoreTab(product: Product) {
+fun ScoreTab(
+    product: Product,
+    selectedAllergens: Set<String> = emptySet()
+) {
     // Check if grades are valid (not just non-null)
     val hasValidNutriscore = product.nutriscore_grade?.uppercase() in validLetterGrades
     val hasValidEcoscore = product.ecoscore_grade?.uppercase() in validLetterGrades
@@ -44,12 +50,22 @@ fun ScoreTab(product: Product) {
 
     val hasAnyValidScore = hasValidNutriscore || hasValidEcoscore || hasValidNova
 
+    // Check for allergens
+    val allergenCheckResult = AllergenChecker.checkProduct(product, selectedAllergens)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Allergen Warning Banner - show at the top if allergens are detected
+        if (allergenCheckResult.hasAllergens) {
+            AllergenWarningBanner(
+                detectedAllergens = allergenCheckResult.detectedAllergens
+            )
+        }
+
         if (hasAnyValidScore) {
             // Nutriscore - only show if valid grade (A-E)
             if (hasValidNutriscore) {
@@ -77,8 +93,8 @@ fun ScoreTab(product: Product) {
                     description = stringResource(R.string.processing_level)
                 )
             }
-        } else {
-            // No valid scores available
+        } else if (!allergenCheckResult.hasAllergens) {
+            // No valid scores available (and no allergens to show)
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

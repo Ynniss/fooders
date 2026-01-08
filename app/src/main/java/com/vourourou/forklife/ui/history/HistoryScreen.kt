@@ -41,6 +41,7 @@ fun HistoryScreen(
 ) {
     val historyItems by viewModel.historyItems.collectAsState()
     val pendingDeleteItems by viewModel.pendingDeleteItems.collectAsState()
+    val selectedAllergens by viewModel.selectedAllergens.collectAsState()
     var showClearDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -120,7 +121,8 @@ fun HistoryScreen(
                     ) {
                         HistoryItemCard(
                             item = item,
-                            onClick = { onNavigateToProduct(item.barcode) }
+                            onClick = { onNavigateToProduct(item.barcode) },
+                            selectedAllergens = selectedAllergens
                         )
                     }
                 }
@@ -196,9 +198,24 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
 @Composable
 private fun HistoryItemCard(
     item: ScanHistoryItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    selectedAllergens: Set<String> = emptySet()
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
+
+    // Check if this item has allergens that match the user's selection
+    val hasAllergenWarning = remember(item.allergenTags, selectedAllergens) {
+        if (selectedAllergens.isEmpty() || item.allergenTags.isNullOrEmpty()) {
+            false
+        } else {
+            val itemAllergens = item.getAllergenTagsList()
+            itemAllergens.any { itemAllergen ->
+                selectedAllergens.any { selectedAllergen ->
+                    itemAllergen.equals(selectedAllergen, ignoreCase = true)
+                }
+            }
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -215,16 +232,38 @@ private fun HistoryItemCard(
                 .padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Product image
-            AsyncImage(
-                model = item.imageUrl,
-                contentDescription = item.productName,
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface),
-                contentScale = ContentScale.Crop
-            )
+            // Product image with allergen warning badge
+            Box {
+                AsyncImage(
+                    model = item.imageUrl,
+                    contentDescription = item.productName,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Allergen warning badge
+                if (hasAllergenWarning) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(2.dp)
+                            .size(20.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(MaterialTheme.colorScheme.error),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = stringResource(R.string.contains_allergens),
+                            tint = MaterialTheme.colorScheme.onError,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
 
             // Product info
             Column(
