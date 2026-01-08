@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -55,6 +56,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -76,6 +78,7 @@ import com.vourourou.forklife.ui.scan.details.skeletons.EnvironmentTabSkeleton
 import com.vourourou.forklife.ui.scan.details.skeletons.IngredientsTabSkeleton
 import com.vourourou.forklife.ui.scan.details.skeletons.ScoreTabSkeleton
 import com.vourourou.forklife.ui.theme.ForkLifeCustomShapes
+import com.vourourou.forklife.utils.ShareUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,11 +92,20 @@ fun ProductDetailScreen(
         ProductInfoSharedViewModel.ProductInformationsEvent.Empty
     )
     val selectedAllergens by viewModel.selectedAllergens.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(barcode) {
         if (barcode.isNotEmpty()) {
             viewModel.getProductInformations(barcode)
         }
+    }
+
+    // Extract current product for share button
+    val currentProduct = when (productEvent) {
+        is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+            (productEvent as ProductInfoSharedViewModel.ProductInformationsEvent.Success).result.data
+        }
+        else -> null
     }
 
     Scaffold(
@@ -106,6 +118,21 @@ fun ProductDetailScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)
                         )
+                    }
+                },
+                actions = {
+                    // Share button - only visible when product is loaded
+                    if (currentProduct != null) {
+                        IconButton(
+                            onClick = {
+                                ShareUtils.shareProduct(context, currentProduct)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = stringResource(R.string.share_product)
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
