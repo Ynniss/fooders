@@ -165,4 +165,12 @@
     <string name="about_and_support">About and Support</string>
     <string name="rate_forklife">Rate ForkLife</string>
     <string name="rate_forklife_description">Enjoying the app? Leave us a review!</string>
+
+    <!-- Share -->
+    <string name="share">Share</string>
+    <string name="share_product">Share product</string>
+    <string name="share_header">I just scanned %s with ForkLife!</string>
+    <string name="share_nutri_score">Nutri-Score: %s</string>
+    <string name="share_eco_score">Eco-Score: %s</string>
+    <string name="share_footer">Download ForkLife to make healthier food choices:</string>
 </resources>

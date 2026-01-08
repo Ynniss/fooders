@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -61,11 +62,13 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import com.vourourou.forklife.R
 import com.vourourou.forklife.data.remote.model.Product
 import com.vourourou.forklife.ui.components.LoadingIndicator
+import com.vourourou.forklife.utils.ShareUtils
 import com.vourourou.forklife.ui.scan.ProductInfoSharedViewModel
 import com.vourourou.forklife.ui.scan.details.CharacteristicsTab
 import com.vourourou.forklife.ui.scan.details.EnvironmentTab
@@ -89,6 +92,15 @@ fun ProductDetailScreen(
         ProductInfoSharedViewModel.ProductInformationsEvent.Empty
     )
     val selectedAllergens by viewModel.selectedAllergens.collectAsState()
+    val context = LocalContext.current
+
+    // Extract current product for sharing
+    val currentProduct = when (productEvent) {
+        is ProductInfoSharedViewModel.ProductInformationsEvent.Success -> {
+            (productEvent as ProductInfoSharedViewModel.ProductInformationsEvent.Success).result.data
+        }
+        else -> null
+    }
 
     LaunchedEffect(barcode) {
         if (barcode.isNotEmpty()) {
@@ -106,6 +118,17 @@ fun ProductDetailScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)
                         )
+                    }
+                },
+                actions = {
+                    // Share button - only show when product is loaded
+                    if (currentProduct != null) {
+                        IconButton(onClick = { ShareUtils.shareProduct(context, currentProduct) }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = stringResource(R.string.share)
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

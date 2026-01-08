@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.vourourou.forklife.R
 import com.vourourou.forklife.data.local.entity.ScanHistoryItem
+import com.vourourou.forklife.utils.ShareUtils
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -122,7 +123,8 @@ fun HistoryScreen(
                         HistoryItemCard(
                             item = item,
                             onClick = { onNavigateToProduct(item.barcode) },
-                            selectedAllergens = selectedAllergens
+                            selectedAllergens = selectedAllergens,
+                            onShare = { ShareUtils.shareHistoryItem(context, item) }
                         )
                     }
                 }
@@ -199,7 +201,8 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
 private fun HistoryItemCard(
     item: ScanHistoryItem,
     onClick: () -> Unit,
-    selectedAllergens: Set<String> = emptySet()
+    selectedAllergens: Set<String> = emptySet(),
+    onShare: () -> Unit = {}
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
@@ -311,6 +314,18 @@ private fun HistoryItemCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
+            }
+
+            // Share button
+            IconButton(
+                onClick = onShare,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = stringResource(R.string.share),
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
