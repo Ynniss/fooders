@@ -165,4 +165,23 @@
     <string name="about_and_support">About and Support</string>
     <string name="rate_forklife">Rate ForkLife</string>
     <string name="rate_forklife_description">Enjoying the app? Leave us a review!</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="toggle_flash">Toggle flashlight</string>
+    <string name="theme_color_orange">Orange theme</string>
+    <string name="theme_color_avocado">Avocado theme</string>
+    <string name="theme_color_cherry">Cherry theme</string>
+    <string name="nutriscore_badge_a">Nutri-Score grade A - Excellent nutritional quality</string>
+    <string name="nutriscore_badge_b">Nutri-Score grade B - Good nutritional quality</string>
+    <string name="nutriscore_badge_c">Nutri-Score grade C - Average nutritional quality</string>
+    <string name="nutriscore_badge_d">Nutri-Score grade D - Poor nutritional quality</string>
+    <string name="nutriscore_badge_e">Nutri-Score grade E - Very poor nutritional quality</string>
+    <string name="ecoscore_badge_a">Eco-Score grade A - Very low environmental impact</string>
+    <string name="ecoscore_badge_b">Eco-Score grade B - Low environmental impact</string>
+    <string name="ecoscore_badge_c">Eco-Score grade C - Moderate environmental impact</string>
+    <string name="ecoscore_badge_d">Eco-Score grade D - High environmental impact</string>
+    <string name="ecoscore_badge_e">Eco-Score grade E - Very high environmental impact</string>
+    <string name="nav_home_description">Navigate to home screen</string>
+    <string name="nav_history_description">Navigate to scan history</string>
+    <string name="nav_stats_description">Navigate to statistics</string>
 </resources>
