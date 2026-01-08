@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -332,11 +334,21 @@ private fun NutriscoreBadge(grade: String) {
         else -> Color.White
     }
 
+    val contentDesc = when (grade) {
+        "A" -> stringResource(R.string.nutriscore_badge_a)
+        "B" -> stringResource(R.string.nutriscore_badge_b)
+        "C" -> stringResource(R.string.nutriscore_badge_c)
+        "D" -> stringResource(R.string.nutriscore_badge_d)
+        "E" -> stringResource(R.string.nutriscore_badge_e)
+        else -> stringResource(R.string.nutri_score_format, grade)
+    }
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .background(color)
             .padding(horizontal = 6.dp, vertical = 2.dp)
+            .semantics { contentDescription = contentDesc }
     ) {
         Text(
             text = stringResource(R.string.nutri_score_format, grade),
@@ -363,11 +375,21 @@ private fun EcoscoreBadge(grade: String) {
         else -> Color.White
     }
 
+    val contentDesc = when (grade) {
+        "A" -> stringResource(R.string.ecoscore_badge_a)
+        "B" -> stringResource(R.string.ecoscore_badge_b)
+        "C" -> stringResource(R.string.ecoscore_badge_c)
+        "D" -> stringResource(R.string.ecoscore_badge_d)
+        "E" -> stringResource(R.string.ecoscore_badge_e)
+        else -> stringResource(R.string.eco_score_format, grade)
+    }
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .background(color)
             .padding(horizontal = 6.dp, vertical = 2.dp)
+            .semantics { contentDescription = contentDesc }
     ) {
         Text(
             text = stringResource(R.string.eco_score_format, grade),

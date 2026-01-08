@@ -252,11 +252,22 @@ fun ThemeColorOption(
     // Avocado green (0xFF66BB6A) needs black for better contrast
     val checkmarkColor = if (color == AvocadoPrimary) Color.Black else Color.White
 
+    // Content description based on theme name
+    val contentDescription = when (name) {
+        stringResource(R.string.orange) -> stringResource(R.string.theme_color_orange)
+        stringResource(R.string.avocado) -> stringResource(R.string.theme_color_avocado)
+        stringResource(R.string.cherry) -> stringResource(R.string.theme_color_cherry)
+        else -> name
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(ForkLifeCustomShapes.CardSmall)
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                onClickLabel = contentDescription
+            )
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
