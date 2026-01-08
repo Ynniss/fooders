@@ -2,6 +2,7 @@ package com.vourourou.forklife.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.gson.Gson
 import com.vourourou.forklife.BuildConfig
 import com.vourourou.forklife.data.local.ForkLifeDatabase
 import com.vourourou.forklife.data.local.ScanHistoryDao
@@ -63,7 +64,12 @@ object AppModule {
             context,
             ForkLifeDatabase::class.java,
             "forklife_database"
-        ).build()
+        )
+            .addMigrations(
+                ForkLifeDatabase.MIGRATION_1_2,
+                ForkLifeDatabase.MIGRATION_2_3
+            )
+            .build()
     }
 
     @Singleton
@@ -74,8 +80,17 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideHistoryRepository(scanHistoryDao: ScanHistoryDao): HistoryRepository {
-        return HistoryRepository(scanHistoryDao)
+    fun provideGson(): Gson {
+        return Gson()
+    }
+
+    @Singleton
+    @Provides
+    fun provideHistoryRepository(
+        scanHistoryDao: ScanHistoryDao,
+        gson: Gson
+    ): HistoryRepository {
+        return HistoryRepository(scanHistoryDao, gson)
     }
 
 }

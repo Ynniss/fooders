@@ -9,6 +9,63 @@ ForkLife is an Android application for scanning and managing food product inform
 **Package name**: `com.vourourou.forklife`
 **Application ID**: `com.vourourou.forklife`
 
+## Development Principles
+
+**CRITICAL: This project follows SOLID principles and Clean Architecture patterns. All code changes MUST preserve these architectural principles.**
+
+### SOLID Principles
+- **Single Responsibility Principle (SRP)**: Each class has one reason to change
+  - ViewModels handle only presentation logic
+  - Repositories handle only data access
+  - Use cases/Managers handle specific business logic (e.g., `InAppReviewManager`)
+
+- **Open/Closed Principle (OCP)**: Open for extension, closed for modification
+  - Use sealed classes for states and events
+  - Leverage Kotlin extension functions
+  - Design interfaces for flexibility
+
+- **Liskov Substitution Principle (LSP)**: Subtypes must be substitutable for base types
+  - Use abstract base classes when needed
+  - Ensure consistent behavior in implementations
+
+- **Interface Segregation Principle (ISP)**: Clients shouldn't depend on interfaces they don't use
+  - Keep repository interfaces focused
+  - Split large interfaces into smaller, cohesive ones
+
+- **Dependency Inversion Principle (DIP)**: Depend on abstractions, not concretions
+  - All dependencies injected via Hilt
+  - ViewModels depend on repository interfaces
+  - Use constructor injection
+
+### Clean Architecture Layers
+```
+Presentation Layer (UI)
+    ↓ (depends on)
+Domain Layer (ViewModels, Use Cases)
+    ↓ (depends on)
+Data Layer (Repositories, Data Sources)
+```
+
+**When adding new features:**
+1. Start with data models and repository interfaces
+2. Implement repositories with proper dependency injection
+3. Create ViewModels that depend on repositories
+4. Build UI components that observe ViewModel state
+5. Keep business logic in ViewModels/Use Cases, NOT in Composables
+
+## Git & PR Guidelines
+
+**Pull Request Descriptions**:
+- NEVER include "Generated with Claude Code" or similar footers in PR descriptions
+- Keep PR descriptions clean and professional
+- Focus on what changed and why
+- Include relevant test plan and version information
+
+**Commit Messages**:
+- Write clear, concise commit messages focused on "why" rather than "what"
+- Follow the repository's existing commit message style
+- Do not add attribution footers unless explicitly requested
+
 ## Build Commands
 
 ```bash
@@ -32,6 +89,12 @@ ForkLife is an Android application for scanning and managing food product inform
 ```
 
 **Note:** The project requires `google-services.json` (Firebase configuration) to build successfully. Place it in `app/google-services.json` for local development.
+
+**16 KB Page Size Support:** The app supports 16 KB memory page sizes as required by Google Play (2024+). This is configured via:
+- Manifest property: `android.app.PROPERTY_SUPPORTS_16KB_PAGE_SIZE=true`
+- ML Kit Barcode Scanning 17.3.0+ (supports 16 KB pages)
+- Modern native library packaging: `useLegacyPackaging = false`
+- All supported ABIs: armeabi-v7a, arm64-v8a, x86, x86_64
 
 ## Device Testing
 
@@ -84,16 +147,38 @@ Key provided dependencies:
 ### Data Layer
 
 **API Integration**:
-- **Custom Backend**: `https://us-central1-fooders-811cb.cloudfunctions.net/app/fooders/api/`
-  - User login, statistics, rankings, and success tracking
 - **OpenFoodFacts API**: `https://world.openfoodfacts.org/`
   - Product information retrieval (READ-only, no authentication required)
 
 **API Interface**: `data/remote/ForkLifeApi.kt`
 
-**Repositories**:
+**Local Database (Room)**:
+- `ForkLifeDatabase`: Room database for local data persistence
+- **Entities**:
+  - `ScanHistoryItem`: Stores scanned product history with allergen tags
+- **DAOs**:
+  - `ScanHistoryDao`: Interface for scan history operations
+- **Migrations**:
+  - `MIGRATION_1_2`: Adds allergenTags column to scan_history table
+
+**Data Persistence (DataStore)**:
+- `DataStoreManager`: Manages user preferences using Preferences DataStore
+  - User session (username)
+  - Theme preference (Orange, Avocado, Cherry)
+  - Dark mode preference (System, Light, Dark)
+  - **Selected allergens** (Set<String>) for allergen alerts
+
+**Repositories** (follow Repository Pattern):
 - `LoginRepository`: Handles user authentication
 - `ScanRepository`: Manages product scanning and information retrieval
+- `OpenFoodFactsRepository`: READ-only access to OpenFoodFacts API
+- `HistoryRepository`: Manages scan history CRUD operations with Room
+
+**Business Logic Managers**:
+- `InAppReviewManager`: Handles Google Play in-app review flow
+  - Tracks successful scans count
+  - Triggers review prompt after threshold (e.g., 5 scans)
+  - Ensures one-time review request per user
 
 **Responses**: Located in `data/remote/responses/` with subdirectories for different response types (ProductInformations, UserSuccessResponse, RankingResponse)
 
@@ -135,7 +220,10 @@ ui/
 │       ├── IngredientsTab.kt
 │       └── EnvironmentTab.kt
 ├── history/
-│   └── HistoryScreen.kt      # Coming soon placeholder
+│   ├── HistoryScreen.kt      # Scan history with swipe-to-delete
+│   └── HistoryViewModel.kt   # Manages history state and deletions
+├── product/
+│   └── ProductDetailScreen.kt # Full product details with allergen warnings
 ├── profile/
 │   ├── ProfileScreen.kt      # With HorizontalPager tabs
 │   └── ProfileViewModel.kt
@@ -178,13 +266,13 @@ Navigation is handled via Compose Navigation:
 - Bottom navigation for Home, History, Profile
 - Slide animations for screen transitions
 
-### Data Persistence
+### Data Models
 
-**DataStore** (via `DataStoreManager`):
-- User session management (username)
-- Theme preference (Orange, Avocado, Cherry)
-- Dark mode preference (System, Light, Dark)
-- Flow-based API for Compose integration
+**Allergen System**:
+- `data/model/Allergen.kt`: Enum defining 14 common allergens
+  - Each allergen has a tag (OpenFoodFacts format) and display name resource
+  - Allergens: Gluten, Milk, Eggs, Nuts, Peanuts, Soy, Fish, Shellfish, Sesame, Mustard, Celery, Sulfites, Lupin, Molluscs
+  - Used for allergen alerts throughout the app
 
 ### Key Features
 
@@ -199,6 +287,30 @@ Navigation is handled via Compose Navigation:
 **Product Information**:
 - Product information with HorizontalPager tabs (Score, Characteristics, Ingredients, Environment)
 - READ-only access to OpenFoodFacts database (no account required)
+- Full product detail screen accessible from scan history
+
+**Allergen Alerts** ⚠️:
+- **User-configurable allergen preferences** in Settings
+- **14 common allergens** supported (Gluten, Milk, Eggs, Nuts, etc.)
+- **Visual warning badges** on product images when allergens detected
+- **FilterChip UI** for allergen selection with theme-aware colors
+- **Persistent storage** of selected allergens via DataStore
+- **Real-time detection** during scanning and in history
+- Allergen tags stored in scan history for offline access
+
+**Scan History**:
+- Room database persistence of scanned products
+- Swipe-to-delete with undo functionality
+- Allergen warning badges on history items
+- Nutri-Score and Eco-Score badges (only shown when available)
+- Tap to view full product details
+- Scan count tracking for frequently scanned items
+
+**In-App Review**:
+- Google Play Core in-app review integration
+- Smart triggering after successful scan milestones
+- One-time prompt to avoid user fatigue
+- Managed by dedicated `InAppReviewManager`
 
 **User Features**:
 - Login system with session persistence
@@ -234,9 +346,11 @@ Navigation is handled via Compose Navigation:
 **Key Libraries**:
 - Dagger Hilt 2.48 - Dependency injection
 - CameraX 1.3.0 - Camera functionality
-- ML Kit Barcode Scanning 17.2.0 - Barcode detection
+- ML Kit Barcode Scanning 17.3.0 - Barcode detection (16 KB page size compatible)
 - Retrofit 2.9.0 + Gson - Network calls
-- DataStore 1.0.0 - Preferences storage
+- Room 2.6.1 - Local database (scan history)
+- DataStore 1.0.0 - Preferences storage (user settings, allergens)
+- Google Play Core 1.10.3 - In-app review
 - Firebase (BOM 32.7.0) - Analytics and Messaging
 - Accompanist Permissions 0.36.0 - Runtime permissions
 
@@ -282,6 +396,23 @@ Navigation is handled via Compose Navigation:
   - Transparent scanning window (75% width, barcode aspect ratio)
   - Rounded corner brackets in primary theme color
   - Hint text: "Placez le code-barres dans le cadre"
+
+### Allergen Alerts UI
+**IMPORTANT: Allergen chips and warnings must match the current theme.**
+
+- **Allergen chips in Settings**: Use `primaryContainer` and `onPrimaryContainer` colors (NOT error colors)
+  - This ensures chips match the selected theme (Orange, Avocado, or Cherry)
+  - Update `FilterChip` colors to use `MaterialTheme.colorScheme.primaryContainer`
+
+- **Allergen warning badges**: Use error colors for visibility
+  - Red badge with warning/info icon on product images
+  - Positioned at top-right corner of product image
+  - Consistent across ScanScreen, ProductDetailScreen, and HistoryScreen
+
+- **Allergen detection logic**:
+  - Compare product's `allergens_tags` with user's `selectedAllergens`
+  - Use case-insensitive matching
+  - Only show warnings when both lists are non-empty and have matches
 
 ## Important Notes
 

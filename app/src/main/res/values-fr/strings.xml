@@ -92,9 +92,7 @@
 
     <!-- Environment Tab -->
     <string name="grade_format">Grade : %s</string>
-    <string name="not_available_text">Non disponible</string>
     <string name="packaging">Emballage</string>
-    <string name="packaging_info_not_available">Informations d\'emballage non disponibles</string>
     <string name="no_environment_info">Aucune information environnementale disponible</string>
 
     <!-- History Screen -->
@@ -117,8 +115,6 @@
     <string name="scan_products_to_see_favorites">Scannez des produits pour voir vos favoris ici</string>
     <string name="no_statistics_yet">Pas encore de statistiques</string>
     <string name="start_scanning_to_see_stats">Commencez à scanner des produits pour voir vos statistiques ici !</string>
-    <string name="scan_count_format">%d scan</string>
-    <string name="scans_count_format">%d scans</string>
 
     <plurals name="scans_count">
         <item quantity="one">%d scan</item>
@@ -141,4 +137,32 @@
     <!-- Accessibility -->
     <string name="navigate_back">Retour</string>
     <string name="selected">Sélectionné</string>
+
+    <!-- Allergen Alerts -->
+    <string name="allergen_alerts">Alertes allergènes</string>
+    <string name="allergen_alerts_description">Sélectionnez les allergènes pour lesquels vous souhaitez être alerté</string>
+    <string name="allergen_warning">Avertissement allergène</string>
+    <string name="allergen_warning_message">Ce produit contient des allergènes auxquels vous êtes sensible :</string>
+    <string name="contains_allergens">Contient des allergènes</string>
+
+    <!-- Allergen Names -->
+    <string name="allergen_gluten">Gluten</string>
+    <string name="allergen_milk">Lait / Lactose</string>
+    <string name="allergen_eggs">Œufs</string>
+    <string name="allergen_nuts">Fruits à coque</string>
+    <string name="allergen_peanuts">Arachides</string>
+    <string name="allergen_soy">Soja</string>
+    <string name="allergen_fish">Poisson</string>
+    <string name="allergen_shellfish">Fruits de mer / Crustacés</string>
+    <string name="allergen_sesame">Sésame</string>
+    <string name="allergen_mustard">Moutarde</string>
+    <string name="allergen_celery">Céleri</string>
+    <string name="allergen_sulfites">Sulfites</string>
+    <string name="allergen_lupin">Lupin</string>
+    <string name="allergen_molluscs">Mollusques</string>
+
+    <!-- About & Support -->
+    <string name="about_and_support">À propos et Support</string>
+    <string name="rate_forklife">Noter ForkLife</string>
+    <string name="rate_forklife_description">Vous aimez l\'application ? Laissez-nous un avis !</string>
 </resources>

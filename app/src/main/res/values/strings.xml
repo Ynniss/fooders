@@ -92,9 +92,7 @@
 
     <!-- Environment Tab -->
     <string name="grade_format">Grade: %s</string>
-    <string name="not_available_text">Not available</string>
     <string name="packaging">Packaging</string>
-    <string name="packaging_info_not_available">Packaging information not available</string>
     <string name="no_environment_info">No environmental information available</string>
 
     <!-- History Screen -->
@@ -117,8 +115,6 @@
     <string name="scan_products_to_see_favorites">Scan products to see your favorites here</string>
     <string name="no_statistics_yet">No statistics yet</string>
     <string name="start_scanning_to_see_stats">Start scanning products to see your statistics here!</string>
-    <string name="scan_count_format">%d scan</string>
-    <string name="scans_count_format">%d scans</string>
 
     <plurals name="scans_count">
         <item quantity="one">%d scan</item>
@@ -141,4 +137,32 @@
     <!-- Accessibility -->
     <string name="navigate_back">Navigate back</string>
     <string name="selected">Selected</string>
+
+    <!-- Allergen Alerts -->
+    <string name="allergen_alerts">Allergen alerts</string>
+    <string name="allergen_alerts_description">Select allergens to be alerted about</string>
+    <string name="allergen_warning">Allergen warning</string>
+    <string name="allergen_warning_message">This product contains allergens you are sensitive to:</string>
+    <string name="contains_allergens">Contains allergens</string>
+
+    <!-- Allergen Names -->
+    <string name="allergen_gluten">Gluten</string>
+    <string name="allergen_milk">Milk / Lactose</string>
+    <string name="allergen_eggs">Eggs</string>
+    <string name="allergen_nuts">Nuts</string>
+    <string name="allergen_peanuts">Peanuts</string>
+    <string name="allergen_soy">Soy</string>
+    <string name="allergen_fish">Fish</string>
+    <string name="allergen_shellfish">Shellfish / Crustaceans</string>
+    <string name="allergen_sesame">Sesame</string>
+    <string name="allergen_mustard">Mustard</string>
+    <string name="allergen_celery">Celery</string>
+    <string name="allergen_sulfites">Sulfites</string>
+    <string name="allergen_lupin">Lupin</string>
+    <string name="allergen_molluscs">Molluscs</string>
+
+    <!-- About & Support -->
+    <string name="about_and_support">About and Support</string>
+    <string name="rate_forklife">Rate ForkLife</string>
+    <string name="rate_forklife_description">Enjoying the app? Leave us a review!</string>
 </resources>

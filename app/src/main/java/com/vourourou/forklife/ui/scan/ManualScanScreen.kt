@@ -25,6 +25,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +60,7 @@ fun ManualScanScreen(
     val productEvent by viewModel.productInformationsEvent.observeAsState(
         ProductInfoSharedViewModel.ProductInformationsEvent.Empty
     )
+    val selectedAllergens by viewModel.selectedAllergens.collectAsState()
 
     val pagerState = rememberPagerState(pageCount = { 4 })
     val tabTitles = listOf(R.string.tab_score, R.string.tab_characteristics, R.string.tab_ingredients, R.string.tab_environment)
@@ -159,7 +161,10 @@ fun ManualScanScreen(
                         modifier = Modifier.weight(1f)
                     ) { page ->
                         when (page) {
-                            0 -> ScoreTab(product = product)
+                            0 -> ScoreTab(
+                                product = product,
+                                selectedAllergens = selectedAllergens
+                            )
                             1 -> CharacteristicsTab(product = product)
                             2 -> IngredientsTab(product = product)
                             3 -> EnvironmentTab(product = product)

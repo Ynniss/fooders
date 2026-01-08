@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +23,8 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
     private val THEME = stringPreferencesKey("theme")
     private val DARK_MODE = stringPreferencesKey("dark_mode")
     private val SCAN_COUNT = intPreferencesKey("scan_count")
+    private val LAST_REVIEW_REQUEST_TIMESTAMP = longPreferencesKey("last_review_request_timestamp")
+    private val SELECTED_ALLERGENS = stringSetPreferencesKey("selected_allergens")
 
     // Flow properties for Compose
     val themeFlow: Flow<String> = sessionDataStore.data.map { preferences ->
@@ -99,6 +103,50 @@ class DataStoreManager @Inject constructor(@ApplicationContext appContext: Conte
 
     suspend fun getScanCount(): Int {
         return scanCountFlow.first()
+    }
+
+    // In-App Review tracking
+    val lastReviewRequestTimestampFlow: Flow<Long> = sessionDataStore.data.map { preferences ->
+        preferences[LAST_REVIEW_REQUEST_TIMESTAMP] ?: 0L
+    }
+
+    suspend fun getLastReviewRequestTimestamp(): Long {
+        return lastReviewRequestTimestampFlow.first()
+    }
+
+    suspend fun updateLastReviewRequestTimestamp(timestamp: Long) {
+        this.sessionDataStore.edit { settings ->
+            settings[LAST_REVIEW_REQUEST_TIMESTAMP] = timestamp
+        }
+    }
+
+    // Allergen preferences
+    val selectedAllergensFlow: Flow<Set<String>> = sessionDataStore.data.map { preferences ->
+        preferences[SELECTED_ALLERGENS] ?: emptySet()
+    }
+
+    suspend fun getSelectedAllergens(): Set<String> {
+        return selectedAllergensFlow.first()
+    }
+
+    suspend fun updateSelectedAllergens(allergens: Set<String>) {
+        this.sessionDataStore.edit { settings ->
+            settings[SELECTED_ALLERGENS] = allergens
+        }
+    }
+
+    suspend fun addAllergen(allergenTag: String) {
+        this.sessionDataStore.edit { settings ->
+            val currentAllergens = settings[SELECTED_ALLERGENS] ?: emptySet()
+            settings[SELECTED_ALLERGENS] = currentAllergens + allergenTag
+        }
+    }
+
+    suspend fun removeAllergen(allergenTag: String) {
+        this.sessionDataStore.edit { settings ->
+            val currentAllergens = settings[SELECTED_ALLERGENS] ?: emptySet()
+            settings[SELECTED_ALLERGENS] = currentAllergens - allergenTag
+        }
     }
 
 }
