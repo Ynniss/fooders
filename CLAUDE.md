@@ -53,6 +53,19 @@ Data Layer (Repositories, Data Sources)
 4. Build UI components that observe ViewModel state
 5. Keep business logic in ViewModels/Use Cases, NOT in Composables
 
+## Git & PR Guidelines
+
+**Pull Request Descriptions**:
+- NEVER include "Generated with Claude Code" or similar footers in PR descriptions
+- Keep PR descriptions clean and professional
+- Focus on what changed and why
+- Include relevant test plan and version information
+
+**Commit Messages**:
+- Write clear, concise commit messages focused on "why" rather than "what"
+- Follow the repository's existing commit message style
+- Do not add attribution footers unless explicitly requested
+
 ## Build Commands
 
 ```bash
