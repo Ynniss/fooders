@@ -1,0 +1,217 @@
+default_platform(:android)
+
+platform :android do
+
+  # =========================================
+  # HELPER METHODS
+  # =========================================
+
+  # Read current version code from build.gradle
+  def get_current_version_code
+    build_gradle = File.read("app/build.gradle")
+    match = build_gradle.match(/versionCode\s+(\d+)/)
+    match ? match[1].to_i : 1
+  end
+
+  # Read current version name from build.gradle
+  def get_current_version_name
+    build_gradle = File.read("app/build.gradle")
+    match = build_gradle.match(/versionName\s+"([^"]+)"/)
+    match ? match[1] : "1.0.0"
+  end
+
+  # Update version code and version name in build.gradle
+  def update_version(new_code, new_name)
+    build_gradle_path = "app/build.gradle"
+    build_gradle = File.read(build_gradle_path)
+
+    build_gradle.gsub!(/versionCode\s+\d+/, "versionCode #{new_code}")
+    build_gradle.gsub!(/versionName\s+"[^"]+"/, "versionName \"#{new_name}\"")
+
+    File.write(build_gradle_path, build_gradle)
+  end
+
+  # =========================================
+  # BUILD LANES
+  # =========================================
+
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(
+      task: "assembleDebug",
+      project_dir: "./"
+    )
+    UI.success("Debug APK built successfully!")
+    UI.message("APK location: app/build/outputs/apk/debug/app-debug.apk")
+  end
+
+  desc "Build release APK (signed)"
+  lane :build_release do
+    gradle(
+      task: "assembleRelease",
+      project_dir: "./"
+    )
+    UI.success("Release APK built successfully!")
+    UI.message("APK location: app/build/outputs/apk/release/app-release.apk")
+  end
+
+  desc "Build release AAB (signed, for Play Store)"
+  lane :build_bundle do
+    gradle(
+      task: "bundleRelease",
+      project_dir: "./"
+    )
+    UI.success("Release AAB built successfully!")
+    UI.message("AAB location: app/build/outputs/bundle/release/app-release.aab")
+  end
+
+  # =========================================
+  # DEPLOYMENT LANES
+  # =========================================
+
+  desc "Deploy to internal testing track"
+  lane :internal do
+    build_bundle
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully deployed to internal testing!")
+  end
+
+  desc "Deploy to closed beta track"
+  lane :beta do
+    build_bundle
+    upload_to_play_store(
+      track: "beta",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully deployed to beta!")
+  end
+
+  desc "Deploy to production"
+  lane :production do
+    # Get current versions
+    current_code = get_current_version_code
+    current_name = get_current_version_name
+    default_code = current_code + 1
+
+    UI.header("Version Configuration")
+
+    # Prompt for version code
+    new_code = UI.input("Version code (current: #{current_code}, default: #{default_code}): ")
+    new_code = new_code.empty? ? default_code : new_code.to_i
+
+    # Prompt for version name
+    new_name = UI.input("Version name (current: #{current_name}, default: #{current_name}): ")
+    new_name = new_name.empty? ? current_name : new_name
+
+    # Show summary and confirm
+    UI.important("Deploy to PRODUCTION with:")
+    UI.message("  Version code: #{new_code}")
+    UI.message("  Version name: #{new_name}")
+
+    unless UI.confirm("Continue?")
+      UI.user_error!("Deployment cancelled")
+    end
+
+    # Update build.gradle
+    update_version(new_code, new_name)
+    UI.success("Updated app/build.gradle")
+
+    # Build and upload
+    build_bundle
+    upload_to_play_store(
+      track: "production",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success("Successfully deployed v#{new_name} (#{new_code}) to production!")
+  end
+
+  desc "Promote internal to beta"
+  lane :promote_to_beta do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "beta",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully promoted internal build to beta!")
+  end
+
+  desc "Promote beta to production"
+  lane :promote_to_production do
+    UI.important("You are about to promote beta to PRODUCTION!")
+    unless UI.confirm("Are you sure you want to continue?")
+      UI.user_error!("Production promotion cancelled by user")
+    end
+
+    upload_to_play_store(
+      track: "beta",
+      track_promote_to: "production",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully promoted beta to production!")
+  end
+
+  # =========================================
+  # UTILITY LANES
+  # =========================================
+
+  desc "Run all tests"
+  lane :test do
+    gradle(
+      task: "test",
+      project_dir: "./"
+    )
+    UI.success("All tests passed!")
+  end
+
+  desc "Clean build artifacts"
+  lane :clean do
+    gradle(
+      task: "clean",
+      project_dir: "./"
+    )
+    UI.success("Build artifacts cleaned!")
+  end
+
+  desc "Validate Play Store credentials"
+  lane :validate_credentials do
+    validate_play_store_json_key(
+      json_key: ENV["PLAY_STORE_JSON_KEY"] || "app/play-store-credentials.json"
+    )
+    UI.success("Play Store credentials are valid!")
+  end
+
+  desc "Fetch current version codes from Play Store"
+  lane :current_versions do
+    version_codes = google_play_track_version_codes(
+      track: "production"
+    )
+    UI.message("Production version codes: #{version_codes}")
+
+    internal_codes = google_play_track_version_codes(
+      track: "internal"
+    )
+    UI.message("Internal version codes: #{internal_codes}")
+  end
+
+end

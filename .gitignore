@@ -73,6 +73,11 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
+# Fastlane secrets and credentials
+fastlane/.env*
+fastlane/*.json
+play-store-credentials.json
+
 # Version control
 vcs.xml
 
