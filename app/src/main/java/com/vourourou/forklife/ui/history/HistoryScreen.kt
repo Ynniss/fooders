@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import com.vourourou.forklife.utils.ShareUtils
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -122,6 +123,7 @@ fun HistoryScreen(
                         HistoryItemCard(
                             item = item,
                             onClick = { onNavigateToProduct(item.barcode) },
+                            onShare = { ShareUtils.shareProduct(context, item) },
                             selectedAllergens = selectedAllergens
                         )
                     }
@@ -199,6 +201,7 @@ private fun EmptyHistoryContent(modifier: Modifier = Modifier) {
 private fun HistoryItemCard(
     item: ScanHistoryItem,
     onClick: () -> Unit,
+    onShare: () -> Unit,
     selectedAllergens: Set<String> = emptySet()
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
@@ -311,6 +314,18 @@ private fun HistoryItemCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
+            }
+
+            // Share button
+            IconButton(
+                onClick = onShare,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = stringResource(R.string.share_product),
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

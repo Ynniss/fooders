@@ -1,0 +1,2 @@
+json_key_file(ENV["PLAY_STORE_JSON_KEY"] || "app/play-store-credentials.json")
+package_name("com.vourourou.forklife")
