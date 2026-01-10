@@ -12,6 +12,23 @@ android {
     namespace = 'com.vourourou.forklife'
     compileSdk 35
 
+    // Load keystore properties from local.properties
+    def keystorePropertiesFile = rootProject.file("local.properties")
+    def keystoreProperties = new Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
+    // Signing configuration for release builds
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['RELEASE_STORE_FILE'] ?: System.getenv('RELEASE_STORE_FILE') ?: 'keystore-not-configured.jks')
+            storePassword keystoreProperties['RELEASE_STORE_PASSWORD'] ?: System.getenv('RELEASE_STORE_PASSWORD') ?: ''
+            keyAlias keystoreProperties['RELEASE_KEY_ALIAS'] ?: System.getenv('RELEASE_KEY_ALIAS') ?: ''
+            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD'] ?: System.getenv('RELEASE_KEY_PASSWORD') ?: ''
+        }
+    }
+
     defaultConfig {
         applicationId "com.vourourou.forklife"
         minSdkVersion 21
@@ -42,6 +59,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
