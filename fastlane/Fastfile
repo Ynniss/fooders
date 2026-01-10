@@ -8,21 +8,21 @@ platform :android do
 
   # Read current version code from build.gradle
   def get_current_version_code
-    build_gradle = File.read("app/build.gradle")
+    build_gradle = File.read("../app/build.gradle")
     match = build_gradle.match(/versionCode\s+(\d+)/)
     match ? match[1].to_i : 1
   end
 
   # Read current version name from build.gradle
   def get_current_version_name
-    build_gradle = File.read("app/build.gradle")
+    build_gradle = File.read("../app/build.gradle")
     match = build_gradle.match(/versionName\s+"([^"]+)"/)
     match ? match[1] : "1.0.0"
   end
 
   # Update version code and version name in build.gradle
   def update_version(new_code, new_name)
-    build_gradle_path = "app/build.gradle"
+    build_gradle_path = "../app/build.gradle"
     build_gradle = File.read(build_gradle_path)
 
     build_gradle.gsub!(/versionCode\s+\d+/, "versionCode #{new_code}")
@@ -103,14 +103,20 @@ platform :android do
     default_code = current_code + 1
 
     UI.header("Version Configuration")
+    UI.message("Current version: #{current_name} (code: #{current_code})")
+    UI.message("")
 
-    # Prompt for version code
-    new_code = UI.input("Version code (current: #{current_code}, default: #{default_code}): ")
-    new_code = new_code.empty? ? default_code : new_code.to_i
+    # Prompt for version code with explicit formatting
+    UI.message("Version Code:")
+    new_code = UI.input("Enter new version code (default: #{default_code})")
+    new_code = new_code.to_s.strip.empty? ? default_code : new_code.to_i
+    UI.message("")
 
-    # Prompt for version name
-    new_name = UI.input("Version name (current: #{current_name}, default: #{current_name}): ")
-    new_name = new_name.empty? ? current_name : new_name
+    # Prompt for version name with explicit formatting
+    UI.message("Version Name:")
+    new_name = UI.input("Enter new version name (default: #{current_name})")
+    new_name = new_name.to_s.strip.empty? ? current_name : new_name.strip
+    UI.message("")
 
     # Show summary and confirm
     UI.important("Deploy to PRODUCTION with:")
@@ -123,7 +129,7 @@ platform :android do
 
     # Update build.gradle
     update_version(new_code, new_name)
-    UI.success("Updated app/build.gradle")
+    UI.success("Updated version to #{new_name} (#{new_code})")
 
     # Build and upload
     build_bundle
