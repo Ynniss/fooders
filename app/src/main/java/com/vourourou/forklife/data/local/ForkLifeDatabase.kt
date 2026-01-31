@@ -4,15 +4,24 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.vourourou.forklife.data.local.dao.ProfileDao
+import com.vourourou.forklife.data.local.entity.IngredientEntity
+import com.vourourou.forklife.data.local.entity.ProfileEntity
 import com.vourourou.forklife.data.local.entity.ScanHistoryItem
 
 @Database(
-    entities = [ScanHistoryItem::class],
-    version = 3,
+    entities = [
+        ScanHistoryItem::class,
+        ProfileEntity::class,
+        IngredientEntity::class
+    ],
+    version = 4,
     exportSchema = false
 )
 abstract class ForkLifeDatabase : RoomDatabase() {
     abstract fun scanHistoryDao(): ScanHistoryDao
+
+    abstract fun profileDao(): ProfileDao
 
     companion object {
         /**
