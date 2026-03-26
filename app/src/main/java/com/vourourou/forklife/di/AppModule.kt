@@ -6,9 +6,11 @@ import com.google.gson.Gson
 import com.vourourou.forklife.BuildConfig
 import com.vourourou.forklife.data.local.ForkLifeDatabase
 import com.vourourou.forklife.data.local.ScanHistoryDao
+import com.vourourou.forklife.data.local.dao.ProfileDao
 import com.vourourou.forklife.data.remote.OpenFoodFactsApi
 import com.vourourou.forklife.data.repository.HistoryRepository
 import com.vourourou.forklife.data.repository.OpenFoodFactsRepository
+import com.vourourou.forklife.data.repository.ProfileRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,7 +70,9 @@ object AppModule {
             .addMigrations(
                 ForkLifeDatabase.MIGRATION_1_2,
                 ForkLifeDatabase.MIGRATION_2_3
+                // We're omitting 3_4 here because we're using the fallback below
             )
+            .fallbackToDestructiveMigration() // This wipes old data to accommodate the new Profile/Ingredient tables
             .build()
     }
 
@@ -76,6 +80,12 @@ object AppModule {
     @Provides
     fun provideScanHistoryDao(database: ForkLifeDatabase): ScanHistoryDao {
         return database.scanHistoryDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideProfileDao(database: ForkLifeDatabase): ProfileDao {
+        return database.profileDao()
     }
 
     @Singleton
@@ -91,6 +101,12 @@ object AppModule {
         gson: Gson
     ): HistoryRepository {
         return HistoryRepository(scanHistoryDao, gson)
+    }
+
+    @Singleton
+    @Provides
+    fun provideProfileRepository(profileDao: ProfileDao): ProfileRepository {
+        return ProfileRepository(profileDao)
     }
 
 }
